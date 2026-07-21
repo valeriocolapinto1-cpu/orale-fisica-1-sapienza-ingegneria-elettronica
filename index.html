@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Fisica 1 — Orale Trainer</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --fg:#e6edf3; --fg2:#9da7b3; --accent:#58a6ff; --accent2:#1f6feb;
+  --ok:#3fb950; --warn:#d29922; --bad:#f85149; --viola:#bc8cff;
+  --r:12px; --tabbar-h:60px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{font-size:16px;}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+}
+header.app-header{
+  position:sticky; top:0; z-index:50; background:rgba(13,17,23,.92);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border); padding:10px 16px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+header.app-header h1{font-size:1.05rem; margin:0; font-weight:700;}
+#countdown{font-size:.85rem; color:var(--warn); font-weight:600; white-space:nowrap;}
+main{padding:14px 14px 24px; max-width:760px; margin:0 auto;}
+.vista{display:none;}
+.vista.attiva{display:block;}
+h2{font-size:1.25rem; margin:.4em 0 .6em;}
+h3{font-size:1.05rem; margin:.8em 0 .4em;}
+.card{
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px 16px; margin-bottom:12px;
+}
+button, .btn{
+  font:inherit; cursor:pointer; border:1px solid var(--border); border-radius:10px;
+  background:var(--bg3); color:var(--fg); padding:12px 16px; min-height:44px;
+  transition:background .15s;
+}
+button:active{background:var(--border);}
+.btn-primario{background:var(--accent2); border-color:var(--accent2); color:#fff; font-weight:600;}
+.btn-largo{display:block; width:100%; text-align:center; margin-top:10px;}
+.tag{
+  display:inline-block; font-size:.75rem; padding:2px 9px; border-radius:999px;
+  border:1px solid var(--border); color:var(--fg2); margin-right:6px; vertical-align:middle;
+}
+.tag-A{color:#79c0ff; border-color:#1f6feb66;}
+.tag-B{color:#56d364; border-color:#3fb95066;}
+.tag-C{color:#e3b341; border-color:#d2992266;}
+.tag-D{color:#d2a8ff; border-color:#bc8cff66;}
+.stato-pallino{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; flex:none;}
+.st-0{background:#484f58;} .st-1{background:var(--bad);} .st-2{background:var(--warn);} .st-3{background:var(--ok);}
+.lista-argomenti{list-style:none; margin:0; padding:0;}
+.lista-argomenti li{margin:0;}
+.riga-argomento{
+  display:flex; align-items:center; width:100%; text-align:left; gap:4px;
+  background:var(--bg2); border:1px solid var(--border); border-radius:10px;
+  padding:12px 14px; margin-bottom:8px; min-height:52px;
+}
+.riga-argomento .titolo-arg{flex:1; font-size:.95rem;}
+.riga-argomento .freccia{color:var(--fg2);}
+details.sezione{
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  margin-bottom:10px; overflow:hidden;
+}
+details.sezione>summary{
+  cursor:pointer; list-style:none; padding:13px 16px; font-weight:600;
+  display:flex; align-items:center; justify-content:space-between; min-height:48px;
+}
+details.sezione>summary::-webkit-details-marker{display:none;}
+details.sezione>summary::after{content:"▸"; color:var(--fg2); transition:transform .2s;}
+details.sezione[open]>summary::after{transform:rotate(90deg);}
+details.sezione .corpo{padding:2px 16px 14px; border-top:1px solid var(--border);}
+.passo-derivazione{border-left:3px solid var(--accent2); padding:6px 0 6px 12px; margin:10px 0;}
+.passo-derivazione .p-passo{font-weight:600; font-size:.92rem;}
+.passo-derivazione .p-formula{margin:6px 0; overflow-x:auto; padding:4px 0;}
+.passo-derivazione .p-commento{color:var(--fg2); font-size:.88rem;}
+ul.puntata{margin:.3em 0; padding-left:1.2em;}
+ul.puntata li{margin-bottom:.45em;}
+.mini{color:var(--fg2); font-size:.85rem;}
+.barra-area{background:var(--bg3); border-radius:999px; height:10px; overflow:hidden; margin:4px 0 12px;}
+.barra-area>div{height:100%; border-radius:999px; background:var(--accent); transition:width .3s;}
+.riga-dash{display:flex; justify-content:space-between; align-items:baseline; font-size:.9rem;}
+.griglia-stati{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:8px;}
+.griglia-stati button{font-size:.85rem; padding:10px 6px;}
+.griglia-stati button.sel{outline:2px solid var(--accent); background:var(--bg);}
+#timer-display{
+  font-size:3rem; font-weight:700; text-align:center; font-variant-numeric:tabular-nums;
+  margin:12px 0; color:var(--accent);
+}
+.punto-checklist{
+  display:flex; flex-direction:column; gap:8px; padding:12px 0; border-bottom:1px solid var(--border);
+}
+.punto-checklist:last-child{border-bottom:none;}
+.voti-03{display:flex; gap:8px;}
+.voti-03 button{flex:1; min-height:44px; font-weight:600;}
+.voti-03 button.sel{background:var(--accent2); border-color:var(--accent2); color:#fff;}
+.formula-riga{padding:8px 4px; border-bottom:1px solid var(--border); overflow-x:auto;}
+.formula-riga:last-child{border-bottom:none;}
+.formula-riga .mini{display:block;}
+nav#tabbar{
+  position:fixed; bottom:0; left:0; right:0; z-index:60;
+  display:flex; background:rgba(22,27,34,.97);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom);
+  height:calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+}
+nav#tabbar button{
+  flex:1; background:none; border:none; border-radius:0; color:var(--fg2);
+  font-size:.7rem; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:2px; min-height:var(--tabbar-h); padding:4px 0;
+}
+nav#tabbar button .icona{font-size:1.35rem; line-height:1;}
+nav#tabbar button.attivo{color:var(--accent); font-weight:600;}
+.giorno-piano{margin-bottom:14px;}
+.giorno-piano .intest{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;}
+.giorno-piano .intest .data-g{font-weight:700;}
+.giorno-piano.oggi{border-color:var(--accent);}
+.chip-arg{
+  display:flex; align-items:center; width:100%; text-align:left;
+  background:var(--bg3); border:1px solid var(--border); border-radius:8px;
+  padding:9px 12px; margin:5px 0; font-size:.88rem; min-height:44px;
+}
+.etichetta-sez{font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; color:var(--fg2); margin-top:10px;}
+.vuoto{color:var(--fg2); font-style:italic; padding:8px 0;}
+.avviso{background:#1f6feb22; border:1px solid #1f6feb66; border-radius:10px; padding:10px 14px; font-size:.9rem; margin-bottom:12px;}
+mjx-container{overflow-x:auto; overflow-y:hidden; max-width:100%;}
+mjx-container[display="true"]{margin:.4em 0 !important;}
+@media (min-width:700px){
+  html{font-size:17px;}
+  .griglia-stati{grid-template-columns:repeat(4,1fr);}
+}
+@media print{
+  body{background:#fff; color:#000; padding:0;}
+  header.app-header, nav#tabbar, .no-print{display:none !important;}
+  .vista{display:none !important;}
+  #vista-formule{display:block !important;}
+  .card{border:1px solid #bbb; background:#fff; break-inside:avoid;}
+  .formula-riga{border-color:#ddd;}
+  .mini{color:#555;}
+  .tag{color:#333; border-color:#999;}
+}
+</style>
+</head>
+<body>
+<script>
+// ============================================================
+// CONTENUTI — 33 argomenti di Fisica 1 (generati per primi)
+// ============================================================
+const CONTENUTI = [
+{
+  id: 1, titolo: "Moto circolare vario: accelerazione tangenziale e centripeta", area: "A", prerequisiti: [],
+  definizioni: "Un punto materiale si muove di moto circolare quando la sua traiettoria è una circonferenza di raggio R. Si definiscono: la coordinata curvilinea s(t) lungo la circonferenza, la velocità angolare \\(\\omega = d\\theta/dt\\) e l'accelerazione angolare \\(\\alpha = d\\omega/dt\\). Nel moto circolare vario il modulo della velocità non è costante, quindi l'accelerazione ha due componenti: quella tangenziale, che modifica il modulo della velocità, e quella centripeta (o normale), che modifica la direzione della velocità puntando verso il centro.",
+  derivazione: [
+    { passo: "Posizione e velocità in termini del versore tangente", formula: "\\[ \\vec{v} = \\frac{d\\vec{r}}{dt} = v\\,\\hat{u}_t, \\qquad v = \\frac{ds}{dt} = \\omega R \\]", commento: "La velocità è sempre tangente alla traiettoria; il suo modulo è legato alla velocità angolare da v = ωR." },
+    { passo: "Derivo la velocità rispetto al tempo (regola del prodotto)", formula: "\\[ \\vec{a} = \\frac{d\\vec{v}}{dt} = \\frac{dv}{dt}\\,\\hat{u}_t + v\\,\\frac{d\\hat{u}_t}{dt} \\]", commento: "Il versore tangente ruota mentre il punto si muove, quindi la sua derivata non è nulla." },
+    { passo: "Derivata del versore tangente", formula: "\\[ \\frac{d\\hat{u}_t}{dt} = \\frac{d\\theta}{dt}\\,\\hat{u}_n = \\omega\\,\\hat{u}_n \\]", commento: "Un versore che ruota con velocità angolare ω ha derivata di modulo ω diretta perpendicolarmente a sé, verso il centro di curvatura (versore normale û_n)." },
+    { passo: "Composizione delle due accelerazioni", formula: "\\[ \\vec{a} = \\underbrace{\\frac{dv}{dt}}_{a_t}\\,\\hat{u}_t + \\underbrace{v\\omega}_{a_n}\\,\\hat{u}_n = \\alpha R\\,\\hat{u}_t + \\frac{v^2}{R}\\,\\hat{u}_n \\]", commento: "Con v = ωR si ottiene a_t = dv/dt = αR e a_n = vω = ω²R = v²/R." },
+    { passo: "Modulo dell'accelerazione totale", formula: "\\[ |\\vec{a}| = \\sqrt{a_t^2 + a_n^2} = \\sqrt{(\\alpha R)^2 + (\\omega^2 R)^2} \\]", commento: "Le due componenti sono ortogonali: si sommano in quadratura." }
+  ],
+  ipotesi: "Punto materiale vincolato a una traiettoria circolare di raggio R costante; cinematica classica (non relativistica). Non serve alcuna ipotesi sulla causa del moto: è pura cinematica.",
+  casiLimite: "Se \\(\\alpha = 0\\) (ω costante) il moto è circolare uniforme: resta solo l'accelerazione centripeta \\(a_n = \\omega^2 R\\). Se \\(R \\to \\infty\\) la traiettoria tende a una retta e \\(a_n \\to 0\\): resta solo l'accelerazione tangenziale, come nel moto rettilineo. Se v = 0 istantaneamente (inversione del moto), a_n = 0 in quell'istante.",
+  erroriTipici: [
+    "Dire che nel moto circolare uniforme l'accelerazione è nulla perché la velocità 'è costante': è costante solo il modulo, non il vettore.",
+    "Confondere a_t = αR (deriva dal cambiamento del modulo di v) con a_n = ω²R (deriva dal cambiamento di direzione).",
+    "Scrivere a_n = v²/R con v velocità angolare invece che tangenziale.",
+    "Trattare la 'forza centripeta' come una forza in più: è la risultante delle forze reali proiettata sulla normale."
+  ],
+  intuizioneFisica: "L'accelerazione centripeta esiste perché girare significa cambiare continuamente direzione: anche a velocità (in modulo) costante, il vettore velocità ruota, e la rapidità con cui ruota è misurata da v²/R. Quella tangenziale è l'accelerazione 'ordinaria' del tachimetro: dice se stai andando più forte o più piano lungo la curva.",
+  checklistOrale: [
+    "Definire ω e α come derivate di θ",
+    "Ricavare v = ωR dalla coordinata curvilinea s = θR",
+    "Spiegare perché la derivata del versore tangente non è nulla e da dove esce û_n",
+    "Ricavare a_t = αR e a_n = ω²R = v²/R",
+    "Disegnare i vettori v, a_t, a_n su una circonferenza",
+    "Discutere il caso limite del moto circolare uniforme",
+    "Saper calcolare il modulo dell'accelerazione totale"
+  ],
+  domandeApprofondimento: [
+    "In un moto curvilineo qualsiasi (non circolare) come si generalizza a_n? (Con il raggio di curvatura locale: a_n = v²/ρ.)",
+    "Un'auto percorre una curva a velocità di modulo crescente: in quale direzione punta l'accelerazione totale rispetto al raggio?",
+    "Perché nel moto circolare uniforme il lavoro della forza risultante è nullo?"
+  ],
+  formuleChiave: ["\\(v = \\omega R\\)", "\\(a_t = \\alpha R = \\frac{dv}{dt}\\)", "\\(a_n = \\omega^2 R = \\frac{v^2}{R}\\)", "\\(|\\vec{a}| = \\sqrt{a_t^2 + a_n^2}\\)"]
+},
+{
+  id: 2, titolo: "Moto armonico: ampiezza, pulsazione, periodo, fase iniziale", area: "A", prerequisiti: [],
+  definizioni: "Un moto rettilineo si dice armonico semplice quando la posizione varia sinusoidalmente nel tempo: \\(x(t) = A\\cos(\\omega t + \\varphi)\\). A è l'ampiezza (massimo scostamento dalla posizione di equilibrio), ω la pulsazione (rad/s), \\(\\varphi\\) la fase iniziale (fissa posizione e velocità a t = 0), \\(T = 2\\pi/\\omega\\) il periodo e \\(\\nu = 1/T\\) la frequenza. Il moto armonico è la soluzione dell'equazione differenziale \\(\\ddot{x} = -\\omega^2 x\\).",
+  derivazione: [
+    { passo: "Equazione caratteristica del moto armonico", formula: "\\[ \\ddot{x}(t) = -\\omega^2\\, x(t) \\]", commento: "Definizione dinamica: l'accelerazione è proporzionale all'opposto della posizione. Ogni sistema che obbedisce a questa equazione compie moto armonico." },
+    { passo: "Verifica che la sinusoide è soluzione", formula: "\\[ x = A\\cos(\\omega t + \\varphi) \\;\\Rightarrow\\; \\dot{x} = -A\\omega\\sin(\\omega t + \\varphi) \\;\\Rightarrow\\; \\ddot{x} = -A\\omega^2\\cos(\\omega t + \\varphi) = -\\omega^2 x \\]", commento: "Derivando due volte si riottiene la funzione moltiplicata per −ω²: la soluzione generale ha due costanti libere, A e φ, fissate dalle condizioni iniziali." },
+    { passo: "Determinazione di A e φ dalle condizioni iniziali", formula: "\\[ x_0 = A\\cos\\varphi, \\quad v_0 = -A\\omega\\sin\\varphi \\;\\Rightarrow\\; A = \\sqrt{x_0^2 + \\frac{v_0^2}{\\omega^2}}, \\quad \\tan\\varphi = -\\frac{v_0}{\\omega x_0} \\]", commento: "Si quadra e si somma per eliminare φ; si divide per eliminare A. Le condizioni iniziali determinano completamente il moto." },
+    { passo: "Periodicità", formula: "\\[ x(t + T) = x(t) \\iff \\omega T = 2\\pi \\;\\Rightarrow\\; T = \\frac{2\\pi}{\\omega}, \\qquad \\nu = \\frac{1}{T} = \\frac{\\omega}{2\\pi} \\]", commento: "Il coseno è periodico di 2π: il periodo non dipende dall'ampiezza (isocronismo)." },
+    { passo: "Velocità e accelerazione massime", formula: "\\[ v_{max} = A\\omega \\;(\\text{in } x = 0), \\qquad a_{max} = A\\omega^2 \\;(\\text{in } x = \\pm A) \\]", commento: "La velocità è massima al passaggio per l'equilibrio, l'accelerazione agli estremi, dove il moto si inverte." },
+    { passo: "Legame con il moto circolare uniforme", formula: "\\[ x(t) = R\\cos(\\omega t + \\varphi) \\]", commento: "Il moto armonico è la proiezione su un diametro di un moto circolare uniforme di raggio R = A e velocità angolare ω: utile per visualizzare fase e pulsazione." }
+  ],
+  ipotesi: "Moto unidimensionale; forza (o accelerazione) di richiamo esattamente lineare in x. Nessuna dissipazione.",
+  casiLimite: "Se \\(v_0 = 0\\): φ = 0 e A = x₀ (parte da fermo dall'estremo). Se \\(x_0 = 0\\): φ = ±π/2 e A = v₀/ω (parte dall'equilibrio con velocità massima). Per ω → 0 il periodo diverge: il sistema non richiama più.",
+  erroriTipici: [
+    "Confondere pulsazione ω (rad/s) e frequenza ν (Hz): ω = 2πν.",
+    "Credere che il periodo dipenda dall'ampiezza: nel moto armonico ideale è isocrono.",
+    "Sbagliare i segni derivando: la velocità è −Aω sin(...), non +.",
+    "Dimenticare che A e φ vengono dalle condizioni iniziali, non dall'equazione del moto."
+  ],
+  intuizioneFisica: "Il moto armonico nasce ogni volta che un sistema, spostato dall'equilibrio, subisce un richiamo proporzionale allo spostamento. È il 'mattone universale' delle oscillazioni: qualsiasi potenziale liscio, vicino a un minimo, è approssimativamente parabolico, quindi quasi tutti i sistemi oscillano armonicamente per piccole perturbazioni.",
+  checklistOrale: [
+    "Scrivere l'equazione differenziale \\(\\ddot{x} = -\\omega^2 x\\) e dire che definisce il moto armonico",
+    "Verificare per sostituzione che x = A cos(ωt+φ) è soluzione",
+    "Definire con precisione A, ω, T, ν, φ e le loro unità",
+    "Ricavare A e φ dalle condizioni iniziali",
+    "Indicare dove sono massime velocità e accelerazione",
+    "Spiegare l'isocronismo e il legame col moto circolare uniforme"
+  ],
+  domandeApprofondimento: [
+    "Perché quasi ogni sistema fisico oscilla armonicamente attorno a un equilibrio stabile? (Sviluppo di Taylor del potenziale al secondo ordine.)",
+    "Come si scrive la stessa soluzione nella forma x = a cos ωt + b sin ωt e che relazione c'è con A e φ?",
+    "Cosa succede alla traiettoria nello spazio delle fasi (x, v)? (Un'ellisse percorsa periodicamente.)"
+  ],
+  formuleChiave: ["\\(x(t) = A\\cos(\\omega t + \\varphi)\\)", "\\(\\ddot{x} = -\\omega^2 x\\)", "\\(T = \\frac{2\\pi}{\\omega}\\)", "\\(A = \\sqrt{x_0^2 + v_0^2/\\omega^2}\\)", "\\(v_{max} = A\\omega,\\; a_{max} = A\\omega^2\\)"]
+},
+{
+  id: 3, titolo: "Oscillatore armonico massa-molla", area: "A", prerequisiti: [2],
+  definizioni: "Un corpo di massa m è collegato a una molla ideale di costante elastica k che esercita la forza di richiamo \\(F = -kx\\) (legge di Hooke), dove x è lo spostamento dalla posizione di riposo della molla. Il sistema massa-molla è il prototipo dell'oscillatore armonico: la pulsazione propria è \\(\\omega = \\sqrt{k/m}\\) e non dipende dall'ampiezza.",
+  derivazione: [
+    { passo: "Seconda legge di Newton con la forza elastica", formula: "\\[ m\\ddot{x} = -kx \\]", commento: "L'unica forza (orizzontale, senza attrito) è quella della molla, proporzionale e opposta allo spostamento." },
+    { passo: "Forma canonica dell'equazione", formula: "\\[ \\ddot{x} + \\frac{k}{m}x = 0 \\;\\Rightarrow\\; \\ddot{x} + \\omega^2 x = 0, \\qquad \\omega = \\sqrt{\\frac{k}{m}} \\]", commento: "Dividendo per m si riconosce l'equazione del moto armonico: la pulsazione è fissata solo da k e m." },
+    { passo: "Soluzione generale", formula: "\\[ x(t) = A\\cos(\\omega t + \\varphi), \\qquad T = 2\\pi\\sqrt{\\frac{m}{k}} \\]", commento: "A e φ dalle condizioni iniziali. Massa maggiore → periodo maggiore; molla più rigida → periodo minore." },
+    { passo: "Energia potenziale elastica", formula: "\\[ U(x) = -\\int_0^x (-kx')\\,dx' = \\frac{1}{2}kx^2 \\]", commento: "La forza elastica è conservativa: U è il lavoro cambiato di segno fatto dalla molla dallo 0 a x." },
+    { passo: "Conservazione dell'energia meccanica", formula: "\\[ E = \\frac{1}{2}m\\dot{x}^2 + \\frac{1}{2}kx^2 = \\frac{1}{2}kA^2 = \\frac{1}{2}m\\omega^2 A^2 \\]", commento: "Sostituendo la soluzione: sin² + cos² = 1. L'energia totale è costante e proporzionale ad A²; si trasforma ciclicamente da cinetica (in x=0) a potenziale (in x=±A)." },
+    { passo: "Caso verticale: la gravità sposta solo l'equilibrio", formula: "\\[ m\\ddot{y} = -ky + mg \\;\\Rightarrow\\; \\text{con } y' = y - \\frac{mg}{k}: \\;\\; m\\ddot{y}' = -ky' \\]", commento: "Definendo la nuova coordinata attorno al punto di equilibrio statico y_eq = mg/k, l'equazione torna identica: stessa ω, la gravità non cambia il periodo." }
+  ],
+  ipotesi: "Molla ideale: massa trascurabile, perfettamente elastica, risposta lineare F = −kx (valida per piccole deformazioni). Nessun attrito né resistenza dell'aria. Corpo puntiforme.",
+  casiLimite: "k → ∞ (molla rigidissima): T → 0, il corpo resta praticamente fermo. m → 0: T → 0. Grandi deformazioni: la legge di Hooke cede (termini non lineari) e l'isocronismo si perde. Con attrito si passa all'oscillatore smorzato.",
+  erroriTipici: [
+    "Scrivere ω = k/m invece di ω = √(k/m).",
+    "Nel sistema verticale, misurare x dalla lunghezza a riposo della molla e dimenticare il termine mg (o viceversa contarlo due volte).",
+    "Credere che la gravità cambi il periodo dell'oscillatore verticale: cambia solo la posizione di equilibrio.",
+    "Confondere l'energia totale ½kA² con la potenziale istantanea ½kx²."
+  ],
+  intuizioneFisica: "La molla 'insiste' a riportare la massa all'equilibrio ma la massa, per inerzia, lo supera ogni volta: l'oscillazione è il compromesso perpetuo tra richiamo elastico e inerzia. ω = √(k/m) dice esattamente questo: più richiamo (k) → oscillazione veloce, più inerzia (m) → oscillazione lenta.",
+  checklistOrale: [
+    "Scrivere F = −kx e giustificarla come approssimazione lineare",
+    "Ricavare l'equazione del moto e portarla in forma canonica",
+    "Identificare ω = √(k/m) e T = 2π√(m/k)",
+    "Ricavare U = ½kx² per integrazione della forza",
+    "Dimostrare la conservazione di E = ½mv² + ½kx² = ½kA²",
+    "Trattare il caso verticale con il cambio di coordinata",
+    "Discutere da cosa dipende (e da cosa non dipende) il periodo"
+  ],
+  domandeApprofondimento: [
+    "Due molle uguali in serie e in parallelo: come cambia la costante elastica equivalente e quindi ω?",
+    "Se la molla ha massa non trascurabile, il periodo aumenta o diminuisce? (Aumenta: parte della molla oscilla, m_eff ≈ m + m_molla/3.)",
+    "In quali punti dell'oscillazione la potenza trasferita dalla molla alla massa è massima?"
+  ],
+  formuleChiave: ["\\(F = -kx\\)", "\\(\\omega = \\sqrt{k/m}\\)", "\\(T = 2\\pi\\sqrt{m/k}\\)", "\\(U = \\frac{1}{2}kx^2\\)", "\\(E = \\frac{1}{2}kA^2\\)"]
+},
+{
+  id: 4, titolo: "Pendolo semplice", area: "A", prerequisiti: [2],
+  definizioni: "Il pendolo semplice è un punto materiale di massa m sospeso a un filo inestensibile e privo di massa di lunghezza L, libero di oscillare in un piano verticale sotto l'azione della gravità. La posizione è individuata dall'angolo θ rispetto alla verticale. Per piccole oscillazioni il moto è armonico con periodo \\(T = 2\\pi\\sqrt{L/g}\\), indipendente dalla massa e dall'ampiezza.",
+  derivazione: [
+    { passo: "Forze sul punto materiale", formula: "\\[ \\vec{F} = m\\vec{g} + \\vec{T}_{filo} \\]", commento: "La tensione è diretta lungo il filo (componente centripeta), il peso ha una componente lungo il filo e una tangente all'arco." },
+    { passo: "Proiezione sulla direzione tangente", formula: "\\[ m a_t = -mg\\sin\\theta \\]", commento: "La tensione non ha componente tangenziale. Il segno meno: la componente tangenziale del peso è sempre di richiamo verso θ = 0." },
+    { passo: "Accelerazione tangenziale in termini di θ", formula: "\\[ s = L\\theta \\;\\Rightarrow\\; a_t = \\ddot{s} = L\\ddot{\\theta} \\;\\Rightarrow\\; mL\\ddot{\\theta} = -mg\\sin\\theta \\]", commento: "La coordinata curvilinea lungo l'arco è s = Lθ; la massa si semplifica." },
+    { passo: "Equazione esatta del pendolo", formula: "\\[ \\ddot{\\theta} + \\frac{g}{L}\\sin\\theta = 0 \\]", commento: "Equazione non lineare: in generale non ha soluzione elementare e il periodo dipende dall'ampiezza." },
+    { passo: "Approssimazione di piccole oscillazioni", formula: "\\[ \\sin\\theta \\approx \\theta \\;(\\theta \\ll 1\\text{ rad}) \\;\\Rightarrow\\; \\ddot{\\theta} + \\frac{g}{L}\\theta = 0 \\]", commento: "Sviluppo di Taylor al primo ordine: l'errore relativo è ~θ²/6 (meno dell'1% fino a ~14°)." },
+    { passo: "Identificazione con il moto armonico", formula: "\\[ \\omega = \\sqrt{\\frac{g}{L}}, \\qquad T = 2\\pi\\sqrt{\\frac{L}{g}}, \\qquad \\theta(t) = \\theta_0\\cos(\\omega t + \\varphi) \\]", commento: "Il periodo dipende solo da L e g: non dalla massa (perché la gravità accelera tutte le masse allo stesso modo) né dall'ampiezza (isocronismo di Galileo, valido solo per piccoli angoli)." },
+    { passo: "Tensione del filo (direzione radiale)", formula: "\\[ T_{filo} - mg\\cos\\theta = m\\frac{v^2}{L} \\;\\Rightarrow\\; T_{filo} = mg\\cos\\theta + \\frac{mv^2}{L} \\]", commento: "Sulla direzione radiale l'accelerazione è centripeta: la tensione è massima nel punto più basso, dove v è massima e cos θ = 1." }
+  ],
+  ipotesi: "Filo inestensibile e di massa trascurabile; massa puntiforme; assenza di attriti e resistenza dell'aria; campo di gravità uniforme; per l'isocronismo, piccole oscillazioni (sin θ ≈ θ).",
+  casiLimite: "Grandi ampiezze: il periodo cresce con θ₀, \\(T \\approx T_0(1 + \\theta_0^2/16)\\). L → 0: T → 0. g → 0 (caduta libera, orbita): il pendolo non oscilla affatto. θ₀ = π: equilibrio instabile in cima.",
+  erroriTipici: [
+    "Dire che il periodo non dipende dall'ampiezza in generale: vale solo per piccole oscillazioni.",
+    "Includere la massa nel periodo: si semplifica perché massa inerziale e gravitazionale coincidono.",
+    "Proiettare male il peso: la componente di richiamo è mg sin θ, quella lungo il filo mg cos θ.",
+    "Dimenticare che la tensione deve anche fornire la forza centripeta: T ≠ mg cos θ durante il moto."
+  ],
+  intuizioneFisica: "Il pendolo oscilla perché la gravità 'preme' il punto verso il fondo dell'arco, ma l'inerzia glielo fa superare. La massa sparisce dal periodo per lo stesso motivo per cui tutti i gravi cadono con la stessa accelerazione: raddoppiare m raddoppia sia la forza sia l'inerzia. L come 'braccio' del richiamo: pendolo lungo, richiamo angolare debole, oscillazione lenta.",
+  checklistOrale: [
+    "Disegnare il diagramma delle forze e proiettare peso e tensione",
+    "Ricavare l'equazione esatta \\(\\ddot{\\theta} + (g/L)\\sin\\theta = 0\\)",
+    "Giustificare l'approssimazione sin θ ≈ θ e i suoi limiti di validità",
+    "Ricavare ω = √(g/L) e T = 2π√(L/g)",
+    "Spiegare perché il periodo non dipende dalla massa",
+    "Calcolare la tensione del filo con l'equazione radiale",
+    "Discutere cosa succede a grandi ampiezze"
+  ],
+  domandeApprofondimento: [
+    "Come misureresti g con un pendolo e quali sono le principali fonti di errore?",
+    "Cosa cambia se il pendolo è dentro un ascensore che accelera verso l'alto con accelerazione a? (g → g + a nel periodo.)",
+    "Che relazione c'è tra il pendolo semplice e il pendolo fisico? (Il fisico si riduce al semplice con L equivalente = I/(md).)"
+  ],
+  formuleChiave: ["\\(\\ddot{\\theta} + \\frac{g}{L}\\sin\\theta = 0\\)", "\\(\\omega = \\sqrt{g/L}\\)", "\\(T = 2\\pi\\sqrt{L/g}\\)", "\\(T_{filo} = mg\\cos\\theta + \\frac{mv^2}{L}\\)"]
+},
+{
+  id: 5, titolo: "Sistemi di riferimento inerziali e non inerziali traslatori", area: "A", prerequisiti: [],
+  definizioni: "Un sistema di riferimento è inerziale se in esso vale il principio d'inerzia: un corpo non soggetto a forze si muove di moto rettilineo uniforme. Ogni sistema in moto rettilineo uniforme rispetto a un inerziale è a sua volta inerziale (relatività galileiana). Un sistema che accelera rispetto a un inerziale è non inerziale: per usare F = ma al suo interno occorre introdurre forze apparenti (o fittizie, o d'inerzia), che non hanno reazione perché non nascono da interazioni.",
+  derivazione: [
+    { passo: "Trasformazione delle posizioni (sistemi traslatori)", formula: "\\[ \\vec{r} = \\vec{r}' + \\vec{R}(t) \\]", commento: "r è la posizione nel sistema inerziale S, r' quella nel sistema mobile S', R la posizione dell'origine di S' vista da S. Niente rotazioni: gli assi restano paralleli." },
+    { passo: "Derivo due volte rispetto al tempo", formula: "\\[ \\vec{v} = \\vec{v}' + \\vec{V}(t), \\qquad \\vec{a} = \\vec{a}' + \\vec{A}(t) \\]", commento: "V e A sono velocità e accelerazione di trascinamento dell'origine di S'. Le derivate dei versori sono nulle perché S' trasla senza ruotare." },
+    { passo: "Seconda legge nel sistema inerziale", formula: "\\[ \\vec{F} = m\\vec{a} = m(\\vec{a}' + \\vec{A}) \\]", commento: "F è la risultante delle sole forze vere (interazioni: gravità, contatto, elastiche...)." },
+    { passo: "Riscrittura dal punto di vista di S'", formula: "\\[ m\\vec{a}' = \\vec{F} - m\\vec{A} \\equiv \\vec{F} + \\vec{F}_{app} \\]", commento: "In S' la legge di Newton 'funziona' solo aggiungendo la forza apparente F_app = −mA, opposta all'accelerazione di trascinamento e proporzionale alla massa." },
+    { passo: "Caso dell'ascensore accelerato", formula: "\\[ N - mg = ma' \\;\\text{con}\\; \\vec{F}_{app} = -m\\vec{A} \\;\\Rightarrow\\; N = m(g + A) \\;\\text{(accelera in su)} \\]", commento: "Il peso apparente (letto dalla bilancia, cioè la normale N) aumenta se l'ascensore accelera verso l'alto, diminuisce verso il basso; N = 0 in caduta libera: assenza di peso apparente." }
+  ],
+  ipotesi: "Meccanica classica (tempo assoluto, trasformazioni di Galileo). Sistema mobile in pura traslazione: assi sempre paralleli, altrimenti compaiono anche forza centrifuga e di Coriolis. Massa costante.",
+  casiLimite: "A = 0: S' è inerziale, le forze apparenti spariscono e si ritrova l'invarianza galileiana. A = g (caduta libera): la forza apparente cancella esattamente il peso — dentro il sistema tutto 'galleggia' (principio di equivalenza in embrione).",
+  erroriTipici: [
+    "Trattare la forza apparente come un'interazione reale e cercarle una reazione (terza legge): non ce l'ha.",
+    "Usare F = ma in un sistema accelerato senza aggiungere −mA.",
+    "Confondere il peso (forza gravitazionale mg) con il peso apparente (la normale N misurata dalla bilancia).",
+    "Credere che 'sentire la spinta' in frenata sia una forza vera: è l'inerzia vista da un sistema non inerziale."
+  ],
+  intuizioneFisica: "Le forze apparenti sono il 'trucco contabile' che permette di continuare a usare Newton in un sistema che accelera: siccome tutto il sistema accelera con A, ogni massa sembra ricevere una spinta −mA. La loro firma caratteristica è la proporzionalità alla massa — esattamente come la gravità, ed è questa somiglianza che ispirerà il principio di equivalenza.",
+  checklistOrale: [
+    "Definire sistema inerziale tramite il principio d'inerzia",
+    "Enunciare la relatività galileiana (sistemi in moto rettilineo uniforme tra loro)",
+    "Ricavare a = a' + A derivando la trasformazione delle posizioni",
+    "Ricavare la forza apparente F_app = −mA",
+    "Spiegare perché le forze apparenti non hanno reazione",
+    "Discutere l'esempio dell'ascensore e il peso apparente",
+    "Menzionare il caso di caduta libera (assenza di peso)"
+  ],
+  domandeApprofondimento: [
+    "Come distingueresti sperimentalmente, stando chiuso in una scatola, un sistema inerziale da uno accelerato?",
+    "Un pendolo dentro un vagone che accelera con a: qual è la nuova posizione di equilibrio? (tan θ = a/g.)",
+    "Perché la Terra è solo approssimativamente un sistema inerziale?"
+  ],
+  formuleChiave: ["\\(\\vec{a} = \\vec{a}' + \\vec{A}\\)", "\\(m\\vec{a}' = \\vec{F} - m\\vec{A}\\)", "\\(\\vec{F}_{app} = -m\\vec{A}\\)", "\\(N = m(g \\pm A)\\)"]
+},
+{
+  id: 6, titolo: "Oscillatore armonico smorzato", area: "A", prerequisiti: [3],
+  definizioni: "Un oscillatore smorzato è un oscillatore armonico soggetto anche a una forza di attrito viscoso proporzionale alla velocità, \\(F_v = -b\\dot{x}\\). Si definiscono il coefficiente di smorzamento \\(\\gamma = b/2m\\) e la pulsazione propria \\(\\omega_0 = \\sqrt{k/m}\\). A seconda del rapporto tra γ e ω₀ il moto è sottosmorzato (oscillazioni con ampiezza che decade esponenzialmente), criticamente smorzato o sovrasmorzato (ritorno all'equilibrio senza oscillare).",
+  derivazione: [
+    { passo: "Equazione del moto con attrito viscoso", formula: "\\[ m\\ddot{x} = -kx - b\\dot{x} \\;\\Rightarrow\\; \\ddot{x} + 2\\gamma\\dot{x} + \\omega_0^2 x = 0, \\quad \\gamma = \\frac{b}{2m},\\; \\omega_0^2 = \\frac{k}{m} \\]", commento: "Equazione differenziale lineare omogenea a coefficienti costanti: si cerca una soluzione esponenziale." },
+    { passo: "Ansatz esponenziale ed equazione caratteristica", formula: "\\[ x = e^{\\lambda t} \\;\\Rightarrow\\; \\lambda^2 + 2\\gamma\\lambda + \\omega_0^2 = 0 \\;\\Rightarrow\\; \\lambda_{1,2} = -\\gamma \\pm \\sqrt{\\gamma^2 - \\omega_0^2} \\]", commento: "Il segno del discriminante γ² − ω₀² separa i tre regimi." },
+    { passo: "Caso sottosmorzato (γ < ω₀)", formula: "\\[ x(t) = A\\,e^{-\\gamma t}\\cos(\\omega_s t + \\varphi), \\qquad \\omega_s = \\sqrt{\\omega_0^2 - \\gamma^2} \\]", commento: "Le radici sono complesse coniugate: oscillazione a pulsazione ω_s < ω₀ dentro un inviluppo esponenziale Ae^{−γt}. Il tempo caratteristico di decadimento dell'ampiezza è τ = 1/γ." },
+    { passo: "Caso critico (γ = ω₀) e sovrasmorzato (γ > ω₀)", formula: "\\[ x = (C_1 + C_2 t)e^{-\\gamma t} \\quad\\text{oppure}\\quad x = C_1 e^{\\lambda_1 t} + C_2 e^{\\lambda_2 t},\\; \\lambda_{1,2}<0 \\]", commento: "Nessuna oscillazione. Lo smorzamento critico è il ritorno all'equilibrio più rapido possibile: per questo si usa negli ammortizzatori e negli strumenti di misura." },
+    { passo: "Bilancio energetico", formula: "\\[ \\frac{dE}{dt} = \\frac{d}{dt}\\Big(\\frac{1}{2}m\\dot{x}^2 + \\frac{1}{2}kx^2\\Big) = \\dot{x}(m\\ddot{x} + kx) = -b\\dot{x}^2 \\le 0 \\]", commento: "L'energia meccanica decresce sempre: la potenza dissipata dall'attrito viscoso è bv². Nel regime sottosmorzato E(t) ≈ E₀e^{−2γt} (decade col quadrato dell'ampiezza)." },
+    { passo: "Fattore di qualità", formula: "\\[ Q = \\frac{\\omega_0}{2\\gamma} \\]", commento: "Q conta (a meno di 2π) quante oscillazioni compie il sistema prima di dissipare gran parte dell'energia: Q alto = smorzamento debole." }
+  ],
+  ipotesi: "Attrito puramente viscoso, lineare nella velocità (valido per moti lenti in fluidi, regime di Stokes); molla ideale lineare; parametri m, b, k costanti.",
+  casiLimite: "b → 0: si ritrova l'oscillatore armonico ideale (γ = 0, ω_s = ω₀). γ ≪ ω₀: molte oscillazioni quasi armoniche con ampiezza lentamente decrescente. γ ≫ ω₀: moto 'strisciante', ritorno lentissimo dominato dalla radice piccola.",
+  erroriTipici: [
+    "Scrivere che la pulsazione di oscillazione resta ω₀: è ω_s = √(ω₀² − γ²) < ω₀.",
+    "Confondere il decadimento dell'ampiezza (e^{−γt}) con quello dell'energia (e^{−2γt}).",
+    "Credere che il sovrasmorzato torni all'equilibrio più in fretta del critico: è il contrario.",
+    "Dimenticare il fattore 2 nella definizione γ = b/2m."
+  ],
+  intuizioneFisica: "L'attrito viscoso sottrae energia a ogni oscillazione, quindi l'ampiezza si spegne esponenzialmente; se lo smorzamento è forte, l'energia viene drenata prima ancora che il sistema riesca a completare un'oscillazione. Lo smorzamento critico è il punto di equilibrio perfetto tra 'tornare in fretta' e 'non oltrepassare l'equilibrio'.",
+  checklistOrale: [
+    "Scrivere l'equazione \\(\\ddot{x} + 2\\gamma\\dot{x} + \\omega_0^2 x = 0\\) definendo γ e ω₀",
+    "Risolvere con l'esponenziale e discutere il discriminante",
+    "Descrivere i tre regimi con le rispettive soluzioni",
+    "Scrivere la soluzione sottosmorzata con inviluppo e ω_s",
+    "Dimostrare che dE/dt = −bv² ≤ 0",
+    "Spiegare perché lo smorzamento critico è usato negli ammortizzatori",
+    "Definire il fattore di qualità Q"
+  ],
+  domandeApprofondimento: [
+    "Come misureresti sperimentalmente γ da un grafico x(t)? (Dal decremento logaritmico tra massimi successivi.)",
+    "Cosa rappresenta la traiettoria nello spazio delle fasi nei tre regimi? (Spirale verso l'origine / nodo.)",
+    "Perché per un attrito radente costante (non viscoso) il decadimento dell'ampiezza è lineare e non esponenziale?"
+  ],
+  formuleChiave: ["\\(\\ddot{x} + 2\\gamma\\dot{x} + \\omega_0^2 x = 0\\)", "\\(x = Ae^{-\\gamma t}\\cos(\\omega_s t + \\varphi)\\)", "\\(\\omega_s = \\sqrt{\\omega_0^2 - \\gamma^2}\\)", "\\(\\frac{dE}{dt} = -b\\dot{x}^2\\)", "\\(Q = \\frac{\\omega_0}{2\\gamma}\\)"]
+},
+{
+  id: 7, titolo: "Risonanza in un oscillatore forzato", area: "A", prerequisiti: [6],
+  definizioni: "Un oscillatore forzato è un oscillatore smorzato su cui agisce anche una forza esterna periodica \\(F(t) = F_0\\cos(\\Omega t)\\). Dopo un transitorio, il sistema oscilla alla pulsazione Ω della forzante (soluzione a regime) con un'ampiezza che dipende da Ω: quando Ω si avvicina alla pulsazione propria ω₀ l'ampiezza cresce fortemente — fenomeno della risonanza. Più lo smorzamento è debole, più il picco di risonanza è alto e stretto.",
+  derivazione: [
+    { passo: "Equazione del moto forzato", formula: "\\[ \\ddot{x} + 2\\gamma\\dot{x} + \\omega_0^2 x = \\frac{F_0}{m}\\cos(\\Omega t) \\]", commento: "Equazione lineare non omogenea: soluzione = omogenea (transitorio, muore come e^{−γt}) + particolare (regime)." },
+    { passo: "Soluzione a regime (ansatz oscillante alla pulsazione Ω)", formula: "\\[ x_p(t) = A(\\Omega)\\cos(\\Omega t - \\delta) \\]", commento: "A regime il sistema risponde alla frequenza della forzante, non alla propria; δ è il ritardo di fase della risposta rispetto alla forzante." },
+    { passo: "Sostituzione e identificazione dei coefficienti", formula: "\\[ A(\\Omega) = \\frac{F_0/m}{\\sqrt{(\\omega_0^2 - \\Omega^2)^2 + 4\\gamma^2\\Omega^2}}, \\qquad \\tan\\delta = \\frac{2\\gamma\\Omega}{\\omega_0^2 - \\Omega^2} \\]", commento: "Si sostituisce x_p nell'equazione e si uguagliano i coefficienti di cos e sin (o si usano i fasori). Questa è la curva di risonanza." },
+    { passo: "Massimo dell'ampiezza", formula: "\\[ \\frac{dA}{d\\Omega} = 0 \\;\\Rightarrow\\; \\Omega_{ris} = \\sqrt{\\omega_0^2 - 2\\gamma^2}, \\qquad A_{max} = \\frac{F_0/m}{2\\gamma\\sqrt{\\omega_0^2 - \\gamma^2}} \\]", commento: "Per smorzamento debole Ω_ris ≈ ω₀ e A_max ≈ F₀/(2mγω₀): l'ampiezza a risonanza è limitata solo dallo smorzamento; per γ → 0 divergerebbe." },
+    { passo: "Comportamento della fase", formula: "\\[ \\Omega \\ll \\omega_0: \\delta \\to 0; \\qquad \\Omega = \\omega_0: \\delta = \\frac{\\pi}{2}; \\qquad \\Omega \\gg \\omega_0: \\delta \\to \\pi \\]", commento: "A bassa frequenza la massa segue la forzante in fase; a risonanza è in quadratura (la forzante è in fase con la velocità: massimo trasferimento di potenza); ad alta frequenza risponde in opposizione di fase, dominata dall'inerzia." },
+    { passo: "Potenza assorbita a regime", formula: "\\[ \\langle P \\rangle = \\frac{1}{2}F_0\\,\\Omega A\\sin\\delta \\;\\; \\text{massima per } \\Omega = \\omega_0 \\]", commento: "A regime la potenza media fornita dalla forzante uguaglia quella dissipata dall'attrito: l'assorbimento di potenza è massimo esattamente a ω₀." }
+  ],
+  ipotesi: "Sistema lineare (Hooke + attrito viscoso lineare); forzante armonica pura; si osserva il sistema dopo l'estinzione del transitorio (t ≫ 1/γ).",
+  casiLimite: "γ → 0: picco di risonanza infinitamente alto e stretto (in un sistema reale l'ampiezza cresce finché non intervengono non linearità o rotture). Ω → 0: A → F₀/(mω₀²) = F₀/k, risposta statica della molla. Ω → ∞: A → 0, l'inerzia impedisce di seguire la forzante.",
+  erroriTipici: [
+    "Dire che a regime il sistema oscilla a ω₀: oscilla alla pulsazione Ω della forzante.",
+    "Confondere il picco d'ampiezza (a √(ω₀²−2γ²)) con il picco di potenza assorbita (esattamente a ω₀).",
+    "Dimenticare il transitorio: subito dopo l'accensione della forzante il moto è la somma delle due soluzioni.",
+    "Credere che a risonanza forzante e spostamento siano in fase: sono sfasati di π/2."
+  ],
+  intuizioneFisica: "La risonanza è spingere l'altalena al momento giusto: se ogni spinta arriva in fase con la velocità, tutta la potenza entra nel sistema e l'ampiezza cresce finché le perdite per attrito non pareggiano l'apporto. Ecco perché a risonanza la fase è π/2: la forza è sincronizzata con la velocità, non con la posizione.",
+  checklistOrale: [
+    "Scrivere l'equazione forzata e separare transitorio e regime",
+    "Ricavare (o impostare) A(Ω) e tan δ",
+    "Tracciare qualitativamente la curva di risonanza per diversi γ",
+    "Discutere il massimo dell'ampiezza e l'effetto dello smorzamento",
+    "Descrivere l'andamento della fase nei tre regimi di frequenza",
+    "Spiegare perché il massimo assorbimento di potenza è a ω₀",
+    "Fare un esempio reale (ponte, altalena, circuito RLC)"
+  ],
+  domandeApprofondimento: [
+    "Che analogia c'è con il circuito RLC serie forzato? (L↔m, R↔b, 1/C↔k, corrente↔velocità.)",
+    "Cosa determina la larghezza del picco di risonanza? (Δω ≈ 2γ, legata a Q = ω₀/2γ.)",
+    "Perché ai soldati si ordina di rompere il passo su un ponte?"
+  ],
+  formuleChiave: ["\\(\\ddot{x} + 2\\gamma\\dot{x} + \\omega_0^2 x = \\frac{F_0}{m}\\cos\\Omega t\\)", "\\(A(\\Omega) = \\frac{F_0/m}{\\sqrt{(\\omega_0^2-\\Omega^2)^2 + 4\\gamma^2\\Omega^2}}\\)", "\\(\\tan\\delta = \\frac{2\\gamma\\Omega}{\\omega_0^2-\\Omega^2}\\)", "\\(\\Omega_{ris} = \\sqrt{\\omega_0^2 - 2\\gamma^2}\\)"]
+},
+{
+  id: 8, titolo: "Lavoro di una forza e teorema lavoro-energia cinetica", area: "B", prerequisiti: [],
+  definizioni: "Il lavoro elementare di una forza \\(\\vec{F}\\) su uno spostamento infinitesimo \\(d\\vec{r}\\) è \\(dW = \\vec{F}\\cdot d\\vec{r} = F\\,ds\\cos\\theta\\); il lavoro lungo un cammino è l'integrale di linea \\(W = \\int_A^B \\vec{F}\\cdot d\\vec{r}\\). L'energia cinetica di un punto materiale è \\(K = \\frac{1}{2}mv^2\\). Il teorema dell'energia cinetica (o delle forze vive) afferma che il lavoro totale di tutte le forze agenti uguaglia la variazione di energia cinetica: \\(W_{tot} = \\Delta K\\). La potenza è \\(P = dW/dt = \\vec{F}\\cdot\\vec{v}\\).",
+  derivazione: [
+    { passo: "Parto dalla seconda legge di Newton", formula: "\\[ \\vec{F}_{tot} = m\\frac{d\\vec{v}}{dt} \\]", commento: "F_tot è la risultante di tutte le forze sul punto materiale." },
+    { passo: "Moltiplico scalarmente per lo spostamento elementare", formula: "\\[ \\vec{F}_{tot}\\cdot d\\vec{r} = m\\frac{d\\vec{v}}{dt}\\cdot \\vec{v}\\,dt \\]", commento: "Uso dr = v dt: il lavoro elementare diventa una quantità puramente cinematica." },
+    { passo: "Riconosco una derivata esatta", formula: "\\[ m\\,\\vec{v}\\cdot\\frac{d\\vec{v}}{dt} = \\frac{d}{dt}\\Big(\\frac{1}{2}m\\,\\vec{v}\\cdot\\vec{v}\\Big) = \\frac{d}{dt}\\Big(\\frac{1}{2}mv^2\\Big) \\]", commento: "Regola di derivazione del prodotto scalare: v·dv/dt è metà della derivata di v²." },
+    { passo: "Integro lungo la traiettoria da A a B", formula: "\\[ W_{tot} = \\int_A^B \\vec{F}_{tot}\\cdot d\\vec{r} = \\int_{t_A}^{t_B} \\frac{d}{dt}\\Big(\\frac{1}{2}mv^2\\Big)dt = \\frac{1}{2}mv_B^2 - \\frac{1}{2}mv_A^2 \\]", commento: "Il risultato dipende solo dai moduli iniziale e finale della velocità: W_tot = ΔK, qualunque siano le forze e la traiettoria." },
+    { passo: "Osservazioni sul segno e sulle forze normali", formula: "\\[ dW > 0 \\iff \\theta < 90°; \\qquad \\vec{F}\\perp\\vec{v} \\Rightarrow W = 0 \\]", commento: "Una forza sempre perpendicolare alla velocità (tensione nel pendolo, normale, forza centripeta, forza di Lorentz) non compie lavoro e non cambia il modulo della velocità." }
+  ],
+  ipotesi: "Punto materiale (per i corpi estesi il teorema va applicato con cautela: conta lo spostamento del punto di applicazione); meccanica classica; il teorema vale per QUALSIASI tipo di forza, conservativa o no.",
+  casiLimite: "Forza costante e parallela allo spostamento rettilineo: W = Fs (formula elementare). Forza perpendicolare: W = 0, moto circolare uniforme. Se W_tot < 0 il corpo rallenta (es. frenata: W_attrito = −ΔK).",
+  erroriTipici: [
+    "Applicare ΔK = W della sola forza che interessa dimenticando le altre: il teorema riguarda il lavoro TOTALE.",
+    "Dire che una forza 'grande' fa sempre lavoro: se è perpendicolare allo spostamento il lavoro è nullo.",
+    "Trattare il lavoro come una quantità che dipende solo da posizione iniziale e finale: in generale dipende dal cammino (salvo forze conservative).",
+    "Dimenticare che il lavoro è uno scalare con segno, non un vettore."
+  ],
+  intuizioneFisica: "Il lavoro misura quanta 'spinta utile' una forza dà lungo il moto: solo la componente della forza lungo la velocità cambia il modulo della velocità. Il teorema dell'energia cinetica è la seconda legge di Newton 'integrata lungo il cammino': trasforma un'informazione istantanea (F = ma) in un bilancio tra due stati, spesso molto più comodo dei calcoli con le accelerazioni.",
+  checklistOrale: [
+    "Definire il lavoro come integrale di linea e discuterne il segno",
+    "Definire l'energia cinetica e la potenza",
+    "Dimostrare il teorema partendo da F = ma e moltiplicando per v",
+    "Sottolineare che vale per il lavoro totale e per qualunque forza",
+    "Spiegare perché le forze perpendicolari alla velocità non lavorano",
+    "Applicarlo a un esempio (frenata, caduta, piano inclinato)"
+  ],
+  domandeApprofondimento: [
+    "Il lavoro dipende dal sistema di riferimento? (Sì: dr cambia tra sistemi in moto relativo, e anche ΔK.)",
+    "Nel moto circolare uniforme chi fornisce la forza centripeta compie lavoro? Perché no?",
+    "Come si estende il teorema a un sistema di punti materiali? (Compare anche il lavoro delle forze interne.)"
+  ],
+  formuleChiave: ["\\(W = \\int_A^B \\vec{F}\\cdot d\\vec{r}\\)", "\\(K = \\frac{1}{2}mv^2\\)", "\\(W_{tot} = \\Delta K\\)", "\\(P = \\vec{F}\\cdot\\vec{v}\\)"]
+},
+{
+  id: 9, titolo: "Forze conservative, energia potenziale e conservazione dell'energia meccanica", area: "B", prerequisiti: [8],
+  definizioni: "Una forza è conservativa se il suo lavoro tra due punti non dipende dal cammino percorso ma solo dagli estremi; equivalentemente, il lavoro su qualunque cammino chiuso è nullo: \\(\\oint \\vec{F}\\cdot d\\vec{r} = 0\\). A ogni forza conservativa si associa un'energia potenziale U definita da \\(W_{A\\to B} = U(A) - U(B) = -\\Delta U\\) (definita a meno di una costante additiva). L'energia meccanica è \\(E = K + U\\): se agiscono solo forze conservative, E si conserva.",
+  derivazione: [
+    { passo: "Definizione di energia potenziale", formula: "\\[ U(P) = -\\int_{P_0}^{P} \\vec{F}\\cdot d\\vec{r} \\]", commento: "Ben definita solo perché l'integrale non dipende dal cammino; P₀ è il punto di riferimento arbitrario dove U = 0." },
+    { passo: "Lavoro in termini di U", formula: "\\[ W_{A\\to B} = \\int_A^B \\vec{F}\\cdot d\\vec{r} = U(A) - U(B) = -\\Delta U \\]", commento: "Spezzo il cammino passando per P₀ e uso la definizione: il lavoro è l'energia potenziale 'spesa'." },
+    { passo: "Combino con il teorema dell'energia cinetica", formula: "\\[ \\Delta K = W_{tot} = -\\Delta U \\;\\Rightarrow\\; \\Delta(K + U) = 0 \\]", commento: "Se TUTTE le forze che lavorano sono conservative, la somma K + U non cambia." },
+    { passo: "Conservazione dell'energia meccanica", formula: "\\[ E = K + U = \\frac{1}{2}mv^2 + U(\\vec{r}) = \\text{costante} \\]", commento: "Potente integrale primo del moto: collega direttamente velocità e posizione senza risolvere le equazioni del moto." },
+    { passo: "Relazione locale forza-potenziale", formula: "\\[ \\vec{F} = -\\vec{\\nabla}U, \\qquad F_x = -\\frac{dU}{dx} \\;(\\text{caso 1D}) \\]", commento: "La forza punta 'in discesa' nel paesaggio di U. Equilibri dove dU/dx = 0: stabili nei minimi (d²U/dx² > 0), instabili nei massimi." },
+    { passo: "Esempi canonici", formula: "\\[ U_{grav} = mgh, \\qquad U_{el} = \\frac{1}{2}kx^2, \\qquad U_{grav.\\,univ.} = -\\frac{GMm}{r} \\]", commento: "Peso (vicino alla superficie), molla, gravitazione universale: tutte conservative. L'attrito no: il suo lavoro dipende dalla lunghezza del cammino." }
+  ],
+  ipotesi: "Forze dipendenti solo dalla posizione (non da velocità o tempo); dominio spaziale in cui l'integrale di linea è ben definito. Per la conservazione di E: nessuna forza non conservativa che compia lavoro.",
+  casiLimite: "Se una forza è perpendicolare al moto (normale, tensione) non lavora: E si conserva anche in sua presenza. Campo uniforme: U lineare in h. La costante additiva di U non ha effetti fisici: contano solo le differenze.",
+  erroriTipici: [
+    "Dire che U 'appartiene al corpo': appartiene al sistema corpo + campo (o alla configurazione).",
+    "Sbagliare il segno: W_cons = −ΔU, non +ΔU.",
+    "Considerare conservativa la forza di attrito perché 'costante': il suo lavoro dipende dal cammino ed è sempre negativo.",
+    "Dimenticare di verificare che TUTTE le forze che lavorano siano conservative prima di usare E = cost."
+  ],
+  intuizioneFisica: "Una forza conservativa è una 'banca perfetta' dell'energia: qualunque lavoro spendi contro di essa lo riavrai per intero al ritorno. L'energia potenziale è il libretto di risparmio: registra il credito accumulato in funzione della sola posizione. Il paesaggio di U (colline e valli) permette di leggere il moto a colpo d'occhio: il corpo accelera verso le valli e può arrivare solo dove E ≥ U.",
+  checklistOrale: [
+    "Dare le due definizioni equivalenti di forza conservativa (cammino / circuitazione nulla)",
+    "Definire U con l'integrale e discutere l'arbitrarietà della costante",
+    "Dimostrare ΔK = −ΔU ⇒ E = K + U costante",
+    "Scrivere F = −∇U e discutere gli equilibri",
+    "Elencare esempi conservativi e non (attrito)",
+    "Usare il grafico di U(x) per discutere il moto qualitativamente",
+    "Risolvere un esempio (caduta, molla) con la conservazione"
+  ],
+  domandeApprofondimento: [
+    "Come si verifica in pratica che un campo di forze è conservativo? (∇×F = 0 in un dominio semplicemente connesso.)",
+    "Che cosa sono i punti di inversione del moto sul grafico di U(x)? (Dove U = E, la velocità si annulla.)",
+    "Perché la forza magnetica su una carica non compie mai lavoro pur non essendo conservativa in senso stretto?"
+  ],
+  formuleChiave: ["\\(\\oint \\vec{F}\\cdot d\\vec{r} = 0\\)", "\\(W_{A\\to B} = -\\Delta U\\)", "\\(E = K + U = \\text{cost}\\)", "\\(\\vec{F} = -\\vec{\\nabla}U\\)", "\\(U_{grav} = mgh,\\; U_{el} = \\tfrac{1}{2}kx^2\\)"]
+},
+{
+  id: 10, titolo: "Energia meccanica in presenza di forze non conservative", area: "B", prerequisiti: [9],
+  definizioni: "Quando sul sistema agiscono anche forze non conservative (attrito radente, resistenza del mezzo, forze motrici), l'energia meccanica E = K + U non si conserva: la sua variazione è pari al lavoro delle sole forze non conservative, \\(\\Delta E = W_{nc}\\). Le forze dissipative (attrito) hanno sempre \\(W_{nc} < 0\\) e convertono energia meccanica in energia interna (calore); una forza motrice può avere \\(W_{nc} > 0\\) e aumentare E.",
+  derivazione: [
+    { passo: "Separo il lavoro totale in parte conservativa e non", formula: "\\[ W_{tot} = W_{cons} + W_{nc} \\]", commento: "Ogni forza agente è classificata in una delle due famiglie." },
+    { passo: "Teorema dell'energia cinetica", formula: "\\[ \\Delta K = W_{tot} = W_{cons} + W_{nc} \\]", commento: "Vale sempre, per qualunque tipo di forza." },
+    { passo: "Esprimo il lavoro conservativo tramite U", formula: "\\[ W_{cons} = -\\Delta U \\;\\Rightarrow\\; \\Delta K = -\\Delta U + W_{nc} \\]", commento: "Solo la parte conservativa ammette energia potenziale." },
+    { passo: "Bilancio dell'energia meccanica", formula: "\\[ \\Delta(K + U) = \\Delta E = W_{nc} \\]", commento: "Teorema di bilancio: l'energia meccanica varia esattamente del lavoro non conservativo. Se W_nc = 0 si riottiene la conservazione." },
+    { passo: "Esempio: attrito radente su un piano", formula: "\\[ W_{attr} = -\\mu_d N \\, d \\;\\Rightarrow\\; \\frac{1}{2}mv_B^2 + U_B = \\frac{1}{2}mv_A^2 + U_A - \\mu_d N d \\]", commento: "d è la lunghezza del cammino effettivamente percorso (non lo spostamento netto!): per questo il lavoro dell'attrito dipende dal percorso." },
+    { passo: "Interpretazione termodinamica", formula: "\\[ |W_{attr}| = \\Delta E_{interna} \\;(\\text{riscaldamento delle superfici}) \\]", commento: "L'energia meccanica 'persa' non sparisce: diventa energia interna (agitazione termica). Il bilancio totale dell'energia resta valido — è il ponte verso il primo principio della termodinamica." }
+  ],
+  ipotesi: "Sistema in cui le forze sono classificabili in conservative e non; per l'attrito radente, modello di Coulomb F = μ_d N con μ_d costante; N nota lungo il cammino.",
+  casiLimite: "W_nc = 0: conservazione esatta di E. Moto a regime (velocità costante) con attrito: la forza motrice compensa esattamente la dissipazione, ΔK = 0 e W_motrice = −W_attrito. Tempo lungo con sola dissipazione: E decresce monotonicamente fino al minimo di U accessibile.",
+  erroriTipici: [
+    "Usare E = cost in presenza di attrito che lavora.",
+    "Nel lavoro dell'attrito usare lo spostamento netto invece della lunghezza del cammino percorso.",
+    "Dimenticare il segno: il lavoro dell'attrito radente sul corpo che striscia è sempre negativo (opposto al moto relativo).",
+    "Dire che l'energia 'si perde': si trasforma in energia interna, il bilancio complessivo torna."
+  ],
+  intuizioneFisica: "ΔE = W_nc è il 'conto corrente' dell'energia meccanica: le forze conservative spostano fondi tra i depositi K e U senza toccare il saldo, le non conservative fanno versamenti (motori) o prelievi (attriti). Il denaro prelevato dall'attrito non è distrutto: è convertito nella valuta 'disordinata' dell'energia termica, non più interamente riconvertibile in moto.",
+  checklistOrale: [
+    "Enunciare il bilancio ΔE = W_nc e dimostrarlo in tre righe",
+    "Distinguere forze conservative, dissipative e motrici",
+    "Calcolare il lavoro dell'attrito radente su un cammino dato",
+    "Spiegare perché conta la lunghezza del percorso e non lo spostamento",
+    "Interpretare la dissipazione come conversione in energia interna",
+    "Risolvere un esempio completo (blocco che sale un piano scabro e ridiscende)"
+  ],
+  domandeApprofondimento: [
+    "Un blocco sale e ridiscende un piano inclinato scabro: perché la velocità di ritorno è minore di quella di lancio, e come la calcoli?",
+    "Nel rotolamento puro l'attrito statico dissipa energia? (No: il punto di contatto è istantaneamente fermo, il lavoro è nullo.)",
+    "Come si collega ΔE = W_nc al primo principio della termodinamica?"
+  ],
+  formuleChiave: ["\\(\\Delta E = \\Delta(K+U) = W_{nc}\\)", "\\(W_{attr} = -\\mu_d N d\\)", "\\(|W_{attr}| = \\Delta E_{interna}\\)"]
+},
+{
+  id: 11, titolo: "Momento di una forza e momento angolare", area: "C", prerequisiti: [],
+  definizioni: "Rispetto a un polo O, il momento di una forza \\(\\vec{F}\\) applicata nel punto P è \\(\\vec{\\tau} = \\vec{r}\\times\\vec{F}\\), con \\(\\vec{r} = \\vec{OP}\\); il suo modulo è \\(\\tau = rF\\sin\\theta = Fb\\), dove b è il braccio (distanza del polo dalla retta d'azione). Il momento angolare di un punto materiale è \\(\\vec{L} = \\vec{r}\\times m\\vec{v} = \\vec{r}\\times\\vec{p}\\). Entrambi dipendono dalla scelta del polo.",
+  derivazione: [
+    { passo: "Derivo il momento angolare rispetto al tempo (polo O fisso)", formula: "\\[ \\frac{d\\vec{L}}{dt} = \\frac{d\\vec{r}}{dt}\\times m\\vec{v} + \\vec{r}\\times m\\frac{d\\vec{v}}{dt} \\]", commento: "Regola di Leibniz per il prodotto vettoriale." },
+    { passo: "Il primo termine si annulla", formula: "\\[ \\vec{v}\\times m\\vec{v} = \\vec{0} \\]", commento: "Il prodotto vettoriale di vettori paralleli è nullo." },
+    { passo: "Uso la seconda legge di Newton nel secondo termine", formula: "\\[ \\frac{d\\vec{L}}{dt} = \\vec{r}\\times\\vec{F} = \\vec{\\tau} \\]", commento: "Teorema del momento angolare per il punto materiale: il momento della forza è la 'rapidità di variazione' del momento angolare — l'analogo rotazionale di F = dp/dt." },
+    { passo: "Conservazione con forze centrali", formula: "\\[ \\vec{F} \\parallel \\vec{r} \\;\\Rightarrow\\; \\vec{\\tau} = \\vec{r}\\times\\vec{F} = \\vec{0} \\;\\Rightarrow\\; \\vec{L} = \\text{cost} \\]", commento: "Se la forza è sempre diretta verso il polo (forza centrale, es. gravitazione), il momento angolare rispetto a quel polo si conserva: il moto è piano e vale la legge delle aree di Keplero." },
+    { passo: "Se il polo Q è mobile compare un termine aggiuntivo", formula: "\\[ \\frac{d\\vec{L}_Q}{dt} = \\vec{\\tau}_Q - \\vec{v}_Q\\times m\\vec{v} \\]", commento: "Il termine extra sparisce se il polo è fisso, oppure se v_Q è parallela a v (in particolare, per un sistema, se Q è il centro di massa)." }
+  ],
+  ipotesi: "Punto materiale in meccanica classica; polo O fisso in un sistema inerziale (altrimenti termine correttivo); r misurato dal polo scelto.",
+  casiLimite: "Forza con retta d'azione passante per il polo: momento nullo anche se F ≠ 0. Moto rettilineo uniforme: L = mvb costante (b = distanza polo-retta), il momento angolare non richiede rotazione. Moto circolare col polo nel centro: L = mvr = mr²ω, tutto perpendicolare al piano.",
+  erroriTipici: [
+    "Dimenticare che τ e L dipendono dal polo e confrontare momenti calcolati rispetto a poli diversi.",
+    "Calcolare τ = rF invece che rF sin θ (dimenticare il braccio).",
+    "Credere che L ≠ 0 implichi moto curvo: anche un moto rettilineo ha momento angolare rispetto a un polo esterno.",
+    "Sbagliare il verso col prodotto vettoriale: usare la regola della mano destra."
+  ],
+  intuizioneFisica: "Il momento di una forza misura la sua efficacia nel far ruotare: la stessa forza 'rende' di più se applicata lontano dal perno e perpendicolarmente (per questo le maniglie stanno sul bordo delle porte). Il momento angolare è la 'quantità di rotazione' immagazzinata; τ = dL/dt dice che per cambiarla serve un momento, esattamente come serve una forza per cambiare la quantità di moto.",
+  checklistOrale: [
+    "Definire τ = r × F e il concetto di braccio",
+    "Definire L = r × p e sottolineare la dipendenza dal polo",
+    "Dimostrare dL/dt = τ per polo fisso",
+    "Spiegare il caso delle forze centrali e la conservazione di L",
+    "Mostrare che un moto rettilineo ha L costante rispetto a qualunque polo",
+    "Enunciare il termine correttivo per polo mobile",
+    "Collegare alla II legge di Keplero (velocità areolare costante)"
+  ],
+  domandeApprofondimento: [
+    "Perché nel moto dei pianeti la velocità areolare è costante? (L = cost ⇒ dA/dt = L/2m.)",
+    "Come cambia L se cambio polo? (L' = L + (O−O')×p.)",
+    "Una pattinatrice che chiude le braccia gira più veloce: quale grandezza si conserva e perché?"
+  ],
+  formuleChiave: ["\\(\\vec{\\tau} = \\vec{r}\\times\\vec{F},\\; |\\vec{\\tau}| = Fb\\)", "\\(\\vec{L} = \\vec{r}\\times m\\vec{v}\\)", "\\(\\frac{d\\vec{L}}{dt} = \\vec{\\tau}\\)", "\\(\\vec{F}\\text{ centrale} \\Rightarrow \\vec{L} = \\text{cost}\\)"]
+},
+{
+  id: 12, titolo: "Centro di massa e prima equazione cardinale", area: "C", prerequisiti: [11],
+  definizioni: "Per un sistema di N punti materiali, il centro di massa (CM) è il punto di posizione \\(\\vec{r}_{cm} = \\frac{1}{M}\\sum_i m_i\\vec{r}_i\\), con \\(M = \\sum_i m_i\\) (per un corpo continuo l'integrale \\(\\vec{r}_{cm} = \\frac{1}{M}\\int \\vec{r}\\,dm\\)). La prima equazione cardinale afferma che la risultante delle sole forze esterne governa il moto del centro di massa: \\(\\vec{F}^{ext} = M\\vec{a}_{cm}\\). Equivalentemente, \\(\\vec{F}^{ext} = d\\vec{P}/dt\\) con \\(\\vec{P} = M\\vec{v}_{cm}\\) quantità di moto totale.",
+  derivazione: [
+    { passo: "Newton per ciascun punto del sistema", formula: "\\[ m_i\\vec{a}_i = \\vec{F}_i^{ext} + \\sum_{j\\neq i}\\vec{f}_{ij} \\]", commento: "Su ogni punto agiscono forze esterne e forze interne f_ij esercitate dagli altri punti del sistema." },
+    { passo: "Sommo su tutti i punti", formula: "\\[ \\sum_i m_i\\vec{a}_i = \\sum_i\\vec{F}_i^{ext} + \\sum_i\\sum_{j\\neq i}\\vec{f}_{ij} \\]", commento: "La doppia somma contiene ogni coppia due volte: f_ij e f_ji." },
+    { passo: "Le forze interne si elidono (terza legge)", formula: "\\[ \\vec{f}_{ij} + \\vec{f}_{ji} = \\vec{0} \\;\\Rightarrow\\; \\sum_i\\sum_{j\\neq i}\\vec{f}_{ij} = \\vec{0} \\]", commento: "Azione e reazione sono opposte: la somma di tutte le forze interne è identicamente nulla, qualunque sia la loro natura." },
+    { passo: "Riconosco l'accelerazione del centro di massa", formula: "\\[ \\sum_i m_i\\vec{a}_i = \\frac{d^2}{dt^2}\\sum_i m_i\\vec{r}_i = M\\ddot{\\vec{r}}_{cm} = M\\vec{a}_{cm} \\]", commento: "Per definizione di r_cm: Σmᵢrᵢ = M r_cm, e derivo due volte." },
+    { passo: "Prima equazione cardinale", formula: "\\[ \\vec{F}^{ext} = M\\vec{a}_{cm} = \\frac{d\\vec{P}}{dt}, \\qquad \\vec{P} = \\sum_i m_i \\vec{v}_i = M\\vec{v}_{cm} \\]", commento: "Il CM si muove come un punto materiale di massa M soggetto alla sola risultante esterna: le forze interne non possono spostare il centro di massa." },
+    { passo: "Conservazione della quantità di moto", formula: "\\[ \\vec{F}^{ext} = \\vec{0} \\;\\Rightarrow\\; \\vec{P} = \\text{cost} \\;\\Rightarrow\\; \\vec{v}_{cm} = \\text{cost} \\]", commento: "Sistema isolato: il CM prosegue in moto rettilineo uniforme qualunque cosa accada internamente (esplosioni, urti, molle)." }
+  ],
+  ipotesi: "Validità della terza legge di Newton per le forze interne; masse costanti; sistema di riferimento inerziale. Non serve alcuna ipotesi di rigidità: vale per qualsiasi sistema.",
+  casiLimite: "Sistema isolato: P costante (base per lo studio degli urti). Proiettile che esplode in volo: i frammenti si disperdono ma il loro CM continua sulla parabola originaria. Corpo rigido: r_cm coincide col centro geometrico se la densità è uniforme e c'è simmetria.",
+  erroriTipici: [
+    "Includere le forze interne nella prima cardinale: contano solo le esterne.",
+    "Credere che il CM debba trovarsi dentro il corpo (controesempio: anello, boomerang).",
+    "Confondere v_cm con la velocità di un punto specifico del corpo.",
+    "Usare la conservazione di P quando la risultante esterna non è nulla (es. durante un urto con vincoli esterni impulsivi)."
+  ],
+  intuizioneFisica: "Il centro di massa è il 'portavoce' del sistema: comunque i pezzi interagiscano tra loro, tirandosi e spingendosi, nessuna forza interna può spostare il baricentro del gruppo — per farlo serve una spinta dall'esterno. È il motivo per cui non puoi sollevarti tirando i tuoi capelli, e perché i fuochi d'artificio esplodono 'attorno' alla traiettoria che il razzo avrebbe seguito.",
+  checklistOrale: [
+    "Definire r_cm per sistemi discreti e continui",
+    "Scrivere Newton per il singolo punto separando interne ed esterne",
+    "Mostrare l'elisione delle forze interne con la terza legge",
+    "Ricavare F_ext = Ma_cm = dP/dt",
+    "Enunciare la conservazione di P per sistemi isolati",
+    "Discutere l'esempio del proiettile che esplode",
+    "Chiarire che non serve la rigidità del sistema"
+  ],
+  domandeApprofondimento: [
+    "Come si calcola il CM di un corpo composito o con un foro? (Additività; il foro come massa negativa.)",
+    "Un uomo cammina su una barca ferma in acqua calma senza attrito: cosa fa la barca e cosa resta fermo?",
+    "La prima cardinale determina completamente il moto di un corpo rigido? (No: serve anche la seconda per la rotazione.)"
+  ],
+  formuleChiave: ["\\(\\vec{r}_{cm} = \\frac{1}{M}\\sum m_i\\vec{r}_i\\)", "\\(\\vec{P} = M\\vec{v}_{cm}\\)", "\\(\\vec{F}^{ext} = M\\vec{a}_{cm} = \\frac{d\\vec{P}}{dt}\\)", "\\(\\vec{F}^{ext}=0 \\Rightarrow \\vec{P}=\\text{cost}\\)"]
+},
+{
+  id: 13, titolo: "Momenti di inerzia e teorema di Huygens-Steiner", area: "C", prerequisiti: [12],
+  definizioni: "Il momento di inerzia di un corpo rispetto a un asse è \\(I = \\sum_i m_i r_i^2\\) (discreto) o \\(I = \\int r^2\\,dm\\) (continuo), dove r è la distanza di ciascun elemento di massa dall'asse. È la misura dell'inerzia rotazionale: quanto il corpo 'resiste' alle variazioni di velocità angolare attorno a quell'asse. Dipende dall'asse scelto e da come la massa è distribuita rispetto a esso. Il teorema di Huygens-Steiner collega il momento rispetto a un asse qualsiasi a quello rispetto all'asse parallelo passante per il CM: \\(I = I_{cm} + Md^2\\).",
+  derivazione: [
+    { passo: "Origine della definizione: energia cinetica di rotazione", formula: "\\[ K = \\sum_i \\frac{1}{2}m_i v_i^2 = \\sum_i \\frac{1}{2}m_i(\\omega r_i)^2 = \\frac{1}{2}\\Big(\\sum_i m_i r_i^2\\Big)\\omega^2 = \\frac{1}{2}I\\omega^2 \\]", commento: "In un corpo rigido che ruota attorno a un asse fisso ogni punto ha v = ωr: raccogliendo ω² emerge naturalmente I come 'massa rotazionale'." },
+    { passo: "Dimostrazione di Huygens-Steiner: scompongo le posizioni", formula: "\\[ \\vec{r}_i = \\vec{r}_{cm} + \\vec{r}_i{'} \\]", commento: "r'_i è la posizione dell'elemento i-esimo rispetto al CM. Lavoro sul piano perpendicolare all'asse." },
+    { passo: "Sviluppo il quadrato della distanza dall'asse", formula: "\\[ I = \\sum_i m_i|\\vec{r}_i|^2 = \\sum_i m_i(d^2 + 2\\,\\vec{d}\\cdot\\vec{r}_i{'} + r_i'^2) \\]", commento: "d è il vettore (di modulo d) dall'asse dato all'asse parallelo per il CM, nel piano perpendicolare." },
+    { passo: "Il termine misto si annulla", formula: "\\[ \\sum_i m_i\\vec{r}_i{'} = \\vec{0} \\;\\text{(definizione di CM)} \\;\\Rightarrow\\; I = Md^2 + I_{cm} \\]", commento: "La somma delle posizioni pesate rispetto al CM è nulla per definizione: restano solo il termine di trasporto Md² e il momento baricentrico." },
+    { passo: "Momenti di inerzia notevoli (da sapere)", formula: "\\[ I_{anello} = MR^2,\\;\\; I_{disco} = \\frac{1}{2}MR^2,\\;\\; I_{sfera} = \\frac{2}{5}MR^2,\\;\\; I_{asta,cm} = \\frac{1}{12}ML^2,\\;\\; I_{asta,estremo} = \\frac{1}{3}ML^2 \\]", commento: "Asta per l'estremo: I = 1/12 ML² + M(L/2)² = 1/3 ML², esempio immediato di Huygens-Steiner." },
+    { passo: "Esempio di calcolo integrale: asta omogenea rispetto al CM", formula: "\\[ I = \\int_{-L/2}^{L/2} x^2 \\frac{M}{L}dx = \\frac{M}{L}\\cdot\\frac{x^3}{3}\\Big|_{-L/2}^{L/2} = \\frac{ML^2}{12} \\]", commento: "dm = λ dx con densità lineare λ = M/L: il calcolo integrale tipo da saper riprodurre." }
+  ],
+  ipotesi: "Corpo rigido (distanze mutue fisse); per Huygens-Steiner i due assi devono essere PARALLELI e uno dei due deve passare per il CM; densità nota per i calcoli integrali.",
+  casiLimite: "Tutta la massa sull'asse: I = 0. Massa concentrata a distanza R: I = MR² (punto materiale). A parità di massa e raggio: anello > disco > sfera, perché conta quanta massa sta lontana dall'asse. d = 0: I = I_cm, il minimo tra tutti gli assi paralleli.",
+  erroriTipici: [
+    "Applicare Huygens-Steiner tra due assi di cui nessuno passa per il CM (va fatto in due passi via I_cm).",
+    "Dire che I dipende solo dalla massa: dipende soprattutto dalla sua distribuzione (r²).",
+    "Usare il raggio del corpo al posto della distanza dall'asse nell'integrale.",
+    "Dimenticare che I_cm è il minimo: I rispetto a qualsiasi altro asse parallelo è maggiore."
+  ],
+  intuizioneFisica: "Il momento di inerzia pesa la massa col quadrato della distanza dall'asse: la massa periferica conta molto di più. Ecco perché un volano ha la massa sul bordo (accumula rotazione) e una pattinatrice accelera chiudendo le braccia (riduce I a parità di L). Huygens-Steiner dice che ruotare attorno a un asse decentrato costa l'inerzia 'propria' più quella del CM trattato come un punto a distanza d.",
+  checklistOrale: [
+    "Definire I per sistemi discreti e continui",
+    "Mostrare come I emerge dall'energia cinetica di rotazione",
+    "Dimostrare il teorema di Huygens-Steiner",
+    "Spiegare perché il termine misto si annulla",
+    "Ricordare i momenti notevoli (anello, disco, sfera, asta)",
+    "Saper svolgere il calcolo integrale per l'asta",
+    "Discutere perché I_cm è il minimo tra assi paralleli"
+  ],
+  domandeApprofondimento: [
+    "Perché una sfera piena scende un piano inclinato più veloce di un anello di pari massa e raggio?",
+    "Cosa afferma il teorema degli assi perpendicolari per le figure piane? (I_z = I_x + I_y.)",
+    "In generale I è un tensore: cosa significa che gli assi principali diagonalizzano l'inerzia?"
+  ],
+  formuleChiave: ["\\(I = \\int r^2\\,dm\\)", "\\(K_{rot} = \\frac{1}{2}I\\omega^2\\)", "\\(I = I_{cm} + Md^2\\)", "\\(I_{disco} = \\tfrac{1}{2}MR^2,\\; I_{sfera} = \\tfrac{2}{5}MR^2,\\; I_{asta,cm} = \\tfrac{1}{12}ML^2\\)"]
+},
+{
+  id: 14, titolo: "Teorema del momento angolare (seconda equazione cardinale)", area: "C", prerequisiti: [11, 12],
+  definizioni: "Per un sistema di punti materiali, il momento angolare totale rispetto a un polo O è \\(\\vec{L} = \\sum_i \\vec{r}_i\\times m_i\\vec{v}_i\\) e il momento risultante delle forze esterne è \\(\\vec{\\tau}^{ext} = \\sum_i \\vec{r}_i\\times\\vec{F}_i^{ext}\\). La seconda equazione cardinale afferma: \\(d\\vec{L}/dt = \\vec{\\tau}^{ext}\\), valida se il polo è fisso in un sistema inerziale oppure coincide con il centro di massa. I momenti delle forze interne non contribuiscono.",
+  derivazione: [
+    { passo: "Derivo il momento angolare totale (polo O fisso)", formula: "\\[ \\frac{d\\vec{L}}{dt} = \\sum_i \\vec{v}_i\\times m_i\\vec{v}_i + \\sum_i \\vec{r}_i\\times m_i\\vec{a}_i = \\sum_i \\vec{r}_i\\times m_i\\vec{a}_i \\]", commento: "Il primo termine è nullo (v × v = 0)." },
+    { passo: "Sostituisco Newton per ogni punto", formula: "\\[ \\frac{d\\vec{L}}{dt} = \\sum_i \\vec{r}_i\\times\\Big(\\vec{F}_i^{ext} + \\sum_{j\\neq i}\\vec{f}_{ij}\\Big) = \\vec{\\tau}^{ext} + \\sum_{coppie}(\\vec{r}_i - \\vec{r}_j)\\times\\vec{f}_{ij} \\]", commento: "Raggruppo i momenti delle forze interne per coppie azione-reazione usando f_ji = −f_ij." },
+    { passo: "I momenti interni si annullano", formula: "\\[ (\\vec{r}_i - \\vec{r}_j) \\parallel \\vec{f}_{ij} \\;\\Rightarrow\\; (\\vec{r}_i - \\vec{r}_j)\\times\\vec{f}_{ij} = \\vec{0} \\]", commento: "Serve la terza legge in forma forte: le forze interne agiscono lungo la congiungente dei due punti (vero per gravità, forze di contatto, elastiche)." },
+    { passo: "Seconda equazione cardinale", formula: "\\[ \\frac{d\\vec{L}}{dt} = \\vec{\\tau}^{ext} \\]", commento: "Solo i momenti esterni cambiano il momento angolare totale del sistema." },
+    { passo: "Validità con polo mobile", formula: "\\[ \\frac{d\\vec{L}_Q}{dt} = \\vec{\\tau}_Q^{ext} - \\vec{v}_Q\\times M\\vec{v}_{cm} \\]", commento: "Il termine spurio si annulla se: (a) Q è fisso; (b) v_Q ∥ v_cm; (c) Q ≡ CM. Per questo il centro di massa è un polo sempre lecito, anche se accelerato." },
+    { passo: "Caso corpo rigido con asse fisso di simmetria", formula: "\\[ L_z = I\\omega \\;\\Rightarrow\\; I\\frac{d\\omega}{dt} = I\\alpha = \\tau_z^{ext} \\]", commento: "Proiettando sull'asse di rotazione si ottiene l'analogo rotazionale di F = ma: è l'equazione con cui si risolvono carrucole, volani, pendoli fisici." },
+    { passo: "Conservazione del momento angolare", formula: "\\[ \\vec{\\tau}^{ext} = \\vec{0} \\;\\Rightarrow\\; \\vec{L} = \\text{cost} \\]", commento: "Terza grande legge di conservazione. Esempi: pattinatrice (I₁ω₁ = I₂ω₂), stella che collassa, pianeti." }
+  ],
+  ipotesi: "Terza legge di Newton in forma forte (forze interne centrali); polo fisso in sistema inerziale oppure polo nel CM; per L = Iω serve un corpo rigido che ruota attorno a un asse fisso o di simmetria.",
+  casiLimite: "Sistema isolato o forze a momento nullo: L conservato. Forze centrali col polo nel centro: si ritrova la conservazione per il punto materiale. Se l'asse non è di simmetria, L non è parallelo a ω e compaiono momenti sui supporti (squilibrio delle ruote).",
+  erroriTipici: [
+    "Usare come polo un punto mobile qualsiasi senza il termine correttivo: solo il CM è sempre lecito.",
+    "Includere momenti delle forze interne.",
+    "Scrivere L = Iω come relazione vettoriale generale: vale sull'asse di rotazione (o per assi principali).",
+    "Dimenticare di verificare che il polo usato per τ e quello usato per L siano lo stesso."
+  ],
+  intuizioneFisica: "È il gemello rotazionale della prima cardinale: come le forze interne non possono spostare il CM, i momenti interni non possono far ruotare il sistema nel suo complesso. Un gatto che cade ruota su sé stesso senza violare la legge: cambia la sua forma (e quindi i suoi momenti d'inerzia parziali) mantenendo L totale nullo.",
+  checklistOrale: [
+    "Definire L e τ totali per un sistema rispetto a un polo",
+    "Dimostrare dL/dt = τ_ext mostrando l'elisione dei momenti interni",
+    "Precisare quando serve la forma forte della terza legge",
+    "Discutere la scelta del polo: fisso oppure CM",
+    "Ricavare Iα = τ per il corpo rigido con asse fisso",
+    "Enunciare la conservazione di L con esempi",
+    "Applicarla a un esercizio (pattinatrice o carrucola massiva)"
+  ],
+  domandeApprofondimento: [
+    "Perché il centro di massa è un polo lecito anche quando accelera?",
+    "Nella pattinatrice che chiude le braccia l'energia cinetica aumenta: chi compie il lavoro? (I muscoli, contro la forza centrifuga apparente.)",
+    "Le due equazioni cardinali bastano a determinare il moto di un corpo rigido? (Sì: 6 equazioni per 6 gradi di libertà.)"
+  ],
+  formuleChiave: ["\\(\\vec{L} = \\sum \\vec{r}_i\\times m_i\\vec{v}_i\\)", "\\(\\frac{d\\vec{L}}{dt} = \\vec{\\tau}^{ext}\\)", "\\(L_z = I\\omega,\\;\\; I\\alpha = \\tau_z\\)", "\\(\\tau^{ext}=0 \\Rightarrow \\vec{L}=\\text{cost}\\)"]
+},
+{
+  id: 15, titolo: "Teorema di König (momento angolare ed energia cinetica)", area: "C", prerequisiti: [12, 13],
+  definizioni: "I teoremi di König scompongono momento angolare ed energia cinetica di un sistema nella somma di un termine 'del centro di massa' (come se tutta la massa fosse concentrata nel CM) e un termine 'relativo al centro di massa' (moto interno visto dal sistema del CM): \\(\\vec{L} = \\vec{r}_{cm}\\times M\\vec{v}_{cm} + \\vec{L}'\\) e \\(K = \\frac{1}{2}Mv_{cm}^2 + K'\\). Il sistema del CM è il riferimento con origine nel CM e assi paralleli a quelli inerziali.",
+  derivazione: [
+    { passo: "Scomposizione delle coordinate rispetto al CM", formula: "\\[ \\vec{r}_i = \\vec{r}_{cm} + \\vec{r}_i{'}, \\qquad \\vec{v}_i = \\vec{v}_{cm} + \\vec{v}_i{'} \\]", commento: "Le grandezze primate sono misurate nel sistema del centro di massa. Proprietà chiave: \\(\\sum_i m_i\\vec{r}_i{'} = \\vec{0}\\) e derivando \\(\\sum_i m_i\\vec{v}_i{'} = \\vec{0}\\)." },
+    { passo: "König per il momento angolare: sviluppo", formula: "\\[ \\vec{L} = \\sum_i (\\vec{r}_{cm} + \\vec{r}_i{'})\\times m_i(\\vec{v}_{cm} + \\vec{v}_i{'}) \\]", commento: "Quattro termini: due 'diagonali' e due misti." },
+    { passo: "I termini misti si annullano", formula: "\\[ \\vec{r}_{cm}\\times\\Big(\\sum_i m_i\\vec{v}_i{'}\\Big) = \\vec{0}, \\qquad \\Big(\\sum_i m_i\\vec{r}_i{'}\\Big)\\times\\vec{v}_{cm} = \\vec{0} \\]", commento: "Entrambe le somme sono nulle per definizione di centro di massa." },
+    { passo: "Primo teorema di König", formula: "\\[ \\vec{L} = \\vec{r}_{cm}\\times M\\vec{v}_{cm} + \\sum_i \\vec{r}_i{'}\\times m_i\\vec{v}_i{'} = \\vec{L}_{cm} + \\vec{L}' \\]", commento: "Momento angolare 'orbitale' del CM + momento angolare 'di spin' attorno al CM. L' è intrinseco: non dipende dal polo." },
+    { passo: "König per l'energia cinetica: sviluppo", formula: "\\[ K = \\sum_i \\frac{1}{2}m_i(\\vec{v}_{cm} + \\vec{v}_i{'})\\cdot(\\vec{v}_{cm} + \\vec{v}_i{'}) = \\frac{1}{2}Mv_{cm}^2 + \\vec{v}_{cm}\\cdot\\sum_i m_i\\vec{v}_i{'} + \\sum_i\\frac{1}{2}m_iv_i'^2 \\]", commento: "Anche qui il termine misto contiene Σmᵢv'ᵢ = 0." },
+    { passo: "Secondo teorema di König", formula: "\\[ K = \\frac{1}{2}Mv_{cm}^2 + K' \\]", commento: "Energia di traslazione del CM + energia del moto attorno al CM. Per un corpo rigido K' = ½I_cm ω²: da qui K = ½Mv_cm² + ½I_cm ω² per il rotolamento." }
+  ],
+  ipotesi: "Sistema di riferimento del CM in pura traslazione (assi paralleli a quelli inerziali, anche se il CM accelera); masse costanti. Nessuna ipotesi di rigidità per i teoremi generali.",
+  casiLimite: "Corpo che solo trasla: K' = 0, K = ½Mv_cm². Corpo che ruota attorno al CM fermo: K = ½I_cmω². Sistema di due corpi: K' = ½μv_rel² con μ massa ridotta — la scomposizione usata negli urti.",
+  erroriTipici: [
+    "Dimenticare uno dei due termini (tipico: contare solo la traslazione nel rotolamento).",
+    "Contare due volte l'energia di rotazione usando I rispetto al punto di contatto E aggiungendo la traslazione.",
+    "Credere che L' dipenda dal polo: è intrinseco al sistema.",
+    "Applicare König con un riferimento relativo che ruota: deve solo traslare col CM."
+  ],
+  intuizioneFisica: "König separa il moto 'del sistema come un tutto' dal moto 'interno'. È la ragione per cui possiamo dire che la Terra ha un momento angolare orbitale attorno al Sole più uno di spin attorno al proprio asse, o che l'energia di una palla che rotola è traslazione più rotazione: la matematica garantisce che i due contributi si sommano semplicemente, senza termini incrociati.",
+  checklistOrale: [
+    "Definire il sistema di riferimento del centro di massa",
+    "Dimostrare le proprietà Σmᵢr'ᵢ = 0 e Σmᵢv'ᵢ = 0",
+    "Dimostrare il primo teorema (L) mostrando l'annullarsi dei termini misti",
+    "Dimostrare il secondo teorema (K)",
+    "Specializzare al corpo rigido: K = ½Mv_cm² + ½I_cmω²",
+    "Applicare al rotolamento o a un urto"
+  ],
+  domandeApprofondimento: [
+    "Perché nel sistema del CM la quantità di moto totale è nulla e perché è il riferimento ideale per gli urti?",
+    "Come si scrive K' per due punti materiali in termini di massa ridotta?",
+    "L'energia cinetica dipende dal sistema di riferimento: quale parte di K è invariante? (K', il termine interno.)"
+  ],
+  formuleChiave: ["\\(\\vec{L} = \\vec{r}_{cm}\\times M\\vec{v}_{cm} + \\vec{L}'\\)", "\\(K = \\frac{1}{2}Mv_{cm}^2 + K'\\)", "\\(K_{rigido} = \\frac{1}{2}Mv_{cm}^2 + \\frac{1}{2}I_{cm}\\omega^2\\)"]
+},
+{
+  id: 16, titolo: "Moto di un corpo rigido", area: "C", prerequisiti: [12, 13, 14],
+  definizioni: "Un corpo rigido è un sistema di punti le cui distanze mutue restano costanti. Il suo moto più generale è la composizione di una traslazione (descritta dal moto del CM) e di una rotazione attorno a un asse passante per il CM: servono 6 coordinate (3 + 3). Il campo delle velocità è \\(\\vec{v}_P = \\vec{v}_{cm} + \\vec{\\omega}\\times\\vec{r}_{P}\\), con r_P posizione di P rispetto al CM. Il moto è governato dalle due equazioni cardinali.",
+  derivazione: [
+    { passo: "Vincolo di rigidità e campo delle velocità", formula: "\\[ |\\vec{r}_P - \\vec{r}_Q| = \\text{cost} \\;\\Rightarrow\\; \\vec{v}_P = \\vec{v}_Q + \\vec{\\omega}\\times(\\vec{r}_P - \\vec{r}_Q) \\]", commento: "Derivando il vincolo si mostra che le velocità relative tra punti del rigido sono puramente rotatorie: ω è la stessa per tutto il corpo (formula fondamentale della cinematica rigida)." },
+    { passo: "Le equazioni del moto", formula: "\\[ \\vec{F}^{ext} = M\\vec{a}_{cm}, \\qquad \\frac{d\\vec{L}_{cm}}{dt} = \\vec{\\tau}_{cm}^{ext} \\]", commento: "Prima cardinale per la traslazione del CM, seconda (con polo nel CM, sempre lecito) per la rotazione: 3+3 equazioni per 6 gradi di libertà — il moto è completamente determinato." },
+    { passo: "Rotazione attorno ad asse fisso", formula: "\\[ L_z = I_z\\omega \\;\\Rightarrow\\; I_z\\alpha = \\tau_z \\]", commento: "Caso più comune negli esercizi: tutte le grandezze proiettate sull'asse. L'analogia con F = ma è completa: m→I, F→τ, a→α, v→ω, x→θ." },
+    { passo: "Cinematica rotazionale (α costante)", formula: "\\[ \\omega(t) = \\omega_0 + \\alpha t, \\qquad \\theta(t) = \\theta_0 + \\omega_0 t + \\frac{1}{2}\\alpha t^2, \\qquad \\omega^2 = \\omega_0^2 + 2\\alpha\\Delta\\theta \\]", commento: "Identiche alle formule del moto uniformemente accelerato con la sostituzione x→θ, v→ω, a→α." },
+    { passo: "Asse istantaneo di rotazione", formula: "\\[ \\vec{v}_C = \\vec{0} \\;\\Rightarrow\\; \\vec{v}_P = \\vec{\\omega}\\times(\\vec{r}_P - \\vec{r}_C) \\]", commento: "Nel moto piano esiste a ogni istante un punto C a velocità nulla (centro di istantanea rotazione): il moto appare come pura rotazione attorno a C. Nel rotolamento C è il punto di contatto." },
+    { passo: "Lavoro e potenza nella rotazione", formula: "\\[ dW = \\tau_z\\,d\\theta, \\qquad P = \\tau_z\\,\\omega \\]", commento: "Analoghi rotazionali di dW = F dx e P = Fv; il teorema dell'energia cinetica diventa W = Δ(½Iω²)." }
+  ],
+  ipotesi: "Rigidità perfetta (nessuna deformazione); per L = Iω asse fisso o principale d'inerzia; sistemi di riferimento inerziali (o polo nel CM).",
+  casiLimite: "Pura traslazione: ω = 0, tutti i punti hanno la stessa velocità. Pura rotazione attorno ad asse fisso: v_cm dell'asse nulla. Rotolamento: combinazione con vincolo v_cm = ωR. Corpo libero nello spazio: il CM va di moto rettilineo uniforme e il corpo ruota attorno a esso.",
+  erroriTipici: [
+    "Assegnare ω 'a un punto': la velocità angolare è unica per tutto il corpo rigido.",
+    "Usare la seconda cardinale con polo mobile diverso dal CM senza correzioni.",
+    "Applicare L = Iω vettorialmente quando l'asse non è principale.",
+    "Dimenticare che servono ENTRAMBE le cardinali: la sola prima non descrive la rotazione."
+  ],
+  intuizioneFisica: "Il vincolo di rigidità riduce un numero enorme di gradi di libertà a soli 6: dire dove sta il CM e come il corpo è orientato basta a conoscere la posizione di ogni suo punto. Il moto si legge sempre come 'il CM trasla + il corpo gira attorno al CM', e ciascuna delle due parti obbedisce alla propria equazione cardinale.",
+  checklistOrale: [
+    "Definire il corpo rigido e contarne i gradi di libertà",
+    "Scrivere la formula fondamentale v_P = v_Q + ω×(r_P−r_Q)",
+    "Impostare le due equazioni cardinali per il moto rototraslatorio",
+    "Ricavare Iα = τ per l'asse fisso e l'analogia con F = ma",
+    "Scrivere le leggi orarie rotazionali per α costante",
+    "Spiegare il centro di istantanea rotazione",
+    "Scrivere lavoro e potenza rotazionali"
+  ],
+  domandeApprofondimento: [
+    "Perché per un corpo rigido il lavoro delle forze interne è nullo? (Le distanze mutue non cambiano.)",
+    "Come trovi graficamente il centro di istantanea rotazione conoscendo le velocità di due punti?",
+    "Cosa succede se si applica una forza il cui momento rispetto al CM è nullo? (Pura traslazione accelerata.)"
+  ],
+  formuleChiave: ["\\(\\vec{v}_P = \\vec{v}_{cm} + \\vec{\\omega}\\times\\vec{r}_P\\)", "\\(\\vec{F}^{ext} = M\\vec{a}_{cm},\\;\\; \\vec{\\tau}_{cm} = \\frac{d\\vec{L}_{cm}}{dt}\\)", "\\(I\\alpha = \\tau_z\\)", "\\(P = \\tau\\omega\\)"]
+},
+{
+  id: 17, titolo: "Statica dei corpi rigidi", area: "C", prerequisiti: [16],
+  definizioni: "Un corpo rigido è in equilibrio statico quando è fermo e resta fermo: tutte le accelerazioni (lineari e angolari) sono nulle. Le condizioni di equilibrio sono due: risultante delle forze esterne nulla \\(\\big(\\sum\\vec{F} = \\vec{0}\\big)\\) e momento risultante nullo rispetto a un polo qualsiasi \\(\\big(\\sum\\vec{\\tau} = \\vec{0}\\big)\\). Nel piano si traducono in 3 equazioni scalari: due per le forze e una per i momenti.",
+  derivazione: [
+    { passo: "Dalle equazioni cardinali con accelerazioni nulle", formula: "\\[ \\vec{a}_{cm} = \\vec{0} \\Rightarrow \\sum\\vec{F}^{ext} = \\vec{0}; \\qquad \\frac{d\\vec{L}}{dt} = \\vec{0} \\Rightarrow \\sum\\vec{\\tau}^{ext} = \\vec{0} \\]", commento: "L'equilibrio è il caso particolare della dinamica con P e L costanti (e nulli per un corpo inizialmente fermo)." },
+    { passo: "Indipendenza dal polo (se la risultante è nulla)", formula: "\\[ \\vec{\\tau}_{O'} = \\vec{\\tau}_{O} + (\\vec{O'O})\\times\\sum\\vec{F} = \\vec{\\tau}_{O} \\]", commento: "Quando ΣF = 0, il momento totale è lo stesso rispetto a qualunque polo: si può scegliere il polo più comodo (tipicamente dove passano più forze incognite, per eliminarle)." },
+    { passo: "Il peso agisce nel baricentro", formula: "\\[ \\vec{\\tau}_{peso} = \\sum_i \\vec{r}_i\\times m_i\\vec{g} = \\Big(\\sum_i m_i\\vec{r}_i\\Big)\\times\\vec{g} = \\vec{r}_{cm}\\times M\\vec{g} \\]", commento: "In campo uniforme il momento totale del peso è quello di un'unica forza Mg applicata nel centro di massa: per questo baricentro e CM coincidono." },
+    { passo: "Esempio guida: scala appoggiata al muro", formula: "\\[ N_m = f_s,\\quad N_p = Mg,\\quad (\\text{polo a terra}):\\; N_m L\\sin\\theta = Mg\\frac{L}{2}\\cos\\theta \\;\\Rightarrow\\; f_s = \\frac{Mg}{2\\tan\\theta} \\le \\mu_s Mg \\]", commento: "Muro liscio, pavimento scabro: le tre equazioni (x, y, momenti) determinano le reazioni; la condizione di non slittamento dà l'angolo minimo tan θ ≥ 1/(2μ_s)." },
+    { passo: "Stabilità dell'equilibrio", formula: "\\[ \\frac{dU}{dq} = 0; \\qquad \\frac{d^2U}{dq^2} > 0 \\text{ stabile}, \\quad < 0 \\text{ instabile} \\]", commento: "Un equilibrio è stabile se piccoli spostamenti alzano il baricentro (U cresce): il corpo torna indietro. Criterio pratico: la verticale dal baricentro deve cadere dentro la base d'appoggio." }
+  ],
+  ipotesi: "Corpo perfettamente rigido; campo di gravità uniforme (per baricentro ≡ CM); vincoli lisci o scabri modellati con reazioni normali e attrito statico ≤ μ_sN.",
+  casiLimite: "Corpo appoggiato al limite del ribaltamento: la reazione normale si concentra sullo spigolo. Attrito insufficiente: l'equilibrio è impossibile e il corpo slitta. Coppia di forze: risultante nulla ma momento non nullo — non c'è equilibrio, il corpo ruota.",
+  erroriTipici: [
+    "Imporre solo ΣF = 0 dimenticando i momenti (una coppia ha risultante nulla ma fa ruotare).",
+    "Cambiare polo a metà del calcolo dei momenti.",
+    "Sbagliare il braccio delle forze (usare la distanza dal punto di applicazione invece che dalla retta d'azione).",
+    "Dimenticare che l'attrito statico è un'incognita ≤ μ_sN, non uguale a μ_sN salvo al limite dello slittamento."
+  ],
+  intuizioneFisica: "Equilibrio significa che le forze non spingono il corpo da nessuna parte E non lo fanno girare attorno a nessun perno. La libertà di scegliere il polo è un'arma tattica: mettendolo dove passano le forze incognite, i loro momenti spariscono e l'equazione si semplifica. La stabilità è geometria del baricentro: un corpo cade quando la verticale dal suo baricentro esce dalla base d'appoggio.",
+  checklistOrale: [
+    "Enunciare le due condizioni di equilibrio e la loro origine dalle cardinali",
+    "Dimostrare che con ΣF = 0 il momento non dipende dal polo",
+    "Dimostrare che il peso equivale a una forza unica nel baricentro",
+    "Risolvere l'esempio della scala (o della trave) impostando le 3 equazioni",
+    "Usare strategicamente la scelta del polo",
+    "Discutere stabilità con il criterio del potenziale/baricentro"
+  ],
+  domandeApprofondimento: [
+    "Perché per un corpo appoggiato la stabilità dipende dalla base d'appoggio e dall'altezza del baricentro?",
+    "Una trave incastrata nel muro: quante reazioni vincolari fornisce l'incastro? (Forza + momento.)",
+    "Se le forze su un corpo sono tre e in equilibrio, perché le loro rette d'azione devono incontrarsi in un punto (o essere parallele)?"
+  ],
+  formuleChiave: ["\\(\\sum\\vec{F}^{ext} = \\vec{0}\\)", "\\(\\sum\\vec{\\tau}^{ext} = \\vec{0}\\;\\forall\\text{ polo}\\)", "\\(\\vec{\\tau}_{peso} = \\vec{r}_{cm}\\times M\\vec{g}\\)", "\\(f_s \\le \\mu_s N\\)"]
+},
+{
+  id: 18, titolo: "Energia cinetica e meccanica di un corpo rigido", area: "C", prerequisiti: [13, 15, 16],
+  definizioni: "L'energia cinetica di un corpo rigido si scompone (König) in traslazione del CM più rotazione attorno al CM: \\(K = \\frac{1}{2}Mv_{cm}^2 + \\frac{1}{2}I_{cm}\\omega^2\\). Per rotazione attorno a un asse fisso: \\(K = \\frac{1}{2}I_{asse}\\omega^2\\). L'energia meccanica è E = K + U con \\(U = Mgh_{cm}\\) (il potenziale gravitazionale di un rigido dipende solo dalla quota del CM). Se lavorano solo forze conservative e i vincoli non dissipano, E si conserva.",
+  derivazione: [
+    { passo: "Energia cinetica per rotazione attorno ad asse fisso", formula: "\\[ K = \\sum_i \\frac{1}{2}m_i v_i^2 = \\sum_i \\frac{1}{2}m_i(\\omega r_i)^2 = \\frac{1}{2}I_{asse}\\,\\omega^2 \\]", commento: "Ogni punto ha v = ωrᵢ con la stessa ω: il momento d'inerzia raccoglie tutta la geometria." },
+    { passo: "Caso generale via König", formula: "\\[ K = \\frac{1}{2}Mv_{cm}^2 + \\frac{1}{2}I_{cm}\\omega^2 \\]", commento: "Traslazione + rotazione attorno al CM. Le due forme sono coerenti: per rotazione attorno a un asse fisso a distanza d dal CM, ½I_asse ω² = ½(I_cm + Md²)ω² = ½Mv_cm² + ½I_cm ω², con v_cm = ωd." },
+    { passo: "Energia potenziale gravitazionale del rigido", formula: "\\[ U = \\sum_i m_i g z_i = g\\sum_i m_i z_i = Mg\\,z_{cm} \\]", commento: "In campo uniforme il potenziale del corpo intero è quello della massa totale posta nel CM." },
+    { passo: "Teorema dell'energia cinetica per il rigido", formula: "\\[ \\Delta K = W^{ext} \\]", commento: "Il lavoro delle forze interne è nullo per il vincolo di rigidità (le distanze non cambiano): conta solo il lavoro esterno. Per la rotazione: W = ∫τ dθ." },
+    { passo: "Conservazione dell'energia meccanica", formula: "\\[ \\frac{1}{2}Mv_{cm}^2 + \\frac{1}{2}I_{cm}\\omega^2 + Mg\\,z_{cm} = \\text{cost} \\]", commento: "Valida se le forze attive sono conservative e le reazioni vincolari non lavorano (perni lisci, rotolamento puro)." },
+    { passo: "Esempio: asta incernierata che cade da orizzontale", formula: "\\[ Mg\\frac{L}{2} = \\frac{1}{2}\\Big(\\frac{1}{3}ML^2\\Big)\\omega^2 \\;\\Rightarrow\\; \\omega = \\sqrt{\\frac{3g}{L}} \\]", commento: "Il CM scende di L/2; l'energia va tutta in rotazione attorno al perno (I = ML²/3). Esempio classico da orale." }
+  ],
+  ipotesi: "Corpo rigido; campo gravitazionale uniforme; vincoli ideali (non dissipativi); per K = ½Iω² asse fisso.",
+  casiLimite: "Pura traslazione: K = ½Mv². Pura rotazione baricentrica: K = ½I_cmω². Rotolamento puro: entrambi i termini con il vincolo v = ωR. Perno scabro o strisciamento: E non si conserva, ΔE = W_attrito.",
+  erroriTipici: [
+    "Sommare ½I_assek ω² (con I rispetto al perno) E ½Mv_cm²: si conta due volte la traslazione.",
+    "Usare I_cm quando la rotazione è attorno a un perno decentrato (o viceversa) senza Huygens-Steiner.",
+    "Calcolare U con la quota di un punto qualsiasi invece che del CM.",
+    "Dimenticare di verificare che i vincoli non lavorino prima di conservare E."
+  ],
+  intuizioneFisica: "Un corpo rigido immagazzina energia cinetica in due 'serbatoi': il moto d'insieme del baricentro e la rotazione attorno a esso. La scelta tra le due scritture equivalenti (asse fisso vs König) è solo questione di comodità: l'energia è la stessa. Il potenziale, invece, ha un solo serbatoio: la quota del baricentro.",
+  checklistOrale: [
+    "Ricavare K = ½Iω² per l'asse fisso",
+    "Scrivere la forma di König e mostrare la coerenza delle due scritture",
+    "Dimostrare U = Mgz_cm",
+    "Spiegare perché il lavoro delle forze interne di un rigido è nullo",
+    "Precisare le condizioni per conservare E (vincoli ideali)",
+    "Risolvere l'esempio dell'asta incernierata che cade"
+  ],
+  domandeApprofondimento: [
+    "Nell'asta che cade, quale punto tocca terra con velocità maggiore di quella di caduta libera? (L'estremo: v = √(3gL) > √(2gL).)",
+    "Perché la reazione del perno non compie lavoro pur essendo diversa da zero?",
+    "Come cambia il risultato se l'asta è incernierata a 1/4 della lunghezza?"
+  ],
+  formuleChiave: ["\\(K = \\frac{1}{2}I_{asse}\\omega^2\\)", "\\(K = \\frac{1}{2}Mv_{cm}^2 + \\frac{1}{2}I_{cm}\\omega^2\\)", "\\(U = Mg\\,z_{cm}\\)", "\\(W_{rot} = \\int \\tau\\,d\\theta\\)"]
+},
+{
+  id: 19, titolo: "Pendolo fisico (o composto)", area: "C", prerequisiti: [4, 13, 14],
+  definizioni: "Il pendolo fisico è un corpo rigido qualsiasi libero di oscillare in un piano verticale attorno a un asse orizzontale fisso O che non passa per il centro di massa. Detta d la distanza tra l'asse e il CM e I il momento d'inerzia rispetto all'asse, per piccole oscillazioni il moto è armonico con \\(T = 2\\pi\\sqrt{I/(Mgd)}\\). La lunghezza ridotta \\(\\ell = I/(Md)\\) è la lunghezza del pendolo semplice equivalente.",
+  derivazione: [
+    { passo: "Seconda cardinale rispetto all'asse di sospensione", formula: "\\[ I\\ddot{\\theta} = \\tau_z = -Mgd\\sin\\theta \\]", commento: "L'unico momento è quello del peso, applicato nel CM a distanza d dall'asse, con braccio d sin θ; la reazione del perno non ha momento rispetto a O. Il segno meno: momento di richiamo." },
+    { passo: "Equazione del pendolo fisico", formula: "\\[ \\ddot{\\theta} + \\frac{Mgd}{I}\\sin\\theta = 0 \\]", commento: "Stessa struttura del pendolo semplice con g/L → Mgd/I." },
+    { passo: "Piccole oscillazioni", formula: "\\[ \\sin\\theta \\approx \\theta \\;\\Rightarrow\\; \\ddot{\\theta} + \\omega^2\\theta = 0, \\qquad \\omega = \\sqrt{\\frac{Mgd}{I}} \\]", commento: "Moto armonico in θ: linearizzazione identica a quella del pendolo semplice." },
+    { passo: "Periodo e lunghezza ridotta", formula: "\\[ T = 2\\pi\\sqrt{\\frac{I}{Mgd}} = 2\\pi\\sqrt{\\frac{\\ell}{g}}, \\qquad \\ell = \\frac{I}{Md} \\]", commento: "Il pendolo fisico oscilla come un pendolo semplice di lunghezza ℓ. Con Huygens-Steiner: ℓ = (I_cm + Md²)/(Md) = I_cm/(Md) + d ≥ d: la lunghezza ridotta supera sempre la distanza dal CM." },
+    { passo: "Verifica di consistenza: il punto materiale", formula: "\\[ I = Md^2 \\;\\Rightarrow\\; T = 2\\pi\\sqrt{\\frac{Md^2}{Mgd}} = 2\\pi\\sqrt{\\frac{d}{g}} \\]", commento: "Se tutta la massa è concentrata a distanza d si riottiene il pendolo semplice: il caso generale contiene quello particolare." },
+    { passo: "Esempio: asta omogenea sospesa a un estremo", formula: "\\[ I = \\frac{1}{3}ML^2,\\; d = \\frac{L}{2} \\;\\Rightarrow\\; T = 2\\pi\\sqrt{\\frac{2L}{3g}} \\]", commento: "Lunghezza ridotta ℓ = 2L/3: l'asta oscilla come un pendolo semplice lungo 2/3 della sua lunghezza." }
+  ],
+  ipotesi: "Corpo rigido; asse fisso orizzontale privo di attrito; campo di gravità uniforme; per l'isocronismo, piccole oscillazioni.",
+  casiLimite: "d → 0 (sospensione nel CM): il momento di richiamo sparisce, T → ∞, equilibrio indifferente. Tutta la massa a distanza d: pendolo semplice. Esiste un d che minimizza T: d = √(I_cm/M) (raggio giratore baricentrico).",
+  erroriTipici: [
+    "Usare I_cm al posto di I rispetto all'asse di sospensione (manca Md²).",
+    "Confondere d (distanza asse-CM) con la lunghezza del corpo.",
+    "Applicare la formula del pendolo semplice T = 2π√(L/g) con L lunghezza geometrica del corpo.",
+    "Dimenticare che la formula del periodo vale solo per piccole oscillazioni."
+  ],
+  intuizioneFisica: "Nel pendolo fisico il peso 'tira giù' il baricentro con braccio d, ma deve far ruotare tutta l'inerzia I distribuita nel corpo. Il rapporto I/(Md) condensa la competizione: più inerzia lontana dall'asse rallenta l'oscillazione, più braccio del peso la accelera. La lunghezza ridotta traduce tutto nel linguaggio familiare del pendolo semplice.",
+  checklistOrale: [
+    "Impostare la seconda cardinale rispetto all'asse di sospensione",
+    "Spiegare perché la reazione del perno non ha momento",
+    "Linearizzare e ricavare ω = √(Mgd/I)",
+    "Definire la lunghezza ridotta e il pendolo semplice equivalente",
+    "Verificare il limite del punto materiale",
+    "Svolgere l'esempio dell'asta sospesa a un estremo",
+    "Discutere il caso d → 0"
+  ],
+  domandeApprofondimento: [
+    "Come useresti un pendolo fisico per misurare g (pendolo reversibile di Kater)?",
+    "Perché esiste una distanza di sospensione che rende minimo il periodo, e quanto vale?",
+    "Cosa cambia nel periodo se l'ampiezza non è piccola?"
+  ],
+  formuleChiave: ["\\(I\\ddot{\\theta} = -Mgd\\sin\\theta\\)", "\\(\\omega = \\sqrt{\\frac{Mgd}{I}}\\)", "\\(T = 2\\pi\\sqrt{\\frac{I}{Mgd}}\\)", "\\(\\ell = \\frac{I}{Md}\\)"]
+},
+{
+  id: 20, titolo: "Rotolamento puro", area: "C", prerequisiti: [16, 18],
+  definizioni: "Un corpo rotondo (raggio R) rotola senza strisciare su una superficie quando il punto di contatto ha velocità istantanea nulla: questo impone il vincolo di rotolamento puro \\(v_{cm} = \\omega R\\) (e derivando \\(a_{cm} = \\alpha R\\)). Il moto è la sovrapposizione di traslazione e rotazione; l'attrito in gioco è STATICO (il contatto non striscia) e non dissipa energia.",
+  derivazione: [
+    { passo: "Il vincolo di rotolamento", formula: "\\[ \\vec{v}_{contatto} = \\vec{v}_{cm} - \\omega R\\,\\hat{x} = \\vec{0} \\;\\Rightarrow\\; v_{cm} = \\omega R \\]", commento: "La velocità del punto di contatto è la somma di traslazione (v_cm) e rotazione (−ωR): il rotolamento puro ne impone l'annullamento." },
+    { passo: "Energia cinetica nel rotolamento", formula: "\\[ K = \\frac{1}{2}Mv_{cm}^2 + \\frac{1}{2}I_{cm}\\omega^2 = \\frac{1}{2}Mv_{cm}^2\\Big(1 + \\frac{I_{cm}}{MR^2}\\Big) \\]", commento: "König + vincolo: comodo scrivere I_cm = βMR² (β = 1 anello, ½ disco, 2/5 sfera) → K = ½(1+β)Mv_cm²." },
+    { passo: "Discesa lungo un piano inclinato: dinamica", formula: "\\[ \\begin{aligned} & Mg\\sin\\theta - f_s = Ma_{cm} \\\\ & f_s R = I_{cm}\\alpha = I_{cm}\\frac{a_{cm}}{R} \\end{aligned} \\]", commento: "Prima cardinale lungo il piano; seconda cardinale rispetto al CM: l'unico momento è quello dell'attrito statico (peso e normale passano per il CM o hanno braccio nullo)." },
+    { passo: "Risolvo il sistema", formula: "\\[ a_{cm} = \\frac{g\\sin\\theta}{1 + I_{cm}/MR^2} = \\frac{g\\sin\\theta}{1+\\beta}, \\qquad f_s = \\frac{\\beta}{1+\\beta}Mg\\sin\\theta \\]", commento: "L'accelerazione è minore di g sin θ: parte della 'spinta' va a far girare il corpo. Corpi con β piccolo (sfera) scendono più in fretta di quelli con β grande (anello), indipendentemente da massa e raggio." },
+    { passo: "Condizione di rotolamento senza strisciamento", formula: "\\[ f_s \\le \\mu_s N = \\mu_s Mg\\cos\\theta \\;\\Rightarrow\\; \\tan\\theta \\le \\frac{1+\\beta}{\\beta}\\,\\mu_s \\]", commento: "Se il piano è troppo ripido l'attrito statico non basta: il corpo rotola E striscia (attrito dinamico, energia dissipata)." },
+    { passo: "Verifica con l'energia", formula: "\\[ Mgh = \\frac{1}{2}(1+\\beta)Mv_{cm}^2 \\;\\Rightarrow\\; v_{cm} = \\sqrt{\\frac{2gh}{1+\\beta}} \\]", commento: "L'attrito statico non lavora (punto di contatto fermo): l'energia si conserva e il risultato coincide con quello dinamico — ottima verifica incrociata." }
+  ],
+  ipotesi: "Corpo rigido a sezione circolare; contatto puntiforme; rotolamento puro (v_contatto = 0) con attrito statico sufficiente; si trascura l'attrito volvente (resistenza al rotolamento).",
+  casiLimite: "μ_s = 0 (piano liscio): il corpo non può rotolare, slitta traslando con a = g sin θ senza ruotare. β → 0 (massa tutta nel centro): a → g sin θ, come un punto che scivola. Strisciamento: v_cm ≠ ωR, l'attrito diventa dinamico e dissipa finché il vincolo non si ristabilisce.",
+  erroriTipici: [
+    "Dire che l'attrito statico dissipa energia nel rotolamento puro: il punto di applicazione è fermo, W = 0.",
+    "Imporre f_s = μ_sN: nel rotolamento f_s è un'incognita, μ_sN è solo il suo limite.",
+    "Dimenticare il termine rotazionale nell'energia.",
+    "Applicare v_cm = ωR anche quando il corpo striscia."
+  ],
+  intuizioneFisica: "Nel rotolamento l'attrito statico è un 'regista' che non spende energia: costringe traslazione e rotazione a marciare insieme (v = ωR) redistribuendo la spinta della gravità tra i due moti. La gara sul piano inclinato la vince chi ha meno inerzia rotazionale relativa: la sfera batte il disco che batte l'anello — sempre, a prescindere da massa e raggio.",
+  checklistOrale: [
+    "Enunciare e giustificare il vincolo v_cm = ωR",
+    "Scrivere K con König e il vincolo (forma con β)",
+    "Impostare le due cardinali per la discesa dal piano inclinato",
+    "Ricavare a_cm = g sinθ/(1+β) e f_s",
+    "Ricavare la condizione sul μ_s per il rotolamento puro",
+    "Rifare il calcolo con la conservazione dell'energia",
+    "Spiegare perché l'attrito statico non dissipa"
+  ],
+  domandeApprofondimento: [
+    "Una sfera lanciata strisciando su un pavimento scabro: come evolve fino al rotolamento puro e quale grandezza conviene conservare? (L rispetto al punto di contatto.)",
+    "Perché nel rotolamento in salita l'attrito statico punta verso l'alto o verso il basso a seconda dei casi?",
+    "Cos'è l'attrito volvente e perché una ruota reale prima o poi si ferma?"
+  ],
+  formuleChiave: ["\\(v_{cm} = \\omega R\\)", "\\(K = \\frac{1}{2}(1+\\beta)Mv_{cm}^2,\\;\\beta = \\frac{I_{cm}}{MR^2}\\)", "\\(a_{cm} = \\frac{g\\sin\\theta}{1+\\beta}\\)", "\\(f_s \\le \\mu_s Mg\\cos\\theta\\)"]
+},
+{
+  id: 21, titolo: "Urti centrali elastici e anelastici", area: "C", prerequisiti: [12],
+  definizioni: "Un urto è un'interazione impulsiva tra due corpi, di durata così breve che le forze esterne sono trascurabili rispetto a quelle interne: la quantità di moto totale si conserva SEMPRE. L'urto è elastico se si conserva anche l'energia cinetica, anelastico se parte di K si converte in altre forme, perfettamente anelastico se i corpi restano attaccati (massima perdita di K compatibile con la conservazione di P). Un urto è centrale (frontale) se le velocità giacciono sulla congiungente dei centri: il problema è unidimensionale.",
+  derivazione: [
+    { passo: "Conservazione della quantità di moto (sempre)", formula: "\\[ m_1v_1 + m_2v_2 = m_1v_1' + m_2v_2' \\]", commento: "Durante l'urto le forze interne (impulsive) dominano su quelle esterne: P totale invariata. Vale per qualunque tipo di urto." },
+    { passo: "Urto elastico: aggiungo la conservazione di K", formula: "\\[ \\frac{1}{2}m_1v_1^2 + \\frac{1}{2}m_2v_2^2 = \\frac{1}{2}m_1v_1'^2 + \\frac{1}{2}m_2v_2'^2 \\]", commento: "Due equazioni, due incognite: il problema è determinato." },
+    { passo: "Trucco algebrico: riorganizzo le due equazioni", formula: "\\[ m_1(v_1 - v_1') = m_2(v_2' - v_2), \\qquad m_1(v_1^2 - v_1'^2) = m_2(v_2'^2 - v_2^2) \\]", commento: "Dividendo membro a membro (differenza di quadrati): v₁ + v₁' = v₂ + v₂'." },
+    { passo: "La velocità relativa si inverte", formula: "\\[ v_1' - v_2' = -(v_1 - v_2) \\]", commento: "Firma dell'urto elastico 1D: la velocità relativa cambia segno mantenendo il modulo (coefficiente di restituzione e = 1)." },
+    { passo: "Soluzione generale dell'urto elastico 1D", formula: "\\[ v_1' = \\frac{m_1 - m_2}{m_1 + m_2}v_1 + \\frac{2m_2}{m_1 + m_2}v_2, \\qquad v_2' = \\frac{2m_1}{m_1 + m_2}v_1 + \\frac{m_2 - m_1}{m_1 + m_2}v_2 \\]", commento: "Casi notevoli (v₂ = 0): masse uguali → si scambiano le velocità; m₁ ≪ m₂ → rimbalzo (v₁' ≈ −v₁); m₁ ≫ m₂ → il bersaglio schizza a v₂' ≈ 2v₁." },
+    { passo: "Urto perfettamente anelastico", formula: "\\[ v' = \\frac{m_1v_1 + m_2v_2}{m_1 + m_2} = v_{cm}, \\qquad \\Delta K = -\\frac{1}{2}\\mu(v_1 - v_2)^2,\\;\\; \\mu = \\frac{m_1m_2}{m_1+m_2} \\]", commento: "I corpi proseguono attaccati alla velocità del CM. L'energia dissipata è tutta quella del moto relativo (½μv_rel²): il termine di König del CM non può essere intaccato perché P si conserva." }
+  ],
+  ipotesi: "Forze esterne trascurabili durante l'urto (approssimazione impulsiva); urto centrale → problema 1D; corpi puntiformi o comunque senza rotazioni indotte.",
+  casiLimite: "Urto elastico con bersaglio infinitamente massivo: inversione pura della velocità (palla contro muro). Masse uguali elastico: scambio delle velocità (biliardo, pendolo di Newton). Anelastico con corpi che partono l'uno contro l'altro con P totale nulla: si fermano entrambi, K interamente dissipata.",
+  erroriTipici: [
+    "Conservare l'energia cinetica in un urto anelastico.",
+    "Non conservare la quantità di moto 'perché c'è attrito col piano': durante l'urto le forze impulsive dominano.",
+    "Usare le formule dell'urto elastico con v₂ = 0 anche quando il bersaglio si muove.",
+    "Dimenticare che nell'urto perfettamente anelastico la perdita di K è determinata, non arbitraria."
+  ],
+  intuizioneFisica: "In ogni urto la quantità di moto è sacra (le forze interne si scambiano impulsi uguali e opposti), mentre l'energia cinetica è negoziabile: può finire in deformazioni, suono, calore. La scomposizione di König chiarisce il bilancio: l'energia 'del CM' è protetta dalla conservazione di P; solo l'energia del moto relativo può essere spesa — e l'urto perfettamente anelastico la spende tutta.",
+  checklistOrale: [
+    "Giustificare la conservazione di P con l'approssimazione impulsiva",
+    "Classificare gli urti (elastico, anelastico, perfettamente anelastico)",
+    "Ricavare l'inversione della velocità relativa nell'urto elastico",
+    "Scrivere le soluzioni generali e discutere i casi notevoli",
+    "Ricavare v' = v_cm e ΔK nell'urto perfettamente anelastico",
+    "Spiegare con König perché si dissipa solo l'energia del moto relativo",
+    "Menzionare il coefficiente di restituzione per i casi intermedi"
+  ],
+  domandeApprofondimento: [
+    "Perché nel sistema del centro di massa l'urto elastico si descrive come semplice inversione delle velocità?",
+    "Nel pendolo di Newton perché cade una sola sfera dall'altra parte e non due a velocità metà? (Servono entrambe le conservazioni.)",
+    "Come si generalizza l'urto elastico in 2D e perché servono più informazioni (parametro d'urto)?"
+  ],
+  formuleChiave: ["\\(m_1v_1 + m_2v_2 = m_1v_1' + m_2v_2'\\)", "\\(v_1' - v_2' = -(v_1 - v_2)\\;(\\text{elastico})\\)", "\\(v' = v_{cm}\\;(\\text{perf. anelastico})\\)", "\\(\\Delta K = -\\tfrac{1}{2}\\mu v_{rel}^2\\)"]
+},
+{
+  id: 22, titolo: "Pendolo balistico", area: "C", prerequisiti: [9, 21],
+  definizioni: "Il pendolo balistico è un dispositivo per misurare la velocità di un proiettile: un blocco di massa M appeso a fili; il proiettile di massa m vi si conficca (urto perfettamente anelastico) e il sistema risale di un'altezza h. Il problema si risolve in DUE fasi con leggi di conservazione diverse: nell'urto si conserva la quantità di moto (non l'energia), nella risalita si conserva l'energia meccanica (non la quantità di moto, perché agiscono gravità e tensioni).",
+  derivazione: [
+    { passo: "Fase 1 — urto perfettamente anelastico: conservo P", formula: "\\[ mv_0 = (m + M)V \\;\\Rightarrow\\; V = \\frac{m}{m+M}v_0 \\]", commento: "Durante il brevissimo urto le forze esterne (peso, tensione) danno impulso trascurabile: P si conserva. L'energia NO: il proiettile si conficca deformando il blocco." },
+    { passo: "Energia dissipata nell'urto", formula: "\\[ \\Delta K = \\frac{1}{2}(m+M)V^2 - \\frac{1}{2}mv_0^2 = -\\frac{M}{m+M}\\cdot\\frac{1}{2}mv_0^2 \\]", commento: "La frazione di energia persa è M/(m+M): con proiettile leggero e blocco pesante quasi tutta l'energia iniziale finisce in deformazione e calore." },
+    { passo: "Fase 2 — risalita: conservo l'energia meccanica", formula: "\\[ \\frac{1}{2}(m+M)V^2 = (m+M)gh \\;\\Rightarrow\\; V = \\sqrt{2gh} \\]", commento: "Dopo l'urto le uniche forze sono il peso (conservativo) e le tensioni (perpendicolari al moto, non lavorano): E si conserva fino al punto più alto, dove il sistema è momentaneamente fermo." },
+    { passo: "Combino le due fasi", formula: "\\[ v_0 = \\frac{m+M}{m}\\sqrt{2gh} \\]", commento: "Misurando m, M e h (o l'angolo di risalita: h = L(1−cos θ)) si ricava la velocità del proiettile: una misura difficile ridotta a tre misure facili." },
+    { passo: "Altezza in funzione dell'angolo massimo", formula: "\\[ h = L(1 - \\cos\\theta_{max}) \\;\\Rightarrow\\; v_0 = \\frac{m+M}{m}\\sqrt{2gL(1-\\cos\\theta_{max})} \\]", commento: "Forma pratica: negli esperimenti si legge l'angolo di massima elongazione." }
+  ],
+  ipotesi: "Urto molto più breve del periodo del pendolo (così P si conserva e il pendolo non si sposta durante l'urto); proiettile che resta conficcato; fili inestensibili e privi di massa; attriti trascurabili nella risalita.",
+  casiLimite: "m ≪ M: V ≈ (m/M)v₀ molto piccola, quasi tutta l'energia dissipata (il caso reale). m ≫ M: V ≈ v₀, quasi niente si dissipa. h → 0: v₀ → 0, coerente.",
+  erroriTipici: [
+    "Conservare l'energia attraverso l'urto: ½mv₀² = (m+M)gh è SBAGLIATO e sovrastima h.",
+    "Conservare la quantità di moto nella risalita (agiscono forze esterne non trascurabili sui tempi lunghi).",
+    "Dimenticare il fattore (m+M)/m risalendo da V a v₀.",
+    "Usare h = L sin θ invece di h = L(1 − cos θ)."
+  ],
+  intuizioneFisica: "Il pendolo balistico è l'esempio perfetto di 'ogni fase la sua legge': l'urto è violento e rapidissimo → comanda la quantità di moto; la risalita è dolce e senza dissipazione → comanda l'energia. Confondere i due regimi porta a errori grossolani, ed è esattamente ciò che l'esaminatore vuole verificare che tu sappia distinguere.",
+  checklistOrale: [
+    "Descrivere il dispositivo e il suo scopo",
+    "Giustificare perché nell'urto si conserva P e non K",
+    "Calcolare V dopo l'urto e l'energia dissipata",
+    "Giustificare perché nella risalita si conserva E e non P",
+    "Ricavare la formula finale v₀ = ((m+M)/m)√(2gh)",
+    "Esprimere h tramite l'angolo massimo",
+    "Discutere la frazione di energia persa M/(m+M)"
+  ],
+  domandeApprofondimento: [
+    "Se il proiettile attraversasse il blocco uscendo con velocità v₁, come cambierebbe l'analisi?",
+    "Perché l'urto deve durare molto meno del periodo del pendolo?",
+    "Con quali misure e propagazione degli errori stimeresti l'incertezza su v₀?"
+  ],
+  formuleChiave: ["\\(mv_0 = (m+M)V\\)", "\\(\\frac{1}{2}(m+M)V^2 = (m+M)gh\\)", "\\(v_0 = \\frac{m+M}{m}\\sqrt{2gh}\\)", "\\(h = L(1-\\cos\\theta_{max})\\)"]
+},
+{
+  id: 23, titolo: "Pressione e legge di Stevino", area: "D", prerequisiti: [],
+  definizioni: "La pressione in un punto di un fluido è il rapporto tra la forza normale esercitata su una superficie elementare e l'area della superficie: \\(p = dF_\\perp/dA\\); è uno scalare (principio di Pascal: in un punto agisce ugualmente in tutte le direzioni). La legge di Stevino dà la pressione in un fluido incomprimibile in quiete: \\(p(h) = p_0 + \\rho g h\\), con h profondità sotto la superficie libera dove la pressione è p₀.",
+  derivazione: [
+    { passo: "Equilibrio di un cilindretto di fluido", formula: "\\[ p(z)A - p(z+dz)A - \\rho g A\\,dz = 0 \\]", commento: "Isolo un cilindretto orizzontale di area A e altezza dz (asse z verso l'alto): la faccia inferiore riceve una spinta maggiore di quella superiore, e la differenza sostiene il peso ρgA dz del fluido contenuto." },
+    { passo: "Equazione fondamentale della statica dei fluidi", formula: "\\[ \\frac{dp}{dz} = -\\rho g \\]", commento: "La pressione diminuisce salendo. Vale per qualunque fluido in quiete; per integrarla serve conoscere ρ(z)." },
+    { passo: "Integro per fluido incomprimibile (ρ costante)", formula: "\\[ \\int_{p_0}^{p} dp' = -\\rho g\\int_{0}^{z} dz' \\;\\Rightarrow\\; p = p_0 - \\rho g z \\;\\;\\xrightarrow{h = -z}\\;\\; p = p_0 + \\rho g h \\]", commento: "Legge di Stevino: la pressione cresce linearmente con la profondità h. Circa 1 atm ogni 10 m d'acqua." },
+    { passo: "Conseguenza: vasi comunicanti e isobare orizzontali", formula: "\\[ p = p(h) \\;\\text{solo} \\;\\Rightarrow\\; \\text{superfici isobare orizzontali} \\]", commento: "La pressione dipende solo dalla quota, non dalla forma del recipiente: nei vasi comunicanti il liquido raggiunge lo stesso livello (paradosso idrostatico)." },
+    { passo: "Applicazione: manometro e barometro di Torricelli", formula: "\\[ p_{atm} = \\rho_{Hg}\\,g\\,h_{Hg} \\;\\approx\\; 13600 \\cdot 9.81 \\cdot 0.76 \\approx 1.013\\times10^5\\;\\text{Pa} \\]", commento: "Nel tubo rovesciato di Torricelli la colonna di mercurio è sostenuta dalla pressione atmosferica: 760 mm di Hg." },
+    { passo: "Da Stevino ad Archimede", formula: "\\[ F_{Arch} = \\oint p\\,dA_{\\perp,vert} = \\rho_{fluido}\\,g\\,V_{immerso} \\]", commento: "La spinta di Archimede è la risultante delle pressioni di Stevino sulla superficie del corpo: maggiore sotto che sopra, quindi diretta verso l'alto e pari al peso del fluido spostato." }
+  ],
+  ipotesi: "Fluido in quiete (statica); per la forma integrata: incomprimibile (ρ costante) e g uniforme. Il fluido non sostiene sforzi di taglio (definizione stessa di fluido).",
+  casiLimite: "Gas su piccoli dislivelli: ρ minuscola, p quasi uniforme (si trascura Stevino nell'aria di una stanza). Atmosfera su grande scala: ρ non costante, integrando con il gas perfetto isotermo si ottiene l'esponenziale barometrica. g → 0 (orbita): niente gradiente di pressione, il fluido fluttua.",
+  erroriTipici: [
+    "Pensare la pressione come vettore 'diretto verso il basso': è uno scalare, agisce in tutte le direzioni.",
+    "Credere che la pressione sul fondo dipenda dalla forma o dalla quantità totale di liquido: conta solo la profondità (paradosso idrostatico).",
+    "Confondere pressione assoluta e relativa (manometrica).",
+    "Applicare la forma ρgh a un gas su grandi dislivelli dove ρ varia."
+  ],
+  intuizioneFisica: "Ogni strato di fluido deve sorreggere tutto il fluido che gli sta sopra: scendendo, il carico cresce e con esso la pressione. Che sia uno scalare deriva dall'incapacità del fluido fermo di sostenere sforzi tangenziali: qualunque orientazione dia alla superficie di prova, sento la stessa spinta normale.",
+  checklistOrale: [
+    "Definire la pressione e le sue unità (Pa, atm, mmHg)",
+    "Enunciare il principio di Pascal (isotropia della pressione)",
+    "Ricavare dp/dz = −ρg dall'equilibrio del cilindretto",
+    "Integrare e ottenere p = p₀ + ρgh",
+    "Spiegare vasi comunicanti e paradosso idrostatico",
+    "Descrivere il barometro di Torricelli",
+    "Collegare Stevino alla spinta di Archimede"
+  ],
+  domandeApprofondimento: [
+    "Come cambia la pressione atmosferica con la quota se assumo l'aria un gas perfetto isotermo? (Decadimento esponenziale.)",
+    "Perché una diga deve essere più spessa alla base e il suo spessore non dipende dalla lunghezza del lago?",
+    "Un corpo galleggia: che relazione c'è tra densità media e frazione immersa?"
+  ],
+  formuleChiave: ["\\(p = \\frac{dF_\\perp}{dA}\\)", "\\(\\frac{dp}{dz} = -\\rho g\\)", "\\(p = p_0 + \\rho g h\\)", "\\(F_{Arch} = \\rho_{fl}\\,g\\,V_{imm}\\)"]
+},
+{
+  id: 24, titolo: "Teoria cinetica dei gas: la pressione dei gas perfetti", area: "D", prerequisiti: [21, 23],
+  definizioni: "La teoria cinetica interpreta le grandezze macroscopiche di un gas in termini del moto disordinato delle sue molecole. Modello di gas perfetto: N molecole puntiformi identiche, non interagenti se non tramite urti elastici istantanei, in moto caotico e isotropo. Risultato centrale: la pressione sulle pareti è \\(p = \\frac{1}{3}\\frac{N}{V}m\\langle v^2\\rangle\\), cioè due terzi della densità di energia cinetica traslazionale.",
+  derivazione: [
+    { passo: "Urto elastico di una molecola sulla parete", formula: "\\[ \\Delta p_x = -2mv_x \\]", commento: "Una molecola con componente v_x verso la parete (perpendicolare a x) rimbalza elasticamente: inverte v_x e cede alla parete impulso 2mv_x." },
+    { passo: "Quante molecole urtano nel tempo dt", formula: "\\[ dN_{urti} = \\frac{1}{2}\\,n_v\\,A\\,v_x\\,dt \\]", commento: "Colpiscono la parete di area A le molecole entro la distanza v_x dt che viaggiano VERSO la parete (metà, per isotropia); n_v = N/V è la densità numerica. (Trattazione rigorosa: si media su tutte le v_x > 0.)" },
+    { passo: "Forza media sulla parete", formula: "\\[ F = \\frac{\\Delta p_{tot}}{dt} = 2m\\langle v_x^2\\rangle^{1/2\\text{-media}}\\cdot\\frac{1}{2}n_vA\\langle \\cdot\\rangle \\;\\Rightarrow\\; F = n_v\\,m\\,\\langle v_x^2\\rangle\\,A \\]", commento: "Combinando impulso per urto e frequenza degli urti, e facendo la media su v_x², i fattori 2 e ½ si semplificano." },
+    { passo: "Pressione e isotropia", formula: "\\[ p = \\frac{F}{A} = n_v m\\langle v_x^2\\rangle; \\qquad \\langle v_x^2\\rangle = \\frac{1}{3}\\langle v^2\\rangle \\;\\Rightarrow\\; p = \\frac{1}{3}\\,\\frac{N}{V}\\,m\\langle v^2\\rangle \\]", commento: "Per isotropia ⟨v²⟩ = ⟨v_x²⟩+⟨v_y²⟩+⟨v_z²⟩ = 3⟨v_x²⟩: nessuna direzione è privilegiata." },
+    { passo: "Riscrittura con l'energia cinetica media", formula: "\\[ pV = \\frac{2}{3}N\\,\\Big\\langle \\frac{1}{2}mv^2 \\Big\\rangle \\]", commento: "La pressione per il volume è 2/3 dell'energia cinetica traslazionale totale: ponte tra micro e macro." },
+    { passo: "Confronto con la legge dei gas perfetti: significato della temperatura", formula: "\\[ pV = Nk_BT \\;\\Rightarrow\\; \\Big\\langle \\frac{1}{2}mv^2 \\Big\\rangle = \\frac{3}{2}k_BT, \\qquad v_{qm} = \\sqrt{\\frac{3k_BT}{m}} = \\sqrt{\\frac{3RT}{M_{mol}}} \\]", commento: "La temperatura assoluta è la misura dell'energia cinetica media traslazionale delle molecole: risultato concettualmente centrale di tutto il capitolo." }
+  ],
+  ipotesi: "Gas perfetto: molecole puntiformi (volume proprio trascurabile), nessuna interazione a distanza, urti elastici; numero enorme di molecole; moto caotico e isotropo; distribuzione delle velocità stazionaria; pareti lisce.",
+  casiLimite: "Alta pressione o bassa temperatura: il volume proprio e le interazioni non sono più trascurabili → gas reali (Van der Waals). T → 0: v_qm → 0 (classicamente). Miscela di gas: ogni specie contribuisce con la propria pressione parziale (legge di Dalton, immediata dalla derivazione).",
+  erroriTipici: [
+    "Dimenticare il fattore 1/3 (isotropia) o il fattore 2 dell'impulso.",
+    "Confondere velocità media, velocità quadratica media e velocità più probabile.",
+    "Dire che la temperatura misura l'energia TOTALE delle molecole: misura solo quella cinetica traslazionale media.",
+    "Pensare che tutte le molecole abbiano la stessa velocità: c'è una distribuzione (Maxwell-Boltzmann)."
+  ],
+  intuizioneFisica: "La pressione di un gas è un tamburellare fittissimo di molecole sulla parete: ogni urto è una piccola spinta, e la media di miliardi di spinte al secondo è una forza costante. La temperatura, vista da qui, smette di essere primitiva: è semplicemente il nome macroscopico dell'agitazione cinetica media delle molecole.",
+  checklistOrale: [
+    "Elencare le ipotesi del modello di gas perfetto",
+    "Calcolare l'impulso ceduto in un urto elastico sulla parete",
+    "Contare gli urti per unità di tempo sulla parete",
+    "Usare l'isotropia per passare da ⟨v_x²⟩ a ⟨v²⟩/3",
+    "Ottenere pV = (2/3)N⟨½mv²⟩",
+    "Confrontare con pV = Nk_BT e interpretare la temperatura",
+    "Definire la velocità quadratica media"
+  ],
+  domandeApprofondimento: [
+    "Perché l'ipotesi di urti elastici con la parete non è essenziale se gas e parete sono alla stessa temperatura?",
+    "Come stimeresti v_qm per l'azoto a temperatura ambiente? (≈ 500 m/s.)",
+    "Cosa afferma la legge di Dalton sulle pressioni parziali e come discende dalla derivazione cinetica?"
+  ],
+  formuleChiave: ["\\(p = \\frac{1}{3}\\frac{N}{V}m\\langle v^2\\rangle\\)", "\\(pV = \\frac{2}{3}N\\langle\\tfrac{1}{2}mv^2\\rangle\\)", "\\(\\langle\\tfrac{1}{2}mv^2\\rangle = \\frac{3}{2}k_BT\\)", "\\(v_{qm} = \\sqrt{3RT/M_{mol}}\\)"]
+},
+{
+  id: 25, titolo: "Legge empirica dei gas perfetti", area: "D", prerequisiti: [23],
+  definizioni: "L'equazione di stato dei gas perfetti, \\(pV = nRT\\), sintetizza in un'unica relazione le leggi empiriche ottenute tra Seicento e Ottocento: legge di Boyle (isoterma: pV = cost), prima legge di Gay-Lussac/Charles (isobara: V ∝ T), seconda legge di Gay-Lussac (isocora: p ∝ T) e principio di Avogadro (volumi uguali, stessa T e p → stesso numero di moli). R = 8.314 J/(mol·K) è la costante universale dei gas; T è la temperatura assoluta in kelvin.",
+  derivazione: [
+    { passo: "Legge di Boyle (T costante)", formula: "\\[ pV = \\text{cost} \\qquad (T\\;\\text{fissata}) \\]", commento: "Comprimendo isotermicamente un gas rarefatto, pressione e volume sono inversamente proporzionali: iperboli nel piano p-V." },
+    { passo: "Leggi di Volta-Gay-Lussac (p o V costanti)", formula: "\\[ V = V_0(1 + \\alpha t) \\;\\;(p\\;\\text{cost}), \\qquad p = p_0(1 + \\alpha t) \\;\\;(V\\;\\text{cost}), \\qquad \\alpha = \\frac{1}{273.15\\,°C} \\]", commento: "Il coefficiente α è LO STESSO per tutti i gas rarefatti: fatto sperimentale notevole che suggerisce un comportamento universale." },
+    { passo: "Nasce la temperatura assoluta", formula: "\\[ T = t + 273.15 \\;\\Rightarrow\\; V = V_0\\,\\alpha\\,T, \\qquad p = p_0\\,\\alpha\\,T \\]", commento: "Tutte le rette estrapolate si annullano a t = −273.15 °C: scegliendo lì lo zero, le leggi diventano proporzionalità dirette. Lo zero assoluto emerge dai dati, non da un postulato." },
+    { passo: "Combino le leggi", formula: "\\[ \\frac{pV}{T} = \\text{cost per una data quantità di gas} \\]", commento: "Trasformazione in due passi (isoterma + isobara) da (p₁,V₁,T₁) a (p₂,V₂,T₂): la combinazione delle due leggi dà p₁V₁/T₁ = p₂V₂/T₂." },
+    { passo: "Principio di Avogadro fissa la costante", formula: "\\[ pV = nRT, \\qquad R = 8.314\\;\\tfrac{\\text{J}}{\\text{mol·K}} \\]", commento: "A parità di p, V, T ogni gas contiene lo stesso numero di moli: la costante è proporzionale a n ed è universale. Un mole a 0 °C e 1 atm occupa 22.4 L." },
+    { passo: "Forma microscopica", formula: "\\[ pV = Nk_BT, \\qquad k_B = \\frac{R}{N_A} = 1.38\\times10^{-23}\\;\\tfrac{\\text{J}}{\\text{K}} \\]", commento: "Con N = nN_A molecole: la costante di Boltzmann è la R 'per molecola'. Questa forma si salda con la derivazione cinetica della pressione." }
+  ],
+  ipotesi: "Gas sufficientemente rarefatto (limite di bassa densità): tutte le leggi empiriche valgono tanto meglio quanto più il gas è lontano dalla condensazione; equilibrio termodinamico (p, T uniformi e ben definite).",
+  casiLimite: "Alta densità/bassa T: deviazioni descritte da Van der Waals \\((p + an^2/V^2)(V - nb) = nRT\\). Vicino alla liquefazione la legge fallisce del tutto. Nel limite p → 0 tutti i gas reali tendono al comportamento perfetto: per questo il gas perfetto definisce la scala di temperatura.",
+  erroriTipici: [
+    "Usare la temperatura in gradi Celsius dentro pV = nRT: serve il kelvin.",
+    "Sbagliare unità di R (8.314 J/mol·K vs 0.0821 L·atm/mol·K).",
+    "Applicare la legge a vapori vicini alla condensazione.",
+    "Confondere n (moli) con N (molecole) e R con k_B."
+  ],
+  intuizioneFisica: "Tre leggi sperimentali indipendenti, scoperte in due secoli, si incastrano in un'unica equazione a patto di misurare la temperatura dalla giusta origine: lo zero assoluto. L'universalità (stessa R per tutti i gas) grida che a basse densità le molecole non si 'vedono' tra loro: conta solo quante sono, non chi sono — ed è esattamente ciò che il modello cinetico assume.",
+  checklistOrale: [
+    "Enunciare Boyle e le due leggi di Gay-Lussac coi rispettivi vincoli",
+    "Spiegare il significato del coefficiente α uguale per tutti i gas",
+    "Mostrare come nasce la temperatura assoluta dall'estrapolazione",
+    "Combinare le leggi in pV/T = cost",
+    "Introdurre Avogadro e scrivere pV = nRT",
+    "Passare alla forma microscopica pV = Nk_BT",
+    "Dire quando la legge cessa di valere"
+  ],
+  domandeApprofondimento: [
+    "Perché il termometro a gas perfetto è lo strumento di riferimento per definire la temperatura?",
+    "Che significato fisico hanno i termini correttivi a e b di Van der Waals?",
+    "Disegna nel piano p-V le isoterme di un gas perfetto e indica come cambiano al crescere di T."
+  ],
+  formuleChiave: ["\\(pV = nRT\\)", "\\(pV = Nk_BT\\)", "\\(\\frac{p_1V_1}{T_1} = \\frac{p_2V_2}{T_2}\\)", "\\(R = 8.314\\;\\text{J/(mol·K)}\\)"]
+},
+{
+  id: 26, titolo: "Energia interna dei gas e principio di equipartizione", area: "D", prerequisiti: [24, 25],
+  definizioni: "L'energia interna U di un gas perfetto è la somma delle energie cinetiche delle sue molecole (non c'è potenziale intermolecolare). Il principio di equipartizione dell'energia afferma che, all'equilibrio a temperatura T, ogni grado di libertà quadratico nell'energia contribuisce in media con \\(\\frac{1}{2}k_BT\\) per molecola. Ne segue \\(U = \\frac{f}{2}nRT\\), con f numero di gradi di libertà attivi: f = 3 per gas monoatomici, f = 5 per biatomici a temperatura ambiente. U dipende SOLO dalla temperatura (legge di Joule).",
+  derivazione: [
+    { passo: "Punto di partenza dalla teoria cinetica", formula: "\\[ \\Big\\langle \\frac{1}{2}mv^2 \\Big\\rangle = \\frac{3}{2}k_BT \\]", commento: "Risultato del confronto tra pressione cinetica e legge dei gas: l'energia traslazionale media è (3/2)k_BT." },
+    { passo: "Lettura per componenti: equipartizione", formula: "\\[ \\Big\\langle \\frac{1}{2}mv_x^2 \\Big\\rangle = \\Big\\langle \\frac{1}{2}mv_y^2 \\Big\\rangle = \\Big\\langle \\frac{1}{2}mv_z^2 \\Big\\rangle = \\frac{1}{2}k_BT \\]", commento: "Per isotropia i tre termini quadratici sono uguali: ½k_BT ciascuno. Il principio generalizza: OGNI termine quadratico nell'energia (traslazione, rotazione, vibrazione) prende ½k_BT." },
+    { passo: "Gas monoatomico", formula: "\\[ U = N\\cdot\\frac{3}{2}k_BT = \\frac{3}{2}nRT \\]", commento: "Solo traslazione (f = 3): un punto materiale non ha rotazioni con inerzia apprezzabile." },
+    { passo: "Gas biatomico a temperatura ambiente", formula: "\\[ f = 3 + 2 = 5 \\;\\Rightarrow\\; U = \\frac{5}{2}nRT \\]", commento: "Si aggiungono 2 rotazioni attorno agli assi perpendicolari alla congiungente (la rotazione attorno all'asse molecolare ha inerzia irrisoria). La vibrazione (2 termini quadratici: cinetico + elastico) è 'congelata' a temperatura ambiente per motivi quantistici." },
+    { passo: "Legge di Joule: U = U(T)", formula: "\\[ U = \\frac{f}{2}nRT \\;\\Rightarrow\\; \\Delta U = \\frac{f}{2}nR\\,\\Delta T = n\\,c_V\\,\\Delta T \\;\\;\\text{in OGNI trasformazione} \\]", commento: "Nel gas perfetto non c'è energia potenziale intermolecolare: U non dipende dal volume. Verifica sperimentale: espansione libera di Joule, T invariata. ΔU = nc_VΔT vale per qualunque trasformazione, non solo le isocore." },
+    { passo: "Conseguenza sui calori specifici", formula: "\\[ c_V = \\frac{f}{2}R: \\quad \\frac{3}{2}R\\;(\\text{mono}),\\;\\; \\frac{5}{2}R\\;(\\text{biat}) \\]", commento: "L'equipartizione predice direttamente i calori molari a volume costante — ponte verso l'argomento successivo." }
+  ],
+  ipotesi: "Gas perfetto (niente interazioni intermolecolari); equilibrio termodinamico; validità della meccanica classica per i gradi di libertà considerati (fallisce quando i quanti di energia rotazionali/vibrazionali superano k_BT).",
+  casiLimite: "Basse temperature: le rotazioni si 'congelano' e il biatomico si comporta da monoatomico (f→3). Alte temperature: si attiva la vibrazione (f→7). Questi gradini nei calori specifici sono inspiegabili classicamente: prima evidenza storica della quantizzazione.",
+  erroriTipici: [
+    "Contare 3 rotazioni per il biatomico invece di 2.",
+    "Usare ΔU = nc_VΔT solo per le isocore: vale per ogni trasformazione del gas perfetto.",
+    "Includere un'energia potenziale intermolecolare nell'energia interna del gas perfetto.",
+    "Dimenticare che la vibrazione conta 2 mezzi-k_BT (termine cinetico + termine elastico)."
+  ],
+  intuizioneFisica: "All'equilibrio l'energia termica è perfettamente democratica: gli urti continui la redistribuiscono finché ogni 'modo quadratico' di immagazzinarla — muoversi lungo x, ruotare, vibrare — ne possiede in media la stessa quota ½k_BT. L'energia interna è il censimento di questi modi; e il fatto che dipenda solo da T (non da V) rispecchia l'assenza di legami tra molecole che non si parlano.",
+  checklistOrale: [
+    "Enunciare il principio di equipartizione con precisione (termini quadratici)",
+    "Contare i gradi di libertà di mono e biatomici",
+    "Spiegare perché la rotazione assiale del biatomico non conta",
+    "Ricavare U = (f/2)nRT",
+    "Enunciare la legge di Joule e l'esperimento dell'espansione libera",
+    "Dedurre c_V = (f/2)R",
+    "Accennare al congelamento quantistico dei gradi di libertà"
+  ],
+  domandeApprofondimento: [
+    "Perché l'espansione libera nel vuoto di un gas perfetto non ne cambia la temperatura, mentre per un gas reale sì (leggermente)?",
+    "Come spiega l'equipartizione la legge di Dulong-Petit per i solidi? (6 termini quadratici → c = 3R.)",
+    "Perché il calore specifico dell'idrogeno cresce a gradini con la temperatura?"
+  ],
+  formuleChiave: ["\\(\\langle E \\rangle = \\frac{1}{2}k_BT\\;\\text{per grado quadratico}\\)", "\\(U = \\frac{f}{2}nRT\\)", "\\(\\Delta U = n c_V \\Delta T\\;\\text{(sempre)}\\)", "\\(f = 3\\;\\text{mono},\\; 5\\;\\text{biat}\\)"]
+},
+{
+  id: 27, titolo: "Calori molari dei gas ideali e dei solidi ideali", area: "D", prerequisiti: [26],
+  definizioni: "Il calore molare è il calore necessario per innalzare di 1 K la temperatura di una mole: \\(c = \\frac{1}{n}\\frac{\\delta Q}{dT}\\). Dipende dalla trasformazione: a volume costante c_V, a pressione costante c_p. Per i gas perfetti vale la relazione di Mayer \\(c_p = c_V + R\\) e si definisce \\(\\gamma = c_p/c_V\\). Per i solidi cristallini la legge di Dulong-Petit prevede c ≈ 3R, indipendente dal materiale.",
+  derivazione: [
+    { passo: "Calore molare a volume costante", formula: "\\[ V = \\text{cost} \\Rightarrow W = 0 \\Rightarrow \\delta Q = dU \\;\\Rightarrow\\; c_V = \\frac{1}{n}\\Big(\\frac{dU}{dT}\\Big) = \\frac{f}{2}R \\]", commento: "Senza lavoro, tutto il calore va in energia interna: c_V misura direttamente la capacità del gas di immagazzinare energia nei suoi gradi di libertà." },
+    { passo: "Calore molare a pressione costante", formula: "\\[ \\delta Q = dU + p\\,dV = nc_V\\,dT + p\\,dV \\]", commento: "A pressione costante il gas si espande scaldandosi: parte del calore paga il lavoro di espansione." },
+    { passo: "Uso l'equazione di stato per il termine di lavoro", formula: "\\[ pV = nRT \\;\\xrightarrow{p\\;\\text{cost}}\\; p\\,dV = nR\\,dT \\]", commento: "Differenzio l'equazione di stato a p costante." },
+    { passo: "Relazione di Mayer", formula: "\\[ nc_p\\,dT = nc_V\\,dT + nR\\,dT \\;\\Rightarrow\\; c_p = c_V + R \\]", commento: "c_p supera sempre c_V esattamente di R: il sovrapprezzo è il lavoro di espansione per grado di riscaldamento. Vale per ogni gas perfetto, qualunque sia f." },
+    { passo: "Valori numerici e rapporto γ", formula: "\\[ \\text{mono: } c_V = \\tfrac{3}{2}R,\\; c_p = \\tfrac{5}{2}R,\\; \\gamma = \\tfrac{5}{3}; \\qquad \\text{biat: } c_V = \\tfrac{5}{2}R,\\; c_p = \\tfrac{7}{2}R,\\; \\gamma = \\tfrac{7}{5} \\]", commento: "γ = 1 + 2/f è misurabile (velocità del suono, adiabatiche): conferma sperimentale del conteggio dei gradi di libertà." },
+    { passo: "Solido ideale: legge di Dulong-Petit", formula: "\\[ \\text{3 oscillatori} \\times 2\\;\\text{termini quadratici} = 6 \\;\\Rightarrow\\; U = 3nRT \\;\\Rightarrow\\; c \\approx 3R \\approx 25\\;\\tfrac{\\text{J}}{\\text{mol·K}} \\]", commento: "Ogni atomo del reticolo è un oscillatore 3D: 3 termini cinetici + 3 potenziali elastici, ciascuno ½k_BT. Il calore molare è lo stesso per (quasi) tutti i solidi a temperatura ambiente; crolla a basse T per effetti quantistici (Einstein, Debye)." }
+  ],
+  ipotesi: "Gas perfetto in equilibrio; trasformazioni quasi-statiche; gradi di libertà classicamente attivi. Per Dulong-Petit: solido cristallino armonico a temperatura abbastanza alta (T sopra la temperatura di Debye).",
+  casiLimite: "Per i solidi a bassa T: c → 0 come T³ (Debye), Dulong-Petit fallisce. Per i gas a T crescente: c_V sale a gradini con l'attivazione di rotazioni e vibrazioni. Nei liquidi non esiste una teoria altrettanto semplice.",
+  erroriTipici: [
+    "Dire che il calore molare è una proprietà unica del gas: dipende dalla trasformazione (c_V ≠ c_p, e ogni politropica ha il suo).",
+    "Usare c_p in ΔU = nc ΔT: l'energia interna va sempre con c_V.",
+    "Dimenticare che la relazione di Mayer vale solo per i gas perfetti.",
+    "Contare 3 gradi di libertà per l'atomo del solido invece di 6 (manca il potenziale elastico)."
+  ],
+  intuizioneFisica: "Scaldare a volume costante è 'versare' energia solo nel serbatoio interno; scaldare a pressione costante costringe anche a pagare il pedaggio del lavoro di espansione, sempre pari a R per mole e per grado: ecco Mayer. Nei solidi ogni atomo, molla tra molle, ha sei tasche da ½k_BT: per questo materiali diversissimi condividono lo stesso calore molare 3R.",
+  checklistOrale: [
+    "Definire il calore molare e spiegare perché dipende dalla trasformazione",
+    "Ricavare c_V = (f/2)R dal primo principio a V costante",
+    "Dimostrare la relazione di Mayer c_p = c_V + R",
+    "Interpretare fisicamente la differenza c_p − c_V",
+    "Dare i valori per mono/biatomici e definire γ = 1 + 2/f",
+    "Ricavare Dulong-Petit contando i termini quadratici",
+    "Accennare ai limiti quantistici (basse temperature)"
+  ],
+  domandeApprofondimento: [
+    "Perché γ compare nell'equazione delle adiabatiche e nella velocità del suono?",
+    "È possibile una trasformazione con calore molare negativo? (Sì: politropiche tra adiabatica e isoterma.)",
+    "Cosa misura il crollo di c dei solidi a bassa temperatura?"
+  ],
+  formuleChiave: ["\\(c_V = \\frac{f}{2}R\\)", "\\(c_p = c_V + R\\)", "\\(\\gamma = \\frac{c_p}{c_V} = 1 + \\frac{2}{f}\\)", "\\(c_{solido} \\approx 3R\\)"]
+},
+{
+  id: 28, titolo: "Primo principio della termodinamica", area: "D", prerequisiti: [10, 26],
+  definizioni: "Il primo principio della termodinamica è la conservazione dell'energia estesa ai fenomeni termici: la variazione di energia interna di un sistema è \\(\\Delta U = Q - W\\), dove Q è il calore assorbito DAL sistema e W il lavoro compiuto DAL sistema (convenzione usuale in Fisica 1). U è una funzione di stato (dipende solo dallo stato del sistema), mentre Q e W dipendono dalla trasformazione: in forma infinitesima \\(dU = \\delta Q - \\delta W\\), con δ a ricordare che calore e lavoro non sono differenziali esatti.",
+  derivazione: [
+    { passo: "Lavoro di espansione quasi-statica", formula: "\\[ \\delta W = F\\,dx = pA\\,dx = p\\,dV \\;\\Rightarrow\\; W = \\int_{V_1}^{V_2} p\\,dV \\]", commento: "Un gas che spinge un pistone di area A compie lavoro p dV. Graficamente W è l'area sotto la curva nel piano p-V: dipende dal cammino, non solo dagli estremi." },
+    { passo: "U è funzione di stato (fondamento sperimentale)", formula: "\\[ W_{adiabatico} = -\\Delta U \\;\\;\\text{indipendente dal cammino} \\]", commento: "Esperimenti di Joule: per portare adiabaticamente un sistema da uno stato A a uno stato B serve sempre lo stesso lavoro, comunque lo si esegua (mulinello, resistenza...). Questo permette di DEFINIRE U." },
+    { passo: "Definizione operativa del calore", formula: "\\[ Q \\equiv \\Delta U + W \\]", commento: "In una trasformazione non adiabatica il bilancio W = −ΔU fallisce: il calore è per definizione l'energia scambiata per via non meccanica (differenza di temperatura). Il primo principio diventa: l'energia si conserva contando ENTRAMBI i canali." },
+    { passo: "Applicazione alle trasformazioni del gas perfetto", formula: "\\[ \\begin{aligned} &\\text{isocora: } W = 0,\\; Q = \\Delta U = nc_V\\Delta T \\\\ &\\text{isobara: } W = p\\Delta V = nR\\Delta T,\\; Q = nc_p\\Delta T \\\\ &\\text{isoterma: } \\Delta U = 0,\\; Q = W = nRT\\ln\\frac{V_2}{V_1} \\\\ &\\text{adiabatica: } Q = 0,\\; W = -\\Delta U = nc_V(T_1 - T_2) \\end{aligned} \\]", commento: "Il quartetto fondamentale. Per l'isoterma: W = ∫nRT dV/V = nRT ln(V₂/V₁). Ogni riga discende dal primo principio più l'equazione di stato." },
+    { passo: "Derivazione dell'equazione delle adiabatiche", formula: "\\[ 0 = nc_V\\,dT + p\\,dV \\;\\xrightarrow{pV = nRT}\\; \\frac{dT}{T} = -\\frac{R}{c_V}\\frac{dV}{V} \\;\\Rightarrow\\; TV^{\\gamma-1} = \\text{cost}, \\quad pV^{\\gamma} = \\text{cost} \\]", commento: "Da δQ = 0: dU = −pdV; elimino T con l'equazione di stato e integro (R/c_V = γ−1). Le adiabatiche nel piano p-V sono più ripide delle isoterme di un fattore γ." }
+  ],
+  ipotesi: "Sistema chiuso (non scambia materia); per W = ∫p dV trasformazioni quasi-statiche (p definita a ogni istante); convenzione dei segni dichiarata esplicitamente (Q > 0 assorbito, W > 0 compiuto dal sistema).",
+  casiLimite: "Trasformazione ciclica: ΔU = 0 ⇒ Q = W (tutto il calore netto diventa lavoro netto e viceversa). Adiabatica: Q = 0. Espansione libera (nel vuoto): W = 0 e Q = 0 ⇒ ΔU = 0, ma NON è quasi-statica: niente W = ∫p dV.",
+  erroriTipici: [
+    "Confondere le convenzioni dei segni (ΔU = Q − W vs Q + W a seconda della definizione di W).",
+    "Trattare Q e W come funzioni di stato: 'il calore contenuto in un corpo' non esiste.",
+    "Usare W = pΔV in trasformazioni non isobare.",
+    "Applicare W = ∫p dV all'espansione libera, che non è quasi-statica.",
+    "Usare c_p per calcolare ΔU."
+  ],
+  intuizioneFisica: "L'energia interna è il conto in banca del sistema; calore e lavoro sono solo i due sportelli da cui l'energia entra ed esce. Lo stato del conto non ricorda da quale sportello i soldi sono passati: per questo U è funzione di stato mentre Q e W no. Il primo principio è la contabilità esatta: nessuna energia si crea o si perde, si sposta.",
+  checklistOrale: [
+    "Enunciare il principio con convenzione dei segni esplicita",
+    "Spiegare perché U è funzione di stato e Q, W no (esperienze di Joule)",
+    "Ricavare W = ∫p dV e la sua lettura grafica nel piano p-V",
+    "Analizzare le quattro trasformazioni notevoli del gas perfetto",
+    "Ricavare il lavoro isotermo con il logaritmo",
+    "Derivare pV^γ = cost per le adiabatiche",
+    "Discutere il ciclo (ΔU = 0) e l'espansione libera"
+  ],
+  domandeApprofondimento: [
+    "Perché un'adiabatica è più ripida di un'isoterma nello stesso punto del piano p-V? (Pendenza γ volte maggiore.)",
+    "In un ciclo percorso in senso orario nel piano p-V il lavoro netto è positivo o negativo? Perché?",
+    "Che differenza c'è tra l'espansione adiabatica quasi-statica e l'espansione libera di Joule, se entrambe hanno Q = 0?"
+  ],
+  formuleChiave: ["\\(\\Delta U = Q - W\\)", "\\(W = \\int p\\,dV\\)", "\\(Q_{isot} = nRT\\ln\\frac{V_2}{V_1}\\)", "\\(pV^\\gamma = \\text{cost},\\; TV^{\\gamma-1} = \\text{cost}\\)"]
+},
+{
+  id: 29, titolo: "Secondo principio della termodinamica", area: "D", prerequisiti: [28],
+  definizioni: "Il secondo principio stabilisce l'irreversibilità dei processi naturali attraverso due enunciati equivalenti. Kelvin-Planck: è impossibile una trasformazione ciclica il cui UNICO risultato sia convertire integralmente in lavoro il calore prelevato da una sola sorgente. Clausius: è impossibile una trasformazione ciclica il cui UNICO risultato sia trasferire calore da un corpo freddo a uno caldo. Una macchina termica deve quindi sempre cedere calore a una sorgente fredda: il rendimento \\(\\eta = W/Q_{ass} = 1 - Q_{ced}/Q_{ass}\\) è sempre minore di 1.",
+  derivazione: [
+    { passo: "Schema della macchina termica e rendimento", formula: "\\[ W = Q_C - |Q_F|, \\qquad \\eta = \\frac{W}{Q_C} = 1 - \\frac{|Q_F|}{Q_C} \\]", commento: "In un ciclo ΔU = 0, quindi il lavoro netto è la differenza tra calore assorbito dalla sorgente calda e calore ceduto alla fredda. Kelvin-Planck vieta |Q_F| = 0, cioè η = 1." },
+    { passo: "¬Clausius ⇒ ¬Kelvin (prima metà dell'equivalenza)", formula: "\\[ \\text{frigo perfetto} + \\text{macchina reale} \\Rightarrow \\text{motore perfetto} \\]", commento: "Se esistesse un frigorifero perfetto (calore da freddo a caldo senza lavoro), lo accoppio a una macchina reale: il frigo restituisce alla sorgente calda il calore che la macchina cede alla fredda. Il sistema composto preleva calore SOLO dalla sorgente calda e lo converte tutto in lavoro: violato Kelvin-Planck." },
+    { passo: "¬Kelvin ⇒ ¬Clausius (seconda metà)", formula: "\\[ \\text{motore perfetto} + \\text{frigorifero reale} \\Rightarrow \\text{frigo perfetto} \\]", commento: "Se esistesse un motore perfetto, uso il suo lavoro per azionare un frigorifero reale: il sistema composto sposta calore dal freddo al caldo senza alcun apporto esterno di lavoro: violato Clausius. Le due negazioni si implicano a vicenda: gli enunciati sono equivalenti." },
+    { passo: "Reversibilità e irreversibilità", formula: "\\[ \\text{reversibile} \\iff \\text{quasi-statica e senza attriti/dissipazioni} \\]", commento: "Una trasformazione è reversibile se può essere invertita riportando sistema E ambiente allo stato iniziale. Attrito, diffusione, passaggio di calore con differenza finita di temperatura, espansione libera: tutti irreversibili. Il secondo principio codifica questa freccia." },
+    { passo: "Macchine frigorifere e coefficiente di prestazione", formula: "\\[ \\text{COP}_{frigo} = \\frac{Q_F}{W}, \\qquad \\text{COP}_{pompa} = \\frac{Q_C}{W} = \\text{COP}_{frigo} + 1 \\]", commento: "Il ciclo percorso al contrario assorbe lavoro per spostare calore dal freddo al caldo: Clausius impone W > 0 (il COP è finito, ma può superare 1: non è un rendimento)." }
+  ],
+  ipotesi: "Sistemi che operano in CICLI (lo stato finale della macchina uguale all'iniziale: essenziale per la parola 'unico risultato'); sorgenti termiche ideali (capacità infinita, temperatura costante).",
+  casiLimite: "Trasformazione non ciclica: convertire tutto il calore in lavoro È possibile (isoterma del gas perfetto: Q = W), ma lo stato del gas cambia — non viola Kelvin-Planck. Limite reversibile: le disuguaglianze del secondo principio diventano uguaglianze (ciclo di Carnot).",
+  erroriTipici: [
+    "Dimenticare 'unico risultato'/'ciclico' negli enunciati: senza, gli enunciati sono falsi (controesempio: isoterma).",
+    "Credere che il frigorifero violi Clausius: assorbe lavoro, quindi il trasferimento non è l'unico risultato.",
+    "Confondere rendimento (≤1) e COP (anche >1).",
+    "Pensare che il secondo principio derivi dal primo: sono indipendenti (il primo non vieta il motore perfetto)."
+  ],
+  intuizioneFisica: "Il primo principio dice che l'energia si conserva; il secondo dice che ha una direzione preferita di degrado: il lavoro si converte in calore integralmente e spontaneamente, il contrario mai del tutto. Il calore è energia 'disordinata': raccoglierla tutta e riordinarla in lavoro richiederebbe di riordinare il caos molecolare, e la natura non lo fa gratis.",
+  checklistOrale: [
+    "Enunciare Kelvin-Planck con tutte le clausole (ciclico, unico risultato)",
+    "Enunciare Clausius correttamente",
+    "Dimostrare l'equivalenza nei due versi (per assurdo, con le macchine composte)",
+    "Definire rendimento e mostrare η < 1",
+    "Definire i COP di frigorifero e pompa di calore",
+    "Spiegare cos'è una trasformazione reversibile e dare esempi di irreversibilità",
+    "Chiarire perché l'isoterma non viola Kelvin-Planck"
+  ],
+  domandeApprofondimento: [
+    "Perché la parola 'ciclico' è indispensabile nell'enunciato di Kelvin-Planck?",
+    "Il moto perpetuo di seconda specie: cosa sarebbe e quale enunciato viola?",
+    "Che legame c'è tra il secondo principio e la freccia del tempo?"
+  ],
+  formuleChiave: ["\\(\\eta = \\frac{W}{Q_C} = 1 - \\frac{|Q_F|}{Q_C} < 1\\)", "\\(\\text{COP}_f = \\frac{Q_F}{W}\\)", "\\(\\text{COP}_p = \\frac{Q_C}{W}\\)"]
+},
+{
+  id: 30, titolo: "Ciclo di Carnot", area: "D", prerequisiti: [28, 29],
+  definizioni: "Il ciclo di Carnot è il ciclo reversibile compiuto tra DUE sole sorgenti termiche (T_C calda e T_F fredda), composto da quattro trasformazioni quasi-statiche: espansione isoterma a T_C, espansione adiabatica da T_C a T_F, compressione isoterma a T_F, compressione adiabatica di ritorno a T_C. Per un gas perfetto il suo rendimento vale \\(\\eta_{Carnot} = 1 - T_F/T_C\\): dipende solo dalle temperature delle sorgenti.",
+  derivazione: [
+    { passo: "Tratto 1→2: espansione isoterma a T_C", formula: "\\[ \\Delta U = 0 \\;\\Rightarrow\\; Q_C = W_{12} = nRT_C\\ln\\frac{V_2}{V_1} > 0 \\]", commento: "Il gas assorbe Q_C dalla sorgente calda e lo converte interamente in lavoro (per questo tratto). Serve contatto termico perfetto e lentezza infinita: reversibile." },
+    { passo: "Tratto 2→3: espansione adiabatica", formula: "\\[ Q = 0, \\qquad W_{23} = -\\Delta U = nc_V(T_C - T_F) > 0 \\]", commento: "Isolato termicamente, il gas continua a espandersi raffreddandosi da T_C a T_F: il lavoro è pagato dall'energia interna." },
+    { passo: "Tratto 3→4: compressione isoterma a T_F", formula: "\\[ Q_F = W_{34} = nRT_F\\ln\\frac{V_4}{V_3} < 0 \\]", commento: "Il gas viene compresso cedendo alla sorgente fredda il calore |Q_F| = nRT_F ln(V₃/V₄)." },
+    { passo: "Tratto 4→1: compressione adiabatica", formula: "\\[ Q = 0, \\qquad W_{41} = -nc_V(T_C - T_F) < 0 \\]", commento: "La compressione adiabatica riscalda il gas riportandolo a T_C: chiude il ciclo. I lavori dei due tratti adiabatici si compensano esattamente." },
+    { passo: "Vincolo geometrico dalle adiabatiche", formula: "\\[ T_CV_2^{\\gamma-1} = T_FV_3^{\\gamma-1}, \\quad T_CV_1^{\\gamma-1} = T_FV_4^{\\gamma-1} \\;\\Rightarrow\\; \\frac{V_2}{V_1} = \\frac{V_3}{V_4} \\]", commento: "Dividendo le due relazioni delle adiabatiche: i rapporti di espansione isoterma sono uguali. È il passaggio chiave che fa semplificare i logaritmi." },
+    { passo: "Rendimento del ciclo", formula: "\\[ \\eta = 1 - \\frac{|Q_F|}{Q_C} = 1 - \\frac{nRT_F\\ln(V_3/V_4)}{nRT_C\\ln(V_2/V_1)} = 1 - \\frac{T_F}{T_C} \\]", commento: "Grazie all'uguaglianza dei rapporti di volume, i logaritmi si elidono: il rendimento dipende SOLO dalle temperature. Corollario immediato: Q_C/T_C = |Q_F|/T_F (i 'calori ridotti' si bilanciano)." }
+  ],
+  ipotesi: "Tutte le trasformazioni reversibili (quasi-statiche, senza attriti, scambi termici a differenza di temperatura infinitesima); due sole sorgenti ideali; per il calcolo esplicito, gas perfetto come fluido di lavoro (ma il risultato è universale per il teorema di Carnot).",
+  casiLimite: "T_F → T_C: η → 0, senza dislivello termico niente lavoro. T_F → 0: η → 1, ma lo zero assoluto è irraggiungibile (terzo principio). Ciclo invertito: frigorifero di Carnot con COP = T_F/(T_C − T_F), il massimo possibile.",
+  erroriTipici: [
+    "Usare le temperature in gradi Celsius nel rendimento.",
+    "Dire che il rendimento dipende dal gas o dalle dimensioni del ciclo: solo dalle temperature.",
+    "Dimenticare la dimostrazione del vincolo V₂/V₁ = V₃/V₄ (l'esaminatore la chiede).",
+    "Confondere il lavoro dei singoli tratti con il lavoro netto del ciclo (area racchiusa nel piano p-V)."
+  ],
+  intuizioneFisica: "Carnot progetta la macchina 'perfetta' eliminando ogni spreco: mai un contatto termico con salto finito di temperatura (per questo il calore si scambia solo lungo isoterme) e mai attriti. Anche così, una parte del calore DEVE essere scaricata alla sorgente fredda: è il prezzo minimo, dettato dal rapporto delle temperature, che nessuna ingegneria può eliminare.",
+  checklistOrale: [
+    "Disegnare il ciclo nel piano p-V (e sapere com'è nel piano T-S)",
+    "Descrivere le quattro trasformazioni con i segni di Q e W",
+    "Calcolare Q_C e Q_F sulle isoterme",
+    "Dimostrare V₂/V₁ = V₃/V₄ con le adiabatiche",
+    "Ricavare η = 1 − T_F/T_C",
+    "Osservare che Q_C/T_C = |Q_F|/T_F",
+    "Discutere i casi limite e il ciclo invertito"
+  ],
+  domandeApprofondimento: [
+    "Perché scambiare calore lungo un'isoterma reversibile richiede tempi infiniti, e cosa comporta per la potenza di una macchina di Carnot reale? (Potenza nulla al rendimento massimo.)",
+    "Come appare il ciclo di Carnot nel piano T-S e perché lì il calcolo del rendimento è immediato? (Un rettangolo.)",
+    "Se il fluido non è un gas perfetto il rendimento cambia? Perché no?"
+  ],
+  formuleChiave: ["\\(Q_C = nRT_C\\ln\\frac{V_2}{V_1}\\)", "\\(\\frac{V_2}{V_1} = \\frac{V_3}{V_4}\\)", "\\(\\eta_{Carnot} = 1 - \\frac{T_F}{T_C}\\)", "\\(\\frac{Q_C}{T_C} = \\frac{|Q_F|}{T_F}\\)"]
+},
+{
+  id: 31, titolo: "Teorema di Carnot", area: "D", prerequisiti: [29, 30],
+  definizioni: "Il teorema di Carnot afferma: (1) nessuna macchina termica operante tra due sorgenti può avere rendimento maggiore della macchina reversibile di Carnot operante tra le stesse sorgenti; (2) tutte le macchine reversibili tra le stesse due sorgenti hanno lo stesso rendimento, \\(\\eta_{rev} = 1 - T_F/T_C\\), indipendente dal fluido e dal meccanismo. Il teorema fonda la scala termodinamica assoluta di temperatura.",
+  derivazione: [
+    { passo: "Impostazione per assurdo", formula: "\\[ \\text{Ipotesi: } \\eta_X > \\eta_{rev} \\]", commento: "Suppongo esista una macchina X (qualsiasi) più efficiente della reversibile R tra le stesse sorgenti T_C e T_F." },
+    { passo: "Inverto la macchina reversibile", formula: "\\[ R \\to R^{-1}: \\;\\text{assorbe } W,\\; \\text{preleva } Q_F,\\; \\text{cede } Q_C \\]", commento: "R è reversibile: posso farla funzionare da frigorifero con gli stessi scambi cambiati di segno. La alimento con il lavoro prodotto da X." },
+    { passo: "Bilancio del sistema composto X + R⁻¹", formula: "\\[ \\eta_X > \\eta_R \\Rightarrow \\frac{W}{Q_C^X} > \\frac{W}{Q_C^R} \\Rightarrow Q_C^X < Q_C^R \\]", commento: "Dimensiono R⁻¹ perché riversi nella sorgente calda esattamente il lavoro W che X produce. A parità di W, la macchina 'migliore' preleva meno calore dalla sorgente calda di quanto R⁻¹ ve ne restituisce." },
+    { passo: "Contraddizione con Clausius", formula: "\\[ Q_{netto,\\,C} = Q_C^R - Q_C^X > 0 \\;\\text{entra nella sorgente calda}, \\qquad W_{netto} = 0 \\]", commento: "Il sistema composto, ciclico e senza lavoro netto esterno, trasferisce calore dalla sorgente fredda alla calda come unico risultato: viola l'enunciato di Clausius. Quindi η_X ≤ η_rev." },
+    { passo: "Seconda parte: tutte le reversibili sono equivalenti", formula: "\\[ \\eta_{R_1} \\le \\eta_{R_2} \\;\\text{e}\\; \\eta_{R_2} \\le \\eta_{R_1} \\;\\Rightarrow\\; \\eta_{R_1} = \\eta_{R_2} \\]", commento: "Se R₁ e R₂ sono entrambe reversibili, applico l'argomento nei due versi (ciascuna può fare da frigorifero per l'altra): i rendimenti devono coincidere. Poiché per il gas perfetto η = 1 − T_F/T_C, questo è il rendimento di OGNI macchina reversibile." },
+    { passo: "Conseguenza: temperatura termodinamica assoluta", formula: "\\[ \\frac{|Q_F|}{Q_C} = \\frac{T_F}{T_C} \\]", commento: "Il rapporto dei calori scambiati da una macchina reversibile dipende solo dalle temperature: si può DEFINIRE la scala di temperatura tramite i calori, senza riferimento ad alcuna sostanza. La scala coincide con quella del gas perfetto." }
+  ],
+  ipotesi: "Validità del secondo principio (enunciato di Clausius o Kelvin-Planck); due sorgenti termiche ideali a temperature fisse; macchine cicliche. La macchina X è del tutto arbitraria (reale, irreversibile, qualunque fluido).",
+  casiLimite: "Macchina irreversibile: η < η_rev strettamente (attriti, salti termici finiti). Macchina reversibile: η = 1 − T_F/T_C esattamente. Il teorema non dice nulla sulla potenza: la macchina di Carnot ideale è infinitamente lenta.",
+  erroriTipici: [
+    "Dimostrare il teorema usando solo il ciclo di Carnot a gas perfetto: la forza del teorema è l'universalità, che richiede l'argomento per assurdo.",
+    "Dimenticare che l'inversione richiede la reversibilità di R: una macchina reale non si può 'far girare al contrario' con gli stessi scambi.",
+    "Concludere che tutte le macchine hanno η = 1 − T_F/T_C: solo le reversibili; le altre stanno sotto.",
+    "Trascurare la clausola 'stesse due sorgenti'."
+  ],
+  intuizioneFisica: "Il teorema mette un tetto universale all'efficienza: non importa quanto ingegnoso sia il progetto, il rendimento è limitato dal solo dislivello di temperatura. Il trucco della dimostrazione è elegante: se qualcuno costruisse una macchina migliore di Carnot, accoppiandola a una Carnot rovesciata otterremmo una pompa di calore gratuita — e la natura, per il secondo principio, non concede pasti gratis.",
+  checklistOrale: [
+    "Enunciare le due parti del teorema",
+    "Impostare la dimostrazione per assurdo con la macchina composta",
+    "Spiegare il ruolo essenziale della reversibilità di R",
+    "Mostrare la violazione di Clausius nel bilancio",
+    "Dimostrare l'uguaglianza dei rendimenti reversibili nei due versi",
+    "Dedurre |Q_F|/Q_C = T_F/T_C e la scala assoluta",
+    "Distinguere il caso irreversibile (disuguaglianza stretta)"
+  ],
+  domandeApprofondimento: [
+    "In che senso il teorema di Carnot permette di definire la temperatura senza termometri a gas?",
+    "Una centrale termoelettrica opera tra 800 K e 300 K: qual è il tetto teorico del rendimento e perché quello reale è più basso?",
+    "Il teorema vale anche per macchine che scambiano calore con più di due sorgenti? (Serve la generalizzazione: disuguaglianza di Clausius.)"
+  ],
+  formuleChiave: ["\\(\\eta_{qualsiasi} \\le \\eta_{rev} = 1 - \\frac{T_F}{T_C}\\)", "\\(\\frac{|Q_F|}{Q_C} = \\frac{T_F}{T_C}\\;(\\text{rev})\\)"]
+},
+{
+  id: 32, titolo: "Disuguaglianza di Clausius", area: "D", prerequisiti: [31],
+  definizioni: "La disuguaglianza di Clausius generalizza il teorema di Carnot a cicli qualsiasi con scambi di calore a più temperature: per ogni ciclo termodinamico \\(\\oint \\frac{\\delta Q}{T} \\le 0\\), dove δQ è il calore assorbito dal sistema e T la temperatura della SORGENTE con cui avviene lo scambio. L'uguaglianza vale se e solo se il ciclo è reversibile. È il ponte che porta dalla teoria delle macchine alla definizione di entropia.",
+  derivazione: [
+    { passo: "Punto di partenza: macchina reversibile a due sorgenti", formula: "\\[ \\frac{Q_C}{T_C} + \\frac{Q_F}{T_F} = 0 \\quad (\\text{con segni: } Q_F < 0) \\]", commento: "Riscrittura del teorema di Carnot: per un ciclo reversibile i 'calori ridotti' Q/T si bilanciano esattamente." },
+    { passo: "Macchina irreversibile a due sorgenti", formula: "\\[ \\eta_{irr} < \\eta_{rev} \\Rightarrow 1 - \\frac{|Q_F|}{Q_C} < 1 - \\frac{T_F}{T_C} \\Rightarrow \\frac{|Q_F|}{T_F} > \\frac{Q_C}{T_C} \\Rightarrow \\frac{Q_C}{T_C} + \\frac{Q_F}{T_F} < 0 \\]", commento: "Il rendimento minore significa che si scarica 'troppo' calore alla sorgente fredda: la somma dei calori ridotti diventa negativa." },
+    { passo: "Ciclo generico: discretizzazione con N sorgenti", formula: "\\[ \\text{ciclo qualunque} \\approx \\text{scambi } Q_i \\text{ con sorgenti } T_i \\]", commento: "Un ciclo che scambia calore con continuità si approssima con N scambi discreti. A ogni sorgente Tᵢ associo una macchina di Carnot ausiliaria che opera tra un unico serbatoio comune T₀ e Tᵢ, fornendo al sistema esattamente Qᵢ." },
+    { passo: "Bilancio delle macchine ausiliarie", formula: "\\[ Q_{0,i} = Q_i\\,\\frac{T_0}{T_i} \\;\\Rightarrow\\; Q_{0,tot} = T_0\\sum_i \\frac{Q_i}{T_i} \\]", commento: "Ogni Carnot ausiliaria preleva dal serbatoio comune il calore Q₀ᵢ legato a Qᵢ dal rapporto delle temperature (proprietà della macchina reversibile)." },
+    { passo: "Applico Kelvin-Planck al sistema composto", formula: "\\[ \\text{ciclo totale con UNICA sorgente } T_0: \\; W_{tot} = Q_{0,tot} \\le 0 \\;\\Rightarrow\\; \\sum_i \\frac{Q_i}{T_i} \\le 0 \\]", commento: "Il sistema composto (ciclo + ausiliarie) è ciclico e scambia calore solo con T₀: se producesse lavoro positivo violerebbe Kelvin-Planck. Quindi il calore netto prelevato da T₀ è ≤ 0." },
+    { passo: "Limite continuo e caso reversibile", formula: "\\[ \\oint \\frac{\\delta Q}{T} \\le 0; \\qquad \\text{ciclo reversibile: percorrendolo al contrario} \\Rightarrow \\oint \\frac{\\delta Q}{T} = 0 \\]", commento: "Per N → ∞ la somma diventa integrale. Se il ciclo è reversibile, invertendolo tutti i δQ cambiano segno: valgono sia ≤ 0 sia ≥ 0, dunque = 0. L'annullarsi dell'integrale su ogni ciclo reversibile implica che δQ_rev/T è un differenziale esatto: nasce l'entropia."
+    }
+  ],
+  ipotesi: "Secondo principio (Kelvin-Planck); T nella formula è la temperatura della sorgente esterna (coincide con quella del sistema solo negli scambi reversibili); macchine ausiliarie di Carnot ideali; cicli chiusi.",
+  casiLimite: "Ciclo reversibile: uguaglianza. Due sole sorgenti: si riottiene il teorema di Carnot. Ciclo con un solo contatto termico (una sorgente): ∮δQ/T = Q/T₀ ≤ 0, cioè Q ≤ 0 — un ciclo monotermo può solo cedere calore (ri-ottengo Kelvin-Planck: coerenza perfetta).",
+  erroriTipici: [
+    "Usare la temperatura del sistema invece di quella della sorgente nei processi irreversibili.",
+    "Concludere che ∮δQ/T = 0 per ogni ciclo: solo per i reversibili.",
+    "Dimenticare i segni dei Qᵢ (assorbito positivo, ceduto negativo).",
+    "Non saper motivare il passaggio con le macchine ausiliarie (il cuore della dimostrazione)."
+  ],
+  intuizioneFisica: "Il rapporto Q/T pesa il calore per la 'qualità' della temperatura a cui viene scambiato: calore preso ad alta temperatura è pregiato, calore scaricato a bassa temperatura è degradato. La disuguaglianza dice che in ogni giro completo il bilancio dei calori pesati non può mai essere positivo: un ciclo non può 'guadagnare qualità'. Al pareggio esatto operano solo i cicli reversibili — ed è quel pareggio a rendere ben definita l'entropia.",
+  checklistOrale: [
+    "Enunciare la disuguaglianza precisando cos'è T",
+    "Verificarla sul caso a due sorgenti (rev e irrev)",
+    "Descrivere la costruzione con le macchine ausiliarie di Carnot",
+    "Applicare Kelvin-Planck al sistema composto",
+    "Dimostrare l'uguaglianza per i cicli reversibili (inversione)",
+    "Dedurre che δQ_rev/T è un differenziale esatto",
+    "Collegare al concetto di entropia"
+  ],
+  domandeApprofondimento: [
+    "Perché nella disuguaglianza compare la temperatura della sorgente e non quella del sistema?",
+    "Come si passa dalla disuguaglianza di Clausius a ΔS ≥ ∫δQ/T per una trasformazione aperta?",
+    "Cosa dice la disuguaglianza per un ciclo monotermo e quale enunciato ritrovi?"
+  ],
+  formuleChiave: ["\\(\\oint \\frac{\\delta Q}{T} \\le 0\\)", "\\(\\oint \\frac{\\delta Q_{rev}}{T} = 0\\)", "\\(\\frac{Q_C}{T_C} + \\frac{Q_F}{T_F} \\le 0\\)"]
+},
+{
+  id: 33, titolo: "Entropia e trasformazioni adiabatiche", area: "D", prerequisiti: [32],
+  definizioni: "L'entropia è la funzione di stato definita da \\(dS = \\delta Q_{rev}/T\\): la variazione tra due stati si calcola lungo una QUALSIASI trasformazione reversibile che li congiunge, \\(\\Delta S = \\int_A^B \\delta Q_{rev}/T\\). Per una trasformazione qualunque vale \\(\\Delta S \\ge \\int_A^B \\delta Q/T\\) (uguaglianza se reversibile). In un sistema isolato (in particolare adiabatico: δQ = 0) l'entropia non può diminuire: \\(\\Delta S \\ge 0\\) — legge dell'aumento dell'entropia.",
+  derivazione: [
+    { passo: "S è funzione di stato (dalla disuguaglianza di Clausius)", formula: "\\[ \\oint \\frac{\\delta Q_{rev}}{T} = 0 \\;\\Rightarrow\\; \\int_A^B \\frac{\\delta Q_{rev}}{T} \\;\\text{indipendente dal cammino reversibile} \\]", commento: "Due cammini reversibili da A a B formano un ciclo reversibile: l'integrale sul ciclo è nullo, quindi i due integrali coincidono. È lecito definire S(B) − S(A)." },
+    { passo: "Disuguaglianza per trasformazioni aperte", formula: "\\[ \\text{ciclo: } A \\xrightarrow{irr} B \\xrightarrow{rev} A \\;\\Rightarrow\\; \\int_A^B \\frac{\\delta Q}{T} - \\Delta S \\le 0 \\;\\Rightarrow\\; \\Delta S \\ge \\int_A^B \\frac{\\delta Q}{T} \\]", commento: "Chiudo la trasformazione irreversibile con un ritorno reversibile e applico Clausius al ciclo: l'entropia cresce almeno quanto il calore ridotto scambiato." },
+    { passo: "Legge dell'aumento dell'entropia", formula: "\\[ \\delta Q = 0 \\;\\Rightarrow\\; \\Delta S \\ge 0 \\qquad (= 0 \\iff \\text{reversibile}) \\]", commento: "In un sistema adiabatico o isolato l'entropia non diminuisce mai. Le adiabatiche reversibili sono ISOENTROPICHE (S costante); le irreversibili aumentano S. Per l'universo (sistema + ambiente): ΔS_univ ≥ 0 sempre." },
+    { passo: "Entropia del gas perfetto", formula: "\\[ dS = \\frac{dU + p\\,dV}{T} = nc_V\\frac{dT}{T} + nR\\frac{dV}{V} \\;\\Rightarrow\\; \\Delta S = nc_V\\ln\\frac{T_B}{T_A} + nR\\ln\\frac{V_B}{V_A} \\]", commento: "Dal primo principio in forma reversibile (δQ_rev = dU + pdV) e dall'equazione di stato: formula operativa per QUALUNQUE coppia di stati del gas perfetto, anche se collegati da processi irreversibili (S è di stato!)." },
+    { passo: "Coerenza: adiabatica reversibile come isoentropica", formula: "\\[ \\Delta S = 0 \\Rightarrow c_V\\ln\\frac{T_B}{T_A} = -R\\ln\\frac{V_B}{V_A} \\Rightarrow TV^{\\gamma-1} = \\text{cost} \\]", commento: "Imponendo S costante nella formula del gas perfetto si riottiene l'equazione delle adiabatiche reversibili: le due strade (primo principio / entropia) coincidono." },
+    { passo: "Esempio irreversibile: espansione libera (Joule)", formula: "\\[ Q = W = 0,\\; \\Delta T = 0 \\;\\Rightarrow\\; \\Delta S = nR\\ln\\frac{V_B}{V_A} > 0 \\]", commento: "Adiabatica MA irreversibile: pur senza scambi, l'entropia cresce. Si calcola con la formula di stato (o con un'isoterma reversibile ausiliaria tra gli stessi stati). Esempio-chiave della differenza tra 'adiabatico' e 'isoentropico'." },
+    { passo: "Interpretazione microscopica (cenno)", formula: "\\[ S = k_B\\ln\\Omega \\]", commento: "Boltzmann: l'entropia conta i microstati compatibili con lo stato macroscopico. L'aumento di S è l'evoluzione spontanea verso gli stati enormemente più probabili: il disordine vince per statistica, non per forza." }
+  ],
+  ipotesi: "Esistenza di cammini reversibili tra gli stati (stati di equilibrio); T ben definita lungo il cammino reversibile usato per il calcolo; per la legge di aumento: sistema isolato o adiabatico.",
+  casiLimite: "Trasformazione reversibile adiabatica: ΔS = 0. Isoterma reversibile: ΔS = Q/T. Scambio di calore tra due corpi a temperature diverse: ΔS_univ = Q(1/T_F − 1/T_C) > 0, la quintessenza dell'irreversibilità. Ciclo qualsiasi: ΔS_sistema = 0 (funzione di stato) ma ΔS_univ ≥ 0.",
+  erroriTipici: [
+    "Calcolare ΔS integrando δQ/T lungo la trasformazione irreversibile reale: va usato un cammino reversibile ausiliario.",
+    "Credere che adiabatico implichi ΔS = 0: vale solo se anche reversibile (controesempio: espansione libera).",
+    "Dire che l'entropia di un sistema non può mai diminuire: può, se cede calore; è quella dell'universo a non diminuire.",
+    "Dimenticare che in un ciclo ΔS del sistema è nullo per definizione di funzione di stato."
+  ],
+  intuizioneFisica: "L'entropia è il contachilometri dell'irreversibilità: registra quanta 'qualità' l'energia ha perso. Ogni processo reale lascia l'universo con più entropia di prima — non perché una forza lo imponga, ma perché gli stati disordinati sono astronomicamente più numerosi di quelli ordinati. L'adiabatica reversibile è il moto perfetto che non lascia traccia; l'espansione libera è la stessa assenza di scambi, ma con una traccia indelebile.",
+  checklistOrale: [
+    "Dimostrare che δQ_rev/T è un differenziale esatto (da Clausius)",
+    "Definire ΔS e spiegare l'uso del cammino reversibile ausiliario",
+    "Ricavare ΔS ≥ ∫δQ/T per trasformazioni aperte",
+    "Enunciare la legge dell'aumento dell'entropia (sistema isolato / universo)",
+    "Ricavare la formula ΔS del gas perfetto",
+    "Distinguere adiabatico da isoentropico con l'espansione libera",
+    "Calcolare ΔS_univ per lo scambio termico tra due corpi",
+    "Accennare a S = k_B ln Ω"
+  ],
+  domandeApprofondimento: [
+    "Due corpi identici a T₁ e T₂ messi a contatto: calcola ΔS totale e mostra che è positiva.",
+    "Perché nel piano T-S l'area sotto la curva è il calore scambiato reversibilmente?",
+    "In che senso l'entropia definisce la freccia del tempo mentre le leggi di Newton sono reversibili?"
+  ],
+  formuleChiave: ["\\(dS = \\frac{\\delta Q_{rev}}{T}\\)", "\\(\\Delta S \\ge \\int \\frac{\\delta Q}{T}\\)", "\\(\\Delta S_{isolato} \\ge 0\\)", "\\(\\Delta S = nc_V\\ln\\frac{T_B}{T_A} + nR\\ln\\frac{V_B}{V_A}\\)", "\\(S = k_B\\ln\\Omega\\)"]
+}
+];
+</script>
+
+<header class="app-header">
+  <h1>Fisica 1 — Orale Trainer</h1>
+  <span id="countdown"></span>
+</header>
+
+<main>
+  <section id="vista-oggi" class="vista attiva"></section>
+  <section id="vista-argomenti" class="vista"></section>
+  <section id="vista-piano" class="vista"></section>
+  <section id="vista-simula" class="vista"></section>
+  <section id="vista-formule" class="vista"></section>
+</main>
+
+<nav id="tabbar">
+  <button data-vista="oggi" class="attivo"><span class="icona">🏠</span>Oggi</button>
+  <button data-vista="argomenti"><span class="icona">📚</span>Argomenti</button>
+  <button data-vista="piano"><span class="icona">🗓️</span>Piano</button>
+  <button data-vista="simula"><span class="icona">🎤</span>Simula</button>
+  <button data-vista="formule"><span class="icona">∑</span>Formule</button>
+</nav>
+
+<script>
+// ============================================================
+// Costanti e stato
+// ============================================================
+const AREE = {
+  A: "Cinematica e oscillazioni",
+  B: "Lavoro ed energia",
+  C: "Sistemi di punti e corpo rigido",
+  D: "Fluidi e termodinamica"
+};
+const STATI = ["Mai visto", "Debole", "Consolidato", "Padroneggiato"];
+const CHIAVE_LS = "fisica1-orale-v1";
+
+function dataISO(d) {
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function oggiData() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+function dataEsame() {
+  const oggi = oggiData();
+  const e = new Date(oggi.getFullYear(), 6, 27); // 27 luglio
+  if (e < oggi) e.setFullYear(e.getFullYear() + 1);
+  return e;
+}
+function giorniAllEsame() {
+  return Math.round((dataEsame() - oggiData()) / 86400000);
+}
+function aggiungiGiorni(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function formattaData(d) {
+  return d.toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "long" });
+}
+
+let stato = caricaStato();
+function caricaStato() {
+  try {
+    const raw = localStorage.getItem(CHIAVE_LS);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { /* localStorage non disponibile (es. Safari privato): si lavora in memoria */ }
+  return { argomenti: {}, simulazioni: {} };
+}
+function salvaStato() {
+  try { localStorage.setItem(CHIAVE_LS, JSON.stringify(stato)); } catch (e) { }
+}
+function recArg(id) {
+  if (!stato.argomenti[id]) stato.argomenti[id] = { stato: 0, ef: 2.3, intervallo: 0, prossimoRipasso: null };
+  return stato.argomenti[id];
+}
+
+// ============================================================
+// SM-2 semplificato: qualità 0-3 per singola revisione
+// ============================================================
+function registraRevisione(id, q) {
+  const r = recArg(id);
+  r.ef = Math.min(2.8, Math.max(1.3, r.ef + 0.1 - (3 - q) * 0.16));
+  if (q <= 1) {
+    r.intervallo = 1;
+  } else if (r.intervallo === 0) {
+    r.intervallo = (q === 3) ? 2 : 1;
+  } else {
+    r.intervallo = Math.min(10, Math.round(r.intervallo * r.ef));
+  }
+  r.stato = (q <= 1) ? 1 : (q === 2) ? 2 : 3;
+  r.ultimaRevisione = dataISO(oggiData());
+  r.prossimoRipasso = dataISO(aggiungiGiorni(oggiData(), r.intervallo));
+  salvaStato();
+}
+
+// ============================================================
+// MathJax helper
+// ============================================================
+function typeset(el) {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise(el ? [el] : undefined).catch(function () { });
+  } else {
+    setTimeout(function () { typeset(el); }, 400);
+  }
+}
+
+// ============================================================
+// Piano di studio: distribuzione pesata sui giorni rimanenti
+// ============================================================
+function costruiscePiano() {
+  const oggi = oggiData();
+  const totGiorni = giorniAllEsame();          // giorni di studio prima dell'esame
+  const giorni = [];
+  for (let i = 0; i < totGiorni; i++) {
+    giorni.push({ data: aggiungiGiorni(oggi, i), nuovi: [], soloRipasso: false });
+  }
+  if (giorni.length === 0) return giorni;
+
+  // Ultimi 2 giorni: solo ripasso e simulazioni (se c'è spazio)
+  const nRipasso = Math.min(2, Math.max(0, giorni.length - 1));
+  for (let i = giorni.length - nRipasso; i < giorni.length; i++) giorni[i].soloRipasso = true;
+  const giorniNuovi = giorni.filter(function (g) { return !g.soloRipasso; });
+
+  // Argomenti ancora da studiare (mai visti), peso doppio su aree C e D
+  const daFare = CONTENUTI.filter(function (a) { return recArg(a.id).stato === 0; });
+  const peso = function (a) { return (a.area === "C" || a.area === "D") ? 2 : 1; };
+  const pesoTot = daFare.reduce(function (s, a) { return s + peso(a); }, 0);
+
+  if (giorniNuovi.length > 0 && daFare.length > 0) {
+    const quota = pesoTot / giorniNuovi.length;
+    let idx = 0, cumulo = 0;
+    daFare.forEach(function (a) {
+      if (cumulo >= quota * (idx + 1) && idx < giorniNuovi.length - 1) idx++;
+      giorniNuovi[idx].nuovi.push(a);
+      cumulo += peso(a);
+    });
+  } else if (daFare.length > 0) {
+    // restano solo giorni di ripasso: gli argomenti mai visti confluiscono lì
+    daFare.forEach(function (a) { giorni[0].nuovi.push(a); });
+  }
+
+  // Ripassi dovuti per ciascun giorno
+  giorni.forEach(function (g, i) {
+    const iso = dataISO(g.data);
+    g.ripassi = CONTENUTI.filter(function (a) {
+      const r = stato.argomenti[a.id];
+      if (!r || r.stato === 0 || !r.prossimoRipasso) return false;
+      return (i === 0) ? (r.prossimoRipasso <= iso) : (r.prossimoRipasso === iso);
+    });
+    g.simulazioneFatta = (stato.simulazioni[iso] || 0) > 0;
+  });
+  return giorni;
+}
+
+// ============================================================
+// Navigazione a tab
+// ============================================================
+const VISTE = ["oggi", "argomenti", "piano", "simula", "formule"];
+let vistaCorrente = "oggi";
+function mostraVista(nome) {
+  vistaCorrente = nome;
+  VISTE.forEach(function (v) {
+    document.getElementById("vista-" + v).classList.toggle("attiva", v === nome);
+  });
+  document.querySelectorAll("#tabbar button").forEach(function (b) {
+    b.classList.toggle("attivo", b.dataset.vista === nome);
+  });
+  if (nome === "oggi") renderOggi();
+  if (nome === "argomenti") renderListaArgomenti();
+  if (nome === "piano") renderPiano();
+  if (nome === "simula") renderSimulaIdle();
+  if (nome === "formule") renderFormule();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll("#tabbar button").forEach(function (b) {
+  b.addEventListener("click", function () { mostraVista(b.dataset.vista); });
+});
+
+function tagArea(a) { return '<span class="tag tag-' + a + '">' + a + "</span>"; }
+function pallino(id) { return '<span class="stato-pallino st-' + recArg(id).stato + '"></span>'; }
+
+// ============================================================
+// Vista OGGI (dashboard)
+// ============================================================
+function renderOggi() {
+  const el = document.getElementById("vista-oggi");
+  const gg = giorniAllEsame();
+  let html = "<h2>Dashboard</h2>";
+
+  if (gg <= 0) {
+    html += '<div class="avviso">🎓 <b>Oggi è il giorno dell\'esame!</b> In bocca al lupo. Ripassa il formulario e stai tranquillo: il lavoro l\'hai fatto.</div>';
+  } else {
+    html += '<div class="avviso">📅 Mancano <b>' + gg + " giorn" + (gg === 1 ? "o" : "i") + "</b> all'esame del 27 luglio.</div>";
+  }
+
+  // Copertura per area
+  html += '<div class="card"><h3>Copertura per area</h3>';
+  Object.keys(AREE).forEach(function (area) {
+    const args = CONTENUTI.filter(function (a) { return a.area === area; });
+    const punti = args.reduce(function (s, a) { return s + recArg(a.id).stato; }, 0);
+    const perc = Math.round(100 * punti / (3 * args.length));
+    const visti = args.filter(function (a) { return recArg(a.id).stato > 0; }).length;
+    html += '<div class="riga-dash"><span>' + tagArea(area) + AREE[area] + '</span><span class="mini">' + visti + "/" + args.length + " visti · " + perc + "%</span></div>";
+    html += '<div class="barra-area"><div style="width:' + perc + '%"></div></div>';
+  });
+  html += "</div>";
+
+  // Da fare oggi
+  const piano = costruiscePiano();
+  const oggiP = piano[0];
+  html += '<div class="card"><h3>Da fare oggi</h3>';
+  if (!oggiP) {
+    html += '<p class="vuoto">Nessun piano: l\'esame è oggi o è passato.</p>';
+  } else {
+    if (oggiP.nuovi.length) {
+      html += '<div class="etichetta-sez">Nuovi argomenti (' + oggiP.nuovi.length + ")</div>";
+      oggiP.nuovi.forEach(function (a) {
+        html += '<button class="chip-arg" onclick="apriScheda(' + a.id + ')">' + pallino(a.id) + tagArea(a.area) + a.titolo + "</button>";
+      });
+    }
+    if (oggiP.ripassi.length) {
+      html += '<div class="etichetta-sez">Ripassi dovuti (' + oggiP.ripassi.length + ")</div>";
+      oggiP.ripassi.forEach(function (a) {
+        html += '<button class="chip-arg" onclick="apriScheda(' + a.id + ')">' + pallino(a.id) + tagArea(a.area) + a.titolo + "</button>";
+      });
+    }
+    if (!oggiP.nuovi.length && !oggiP.ripassi.length) {
+      html += '<p class="vuoto">Nessun nuovo argomento né ripasso in scadenza. 👏</p>';
+    }
+    html += '<div class="etichetta-sez">Simulazione obbligatoria</div>';
+    html += oggiP.simulazioneFatta
+      ? '<p>✅ Simulazione di oggi completata (' + (stato.simulazioni[dataISO(oggiData())] || 0) + ")</p>"
+      : '<button class="btn-primario btn-largo" onclick="mostraVista(\'simula\')">🎤 Fai la simulazione di oggi</button>';
+  }
+  html += "</div>";
+  el.innerHTML = html;
+}
+
+// ============================================================
+// Vista ARGOMENTI (lista + scheda)
+// ============================================================
+function renderListaArgomenti() {
+  const el = document.getElementById("vista-argomenti");
+  let html = "<h2>I 33 argomenti</h2>";
+  Object.keys(AREE).forEach(function (area) {
+    html += "<h3>" + tagArea(area) + AREE[area] + '</h3><ul class="lista-argomenti">';
+    CONTENUTI.filter(function (a) { return a.area === area; }).forEach(function (a) {
+      html += '<li><button class="riga-argomento" onclick="apriScheda(' + a.id + ')">' +
+        pallino(a.id) + '<span class="titolo-arg">' + a.id + ". " + a.titolo + '</span><span class="mini">' +
+        STATI[recArg(a.id).stato] + '</span><span class="freccia">›</span></button></li>';
+    });
+    html += "</ul>";
+  });
+  el.innerHTML = html;
+}
+
+function sezione(titolo, corpoHtml, aperta) {
+  return '<details class="sezione"' + (aperta ? " open" : "") + "><summary>" + titolo + '</summary><div class="corpo">' + corpoHtml + "</div></details>";
+}
+function listaPunti(arr) {
+  return '<ul class="puntata">' + arr.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>";
+}
+
+function apriScheda(id, tornaA) {
+  const a = CONTENUTI.find(function (x) { return x.id === id; });
+  if (!a) return;
+  mostraVista("argomenti");
+  const el = document.getElementById("vista-argomenti");
+  const r = recArg(id);
+  const prereq = a.prerequisiti.map(function (pid) {
+    const p = CONTENUTI.find(function (x) { return x.id === pid; });
+    return p ? '<button class="tag" onclick="apriScheda(' + pid + ')">' + p.titolo + "</button>" : "";
+  }).join(" ");
+
+  let deriv = a.derivazione.map(function (p, i) {
+    return '<div class="passo-derivazione"><div class="p-passo">' + (i + 1) + ". " + p.passo +
+      '</div><div class="p-formula">' + p.formula + '</div><div class="p-commento">' + p.commento + "</div></div>";
+  }).join("");
+
+  let html = '<button class="no-print" onclick="renderListaArgomenti()">‹ Tutti gli argomenti</button>' +
+    "<h2 style='margin-top:.6em'>" + a.id + ". " + a.titolo + "</h2>" +
+    "<p>" + tagArea(a.area) + '<span class="mini">' + AREE[a.area] + " · Stato: <b>" + STATI[r.stato] + "</b>" +
+    (r.prossimoRipasso ? " · prossimo ripasso: " + r.prossimoRipasso : "") + "</span></p>" +
+    (prereq ? '<p class="mini">Prerequisiti: ' + prereq + "</p>" : "") +
+    sezione("📖 Definizioni", "<p>" + a.definizioni + "</p>", true) +
+    sezione("🧮 Derivazione (nascosta: prova prima a voce!)", deriv, false) +
+    sezione("📌 Ipotesi di validità", "<p>" + a.ipotesi + "</p>", false) +
+    sezione("🔭 Casi limite", "<p>" + a.casiLimite + "</p>", false) +
+    sezione("⚠️ Errori tipici", listaPunti(a.erroriTipici), false) +
+    sezione("💡 Intuizione fisica", "<p>" + a.intuizioneFisica + "</p>", false) +
+    sezione("✅ Checklist per l'orale", listaPunti(a.checklistOrale), false) +
+    sezione("❓ Domande di approfondimento", listaPunti(a.domandeApprofondimento), false) +
+    sezione("∑ Formule chiave", a.formuleChiave.map(function (f) { return '<div class="formula-riga">' + f + "</div>"; }).join(""), false) +
+    '<div class="card no-print"><h3>Autovalutazione rapida</h3><p class="mini">Dopo aver ripassato, come lo sapevi? Aggiorna lo stato e programma il ripasso.</p>' +
+    '<div class="griglia-stati">' +
+    [0, 1, 2, 3].map(function (q) {
+      return "<button onclick=\"autovaluta(" + id + "," + q + ')">' + ["😵 Zero", "😕 Poco", "🙂 Bene", "😎 Perfetto"][q] + "</button>";
+    }).join("") + "</div></div>";
+
+  el.innerHTML = html;
+  window.scrollTo(0, 0);
+  typeset(el);
+}
+function autovaluta(id, q) {
+  registraRevisione(id, q);
+  apriScheda(id);
+}
+
+// ============================================================
+// Vista PIANO
+// ============================================================
+function renderPiano() {
+  const el = document.getElementById("vista-piano");
+  const piano = costruiscePiano();
+  let html = "<h2>Piano fino all'esame</h2>";
+  if (!piano.length) {
+    html += '<div class="avviso">L\'esame è oggi (o è passato): niente più piano, solo ripasso libero del formulario. 🍀</div>';
+    el.innerHTML = html;
+    return;
+  }
+  html += '<p class="mini">Gli argomenti non completati vengono ridistribuiti automaticamente sui giorni successivi. Peso doppio sulle aree C e D. Ultimi ' +
+    Math.min(2, piano.length - 1) + ' giorni: solo ripasso e simulazioni.</p>';
+  piano.forEach(function (g, i) {
+    html += '<div class="card giorno-piano' + (i === 0 ? " oggi" : "") + '"><div class="intest"><span class="data-g">' +
+      (i === 0 ? "Oggi — " : "") + formattaData(g.data) + "</span>" +
+      (g.soloRipasso ? '<span class="tag">solo ripasso</span>' : "") + "</div>";
+    if (g.nuovi.length) {
+      html += '<div class="etichetta-sez">Nuovi argomenti</div>';
+      g.nuovi.forEach(function (a) {
+        html += '<button class="chip-arg" onclick="apriScheda(' + a.id + ')">' + pallino(a.id) + tagArea(a.area) + a.titolo + "</button>";
+      });
+    }
+    if (g.ripassi && g.ripassi.length) {
+      html += '<div class="etichetta-sez">Ripassi programmati</div>';
+      g.ripassi.forEach(function (a) {
+        html += '<button class="chip-arg" onclick="apriScheda(' + a.id + ')">' + pallino(a.id) + tagArea(a.area) + a.titolo + "</button>";
+      });
+    }
+    if (g.soloRipasso && !(g.ripassi && g.ripassi.length) && !g.nuovi.length) {
+      html += '<p class="vuoto">Ripasso libero degli argomenti più deboli + simulazioni.</p>';
+    }
+    html += '<div class="etichetta-sez">Simulazione</div><p>' +
+      (i === 0 ? (g.simulazioneFatta ? "✅ fatta oggi" : "🎤 1 simulazione obbligatoria — vai al tab Simula") : "🎤 1 simulazione obbligatoria") + "</p></div>";
+  });
+  el.innerHTML = html;
+}
+
+// ============================================================
+// Vista SIMULA
+// ============================================================
+let sim = null; // {argomento, inizio, timerId, voti[]}
+
+function scegliArgomentoPesato() {
+  const oggiIso = dataISO(oggiData());
+  const pesi = CONTENUTI.map(function (a) {
+    const r = recArg(a.id);
+    let w = 4 - r.stato;                       // mai visto 4 ... padroneggiato 1
+    if (r.prossimoRipasso && r.prossimoRipasso <= oggiIso && r.stato > 0) w += 2; // ripasso scaduto
+    if (a.area === "C" || a.area === "D") w += 1; // aree più pesate all'esame
+    return w;
+  });
+  const tot = pesi.reduce(function (s, w) { return s + w; }, 0);
+  let x = Math.random() * tot;
+  for (let i = 0; i < CONTENUTI.length; i++) {
+    x -= pesi[i];
+    if (x <= 0) return CONTENUTI[i];
+  }
+  return CONTENUTI[CONTENUTI.length - 1];
+}
+
+function fermaTimer() { if (sim && sim.timerId) { clearInterval(sim.timerId); sim.timerId = null; } }
+
+function renderSimulaIdle() {
+  fermaTimer();
+  sim = null;
+  const el = document.getElementById("vista-simula");
+  const oggiIso = dataISO(oggiData());
+  const fatte = stato.simulazioni[oggiIso] || 0;
+  el.innerHTML = "<h2>Simulazione orale</h2>" +
+    '<div class="card"><p>Ti verrà estratto <b>un argomento a caso</b> (con probabilità maggiore per quelli deboli o in scadenza). Esponi <b>a voce alta</b>, come davanti al professore: definizioni → ipotesi → derivazione → casi limite.</p>' +
+    '<p class="mini">Simulazioni fatte oggi: ' + fatte + "</p>" +
+    '<button class="btn-primario btn-largo" onclick="avviaSimulazione()">🎲 Estrai argomento e parti</button></div>';
+}
+
+function avviaSimulazione() {
+  const a = scegliArgomentoPesato();
+  sim = { argomento: a, inizio: Date.now(), timerId: null, voti: {} };
+  const el = document.getElementById("vista-simula");
+  el.innerHTML = "<h2>Simulazione in corso</h2>" +
+    '<div class="card"><p class="mini">Argomento estratto:</p><h3 style="margin-top:.2em">' + tagArea(a.area) + a.titolo + "</h3>" +
+    '<div id="timer-display">00:00</div>' +
+    "<p>🎤 <b>Esponi a voce alta</b>, senza guardare la scheda: definizioni, ipotesi, derivazione completa, casi limite, errori da evitare.</p>" +
+    '<button class="btn-primario btn-largo" onclick="mostraChecklistSim()">Ho finito di esporre → checklist</button>' +
+    '<button class="btn-largo" onclick="renderSimulaIdle()">Annulla</button></div>';
+  sim.timerId = setInterval(function () {
+    const s = Math.floor((Date.now() - sim.inizio) / 1000);
+    const disp = document.getElementById("timer-display");
+    if (disp) disp.textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  }, 250);
+}
+
+function mostraChecklistSim() {
+  fermaTimer();
+  const a = sim.argomento;
+  const durata = Math.floor((Date.now() - sim.inizio) / 1000);
+  const el = document.getElementById("vista-simula");
+  let html = "<h2>Autovalutazione</h2>" +
+    '<div class="card"><p class="mini">' + tagArea(a.area) + a.titolo + " · esposizione: " +
+    Math.floor(durata / 60) + " min " + (durata % 60) + ' s</p>' +
+    "<p>Per ogni punto della checklist: <b>0</b> = non l'ho detto · <b>1</b> = accennato · <b>2</b> = detto bene · <b>3</b> = perfetto, con dettagli.</p></div><div class='card'>";
+  a.checklistOrale.forEach(function (punto, i) {
+    html += '<div class="punto-checklist"><div>' + (i + 1) + ". " + punto + '</div><div class="voti-03" id="voto-' + i + '">' +
+      [0, 1, 2, 3].map(function (v) {
+        return '<button onclick="votaPunto(' + i + "," + v + ')">' + v + "</button>";
+      }).join("") + "</div></div>";
+  });
+  html += '</div><button class="btn-primario btn-largo" onclick="chiudiChecklistSim()">Conferma e vedi le domande</button>';
+  el.innerHTML = html;
+  window.scrollTo(0, 0);
+  typeset(el);
+}
+
+function votaPunto(i, v) {
+  sim.voti[i] = v;
+  const box = document.getElementById("voto-" + i);
+  Array.prototype.forEach.call(box.children, function (b, j) {
+    b.classList.toggle("sel", j === v);
+  });
+}
+
+function chiudiChecklistSim() {
+  const a = sim.argomento;
+  const n = a.checklistOrale.length;
+  let somma = 0;
+  for (let i = 0; i < n; i++) somma += (sim.voti[i] || 0);
+  const media = somma / n;                       // 0..3
+  const q = Math.round(media);
+  registraRevisione(a.id, Math.min(3, Math.max(0, q)));
+  const oggiIso = dataISO(oggiData());
+  stato.simulazioni[oggiIso] = (stato.simulazioni[oggiIso] || 0) + 1;
+  salvaStato();
+
+  const el = document.getElementById("vista-simula");
+  let html = "<h2>Domande di approfondimento</h2>" +
+    '<div class="avviso">Punteggio: <b>' + media.toFixed(1) + " / 3</b> → stato: <b>" + STATI[recArg(a.id).stato] +
+    "</b> · prossimo ripasso: " + recArg(a.id).prossimoRipasso + "</div>" +
+    '<div class="card"><p>Ora rispondi a voce anche a queste, come farebbe il professore per andare a fondo:</p>' +
+    listaPunti(a.domandeApprofondimento) + "</div>" +
+    '<button class="btn-primario btn-largo" onclick="avviaSimulazione()">🎲 Un\'altra simulazione</button>' +
+    '<button class="btn-largo" onclick="apriScheda(' + a.id + ')">📖 Rivedi la scheda completa</button>' +
+    '<button class="btn-largo" onclick="renderSimulaIdle()">Fine</button>';
+  el.innerHTML = html;
+  window.scrollTo(0, 0);
+  typeset(el);
+}
+
+// ============================================================
+// Vista FORMULE (formulario stampabile)
+// ============================================================
+function renderFormule() {
+  const el = document.getElementById("vista-formule");
+  let html = '<h2>Formulario</h2><button class="btn-largo no-print" onclick="window.print()">🖨️ Stampa il formulario</button>';
+  Object.keys(AREE).forEach(function (area) {
+    html += '<div class="card"><h3>' + tagArea(area) + AREE[area] + "</h3>";
+    CONTENUTI.filter(function (a) { return a.area === area; }).forEach(function (a) {
+      html += '<div class="formula-riga"><span class="mini">' + a.id + ". " + a.titolo + "</span>" +
+        a.formuleChiave.join(" &nbsp;·&nbsp; ") + "</div>";
+    });
+    html += "</div>";
+  });
+  el.innerHTML = html;
+  typeset(el);
+}
+
+// ============================================================
+// Avvio
+// ============================================================
+function aggiornaCountdown() {
+  const gg = giorniAllEsame();
+  document.getElementById("countdown").textContent =
+    gg > 0 ? "⏳ " + gg + " g all'esame" : (gg === 0 ? "🎓 Esame oggi!" : "");
+}
+aggiornaCountdown();
+renderOggi();
+</script>
+</body>
+</html>
