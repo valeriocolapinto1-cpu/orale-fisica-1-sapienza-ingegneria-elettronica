@@ -199,10 +199,90 @@ nav#navbar button.attivo .icona{transform:translateY(-1px) scale(1.08);}
 .sim-riga output{flex:0 0 74px; text-align:right; font-variant-numeric:tabular-nums; font-size:.88rem; font-weight:700; color:var(--accent-chiaro);}
 .sim-legenda{font-size:.84rem; color:var(--fg2); margin-top:8px;}
 
-/* ---------- Pagina "in parole semplici" ---------- */
-.semplice-blocco{background:var(--sup1); border-radius:var(--r); padding:16px 18px; margin-bottom:12px;}
-.semplice-blocco h4{margin:0 0 6px; font-size:1rem; font-weight:700;}
-.semplice-blocco p{margin:0; color:var(--fg); font-size:.95rem;}
+/* ---------- Spiegazione in evidenza (intuizione) ---------- */
+.spiegazione-hero{
+  background:linear-gradient(135deg, var(--accent-soft), rgba(52,217,123,.06));
+  border:1px solid rgba(91,140,255,.22); border-radius:var(--r);
+  padding:16px 18px; margin:12px 0; position:relative;
+}
+.spiegazione-hero h4{margin:0 0 6px; font-size:.82rem; text-transform:uppercase; letter-spacing:.07em; color:var(--accent-chiaro); font-weight:800;}
+.spiegazione-hero p{margin:0; font-size:1rem; line-height:1.6;}
+
+/* ---------- Controllo segmentato (facile/difficile ecc.) ---------- */
+.segmentato{display:inline-flex; background:var(--sup2); border-radius:12px; padding:4px; gap:4px; flex-wrap:wrap;}
+.segmentato button{background:none; min-height:38px; padding:8px 14px; border-radius:9px; font-size:.86rem; color:var(--fg2); font-weight:700;}
+.segmentato button.sel{background:var(--accent); color:#0b0e14;}
+.segmentato.pieno{display:flex; width:100%;}
+.segmentato.pieno button{flex:1;}
+
+/* ---------- Checklist durante la simulazione ---------- */
+.checklist-sim{list-style:none; margin:8px 0 0; padding:0;}
+.checklist-sim li{
+  display:flex; align-items:flex-start; gap:10px; padding:11px 12px; margin-bottom:8px;
+  background:var(--sup2); border-radius:11px; font-size:.9rem; cursor:pointer;
+  transition:background var(--dur), opacity var(--dur);
+}
+.checklist-sim li:hover{background:var(--sup3);}
+.checklist-sim li .box{
+  flex:none; width:22px; height:22px; border-radius:6px; border:2px solid var(--fg3);
+  display:flex; align-items:center; justify-content:center; font-size:.8rem; color:#0b0e14;
+  transition:background var(--dur), border-color var(--dur); margin-top:1px;
+}
+.checklist-sim li.fatto{opacity:.62;}
+.checklist-sim li.fatto .box{background:var(--st3); border-color:var(--st3);}
+.checklist-sim li.fatto .testo{text-decoration:line-through; color:var(--fg2);}
+
+/* ---------- Vista QUIZ ---------- */
+.quiz-scelte{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px;}
+.chip-scelta{
+  background:var(--sup2); color:var(--fg2); border-radius:999px; padding:9px 16px;
+  font-size:.86rem; font-weight:700; min-height:42px; transition:background var(--dur), color var(--dur);
+}
+.chip-scelta.sel{background:var(--accent-soft); color:var(--accent-chiaro); box-shadow:inset 0 0 0 1.5px var(--accent);}
+.quiz-barra{height:8px; border-radius:999px; background:var(--sup3); overflow:hidden; margin:4px 0 2px;}
+.quiz-barra span{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-chiaro)); width:0; transition:width .4s ease;}
+.quiz-meta{display:flex; justify-content:space-between; align-items:center; font-size:.82rem; color:var(--fg2); margin-bottom:10px;}
+.quiz-tipo-tag{font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--fg3); font-weight:800;}
+.quiz-domanda{font-size:1.12rem; font-weight:700; line-height:1.45; margin:6px 0 4px;}
+.quiz-opzioni{display:flex; flex-direction:column; gap:10px; margin-top:14px;}
+.quiz-opt{
+  text-align:left; background:var(--sup2); border:1.5px solid transparent; border-radius:12px;
+  padding:14px 16px; font-weight:500; font-size:.95rem; min-height:52px; line-height:1.4;
+  display:flex; align-items:center; gap:12px; transition:background var(--dur), border-color var(--dur), transform .1s;
+}
+.quiz-opt .lettera{
+  flex:none; width:26px; height:26px; border-radius:8px; background:var(--sup3); color:var(--fg2);
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.82rem;
+}
+.quiz-opt:hover:not(:disabled){background:var(--sup3);}
+.quiz-opt.giusta{border-color:var(--st3); background:var(--st3-soft);}
+.quiz-opt.giusta .lettera{background:var(--st3); color:#0b0e14;}
+.quiz-opt.sbagliata{border-color:var(--st1); background:var(--st1-soft);}
+.quiz-opt.sbagliata .lettera{background:var(--st1); color:#0b0e14;}
+.quiz-opt.attenua{opacity:.5;}
+.quiz-esito{margin-top:14px; padding:12px 16px; border-radius:12px; font-size:.92rem; font-weight:600; animation:appare .2s ease;}
+.quiz-esito.ok{background:var(--st3-soft); color:#8ef0bb;}
+.quiz-esito.no{background:var(--st1-soft); color:#ff9d9d;}
+.quiz-flash-risposta{background:var(--sup2); border-radius:12px; padding:14px 16px; margin-top:12px; animation:appare .2s ease; line-height:1.55;}
+.quiz-flash-risposta .mini{display:block; margin-bottom:4px;}
+.quiz-punteggio{font-size:3rem; font-weight:800; text-align:center; color:var(--accent-chiaro); font-variant-numeric:tabular-nums; margin:6px 0;}
+.quiz-badge{display:inline-block; font-size:1rem; font-weight:800; padding:6px 16px; border-radius:999px; margin:2px 0 8px;}
+
+/* ---------- Micro-animazioni (sito più dinamico) ---------- */
+@keyframes entra{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+.stagger > *{opacity:0; animation:entra .42s ease forwards;}
+.stagger > *:nth-child(1){animation-delay:.02s;} .stagger > *:nth-child(2){animation-delay:.06s;}
+.stagger > *:nth-child(3){animation-delay:.10s;} .stagger > *:nth-child(4){animation-delay:.14s;}
+.stagger > *:nth-child(5){animation-delay:.18s;} .stagger > *:nth-child(6){animation-delay:.22s;}
+.stagger > *:nth-child(7){animation-delay:.26s;} .stagger > *:nth-child(8){animation-delay:.30s;}
+.stagger > *:nth-child(9){animation-delay:.34s;} .stagger > *:nth-child(n+10){animation-delay:.38s;}
+@media (prefers-reduced-motion: reduce){
+  .stagger > *{animation:none; opacity:1;}
+  .vista.attiva{animation:none;}
+}
+.barra-totale{height:12px; border-radius:999px; background:var(--sup3); overflow:hidden; margin-top:4px;}
+.barra-totale span{display:block; height:100%; border-radius:999px; width:0;
+  background:linear-gradient(90deg,#7db5ff,#5fe0a0,#ffc266,#d3a8ff); transition:width .8s cubic-bezier(.2,.7,.2,1);}
 
 mjx-container{overflow-x:auto; overflow-y:hidden; max-width:100%;}
 mjx-container[display="true"]{margin:.4em 0 !important;}
@@ -240,7 +320,7 @@ mjx-container[display="true"]{margin:.4em 0 !important;}
   header.app-header, nav#navbar, .no-print, #scheda-overlay{display:none !important;}
   .vista{display:none !important;}
   #vista-formulario{display:block !important;}
-  .card, .semplice-blocco{background:#fff; border:1px solid #bbb; break-inside:avoid;}
+  .card{background:#fff; border:1px solid #bbb; break-inside:avoid;}
   .formula-riga + .formula-riga{border-color:#ddd;}
   .mini{color:#555;}
   .tag{color:#333; background:#eee;}
@@ -1445,8 +1525,8 @@ const CONTENUTI = [
   <section id="vista-oggi" class="vista attiva"></section>
   <section id="vista-argomenti" class="vista"></section>
   <section id="vista-simula" class="vista"></section>
+  <section id="vista-quiz" class="vista"></section>
   <section id="vista-formulario" class="vista"></section>
-  <section id="vista-semplice" class="vista"></section>
 </main>
 
 <nav id="navbar">
@@ -1454,53 +1534,14 @@ const CONTENUTI = [
   <button data-vista="oggi" class="attivo"><span class="icona">🏠</span>Oggi</button>
   <button data-vista="argomenti"><span class="icona">📚</span>Argomenti</button>
   <button data-vista="simula"><span class="icona">🎤</span>Simula</button>
+  <button data-vista="quiz"><span class="icona">📝</span>Quiz</button>
   <button data-vista="formulario"><span class="icona">∑</span>Formulario</button>
-  <button data-vista="semplice"><span class="icona">💡</span>Semplice</button>
   <div id="countdown-nav"></div>
 </nav>
 
 <div id="scheda-overlay"><div class="contenuto" id="scheda-contenuto"></div></div>
 
 <script>
-// ============================================================
-// Spiegazioni in parole semplici (una per argomento)
-// ============================================================
-const SPIEGAZIONI_SEMPLICI = {
-  1: "Quando giri in tondo, anche a velocità costante, stai accelerando: cambiare direzione È accelerare. Questa accelerazione punta verso il centro della curva (centripeta). Se in più acceleri o freni lungo la curva, c'è anche una componente lungo il moto (tangenziale). Le due si sommano come i lati di un rettangolo.",
-  2: "Il moto armonico è il dondolio perfetto: avanti e indietro seguendo un'onda sinusoidale. L'ampiezza dice quanto lontano arrivi, il periodo quanto tempo ci metti a fare un giro completo, la fase da dove parti. La cosa sorprendente: il tempo di un'oscillazione non dipende da quanto è ampia.",
-  3: "Attacca un peso a una molla e tiralo: la molla lo richiama, lui la supera per inerzia, la molla lo richiama di nuovo... ecco l'oscillazione. Molla più dura = oscillazione più veloce; massa più grande = più lenta. L'energia rimbalza continuamente tra movimento (al centro) ed elastico teso (agli estremi).",
-  4: "Un peso appeso a un filo che dondola. Se le oscillazioni sono piccole, il tempo di ogni dondolio dipende solo dalla lunghezza del filo e dalla gravità: non dal peso, non dall'ampiezza. Per questo i pendoli facevano funzionare gli orologi. Con oscillazioni grandi, però, il dondolio rallenta.",
-  5: "Dentro un treno che frena ti senti spinto in avanti, ma nessuno ti sta spingendo: è il tuo corpo che vorrebbe continuare dritto. Nei sistemi che accelerano compaiono queste 'forze fantasma' (apparenti): non nascono da nessuna interazione, sono solo l'effetto di guardare il mondo da un punto di vista che accelera.",
-  6: "Un'oscillazione con attrito si spegne: ogni dondolio è un po' più piccolo del precedente, come un'altalena abbandonata. Se l'attrito è enorme, il sistema non oscilla nemmeno: torna piano piano all'equilibrio, come una porta con l'ammortizzatore. Il confine tra i due comportamenti si chiama smorzamento critico.",
-  7: "Spingi un'altalena al momento giusto e con spintarelle minime arrivi altissimo: è la risonanza. Ogni sistema ha una frequenza 'preferita': se lo solleciti proprio lì, assorbe energia al massimo e l'oscillazione si amplifica. Per questo un ponte può entrare in crisi con il passo cadenzato dei soldati.",
-  8: "Il lavoro misura quanta energia una forza dà (o toglie) a un corpo spingendolo lungo il suo cammino. Spingi nella direzione del moto: il corpo va più veloce. Spingi contro: rallenta. Spingi di lato (perpendicolare): non cambi la sua velocità di un grammo. Il teorema dice proprio questo: lavoro totale = variazione dell'energia di movimento.",
-  9: "Alcune forze sono 'banche perfette': l'energia spesa per sollevare un peso te la restituiscono tutta quando ricade. Per queste forze si può tenere un libretto di risparmio, l'energia potenziale. La somma di energia di movimento e di posizione resta costante: è la conservazione dell'energia meccanica.",
-  10: "L'attrito è la tassa dell'energia: a ogni strofinamento un po' di energia meccanica se ne va in calore e non torna più indietro. Il bilancio resta esatto: quello che l'energia meccanica perde, lo ritrovi come riscaldamento. Per questo una palla che rimbalza si ferma, e i freni di un'auto scottano.",
-  11: "Per aprire una porta spingi sulla maniglia, non vicino ai cardini: conta non solo la forza ma anche il braccio con cui la applichi. Questo 'potere di far ruotare' è il momento della forza. Il momento angolare è invece la 'quantità di rotazione' che un corpo possiede — e per cambiarla serve un momento, come per cambiare velocità serve una forza.",
-  12: "In ogni sistema c'è un punto speciale, il centro di massa, che si muove come se tutta la massa fosse concentrata lì. Le forze interne, per quanto violente, non possono spostarlo: un fuoco d'artificio esplode in mille pezzi, ma il centro dei frammenti continua esattamente sulla traiettoria che il razzo avrebbe seguito.",
-  13: "Far girare un corpo costa fatica in base a dove sta la sua massa: la massa lontana dall'asse pesa molto di più di quella vicina. È il momento d'inerzia. Per questo la pattinatrice che chiude le braccia gira più veloce, e una sfera piena batte in discesa un anello della stessa massa: ha la massa più 'raccolta'.",
-  14: "È la versione rotazionale della legge di Newton: come le forze cambiano la velocità, i momenti delle forze cambiano la rotazione. E come le forze interne non spostano il centro di massa, i momenti interni non fanno ruotare il sistema. Se da fuori nessuno 'torce', la quantità di rotazione totale resta quella: si conserva.",
-  15: "Il moto di qualunque sistema si può sempre spezzare in due pezzi puliti: il moto del centro di massa (il sistema 'come un tutto') e il moto attorno al centro di massa (la rotazione interna). Energia e momento angolare si sommano semplicemente: la Terra ha l'energia del viaggio attorno al Sole più quella del girare su sé stessa.",
-  16: "Un corpo rigido è un oggetto che non si deforma: per descriverlo bastano la posizione del suo centro di massa e come è orientato. Ogni suo movimento è una combinazione di due ingredienti: una traslazione (tutto il corpo si sposta insieme) e una rotazione attorno al centro di massa.",
-  17: "Un corpo sta fermo se le forze non lo spingono da nessuna parte E non lo fanno girare attorno a nessun perno: servono entrambe le condizioni. Una scala appoggiata al muro sta su finché l'attrito a terra regge. E un oggetto si ribalta quando la verticale dal suo baricentro esce dalla base d'appoggio.",
-  18: "L'energia di movimento di un corpo rigido ha due serbatoi: quello del viaggio (il centro di massa che si sposta) e quello della giravolta (la rotazione). Una palla che rotola li usa entrambi. Per l'energia di posizione invece conta una cosa sola: a che altezza sta il baricentro.",
-  19: "Qualsiasi oggetto appeso a un perno — una sbarra, una racchetta, un quadro — dondola come un pendolo se lo sposti. Oscilla come farebbe un pendolo semplice di una certa lunghezza 'equivalente', che dipende da come la massa è distribuita attorno al perno. Sospendilo nel baricentro e non oscilla più.",
-  20: "Una ruota che rotola senza slittare ha una proprietà curiosa: il punto che tocca terra è ogni istante fermo. Per questo l'attrito non consuma energia nel rotolamento pulito: fa solo da regista, obbligando avanzamento e rotazione ad andare a braccetto. In discesa vince chi ha la massa più raccolta verso il centro: sfera, poi disco, poi anello.",
-  21: "In ogni scontro la quantità di moto totale si conserva: quello che uno perde l'altro lo guadagna. L'energia invece è negoziabile: negli urti elastici si conserva tutta (palline da biliardo), in quelli anelastici parte finisce in deformazioni e calore. Se i corpi restano appiccicati, la perdita è la massima possibile.",
-  22: "Come misuri la velocità di un proiettile senza radar? Sparalo dentro un blocco appeso e guarda quanto sale. Il trucco è usare due leggi diverse in due momenti diversi: nell'impatto (violento e rapidissimo) si conserva la quantità di moto; nella risalita (dolce e pulita) si conserva l'energia. Da lì si risale alla velocità iniziale.",
-  23: "Sott'acqua le orecchie fanno male perché ogni strato di liquido sorregge tutto quello che ha sopra: più scendi, più peso c'è da reggere, più la pressione cresce — circa un'atmosfera in più ogni dieci metri. E la pressione non 'spinge in giù': in un punto preme uguale in tutte le direzioni.",
-  24: "La pressione di un gas è un bombardamento: miliardi di molecole al secondo picchiano contro le pareti, e la media di tutti quei colpettini è una spinta costante. La temperatura, vista al microscopio, è semplicemente quanto velocemente si agitano le molecole: gas caldo = molecole indiavolate.",
-  25: "Comprimi un gas e la pressione sale; scaldalo e si espande (o preme di più). Le tre leggi sperimentali dei gas si fondono in un'unica formula, pV = nRT, valida per tutti i gas rarefatti: a basse densità le molecole non si 'vedono' tra loro, quindi conta solo quante sono, non di che gas si tratta.",
-  26: "L'energia di un gas perfetto è tutta nell'agitazione delle sue molecole, e la natura la distribuisce democraticamente: ogni 'modo di muoversi' (traslare, ruotare) riceve in media la stessa quota. Per questo l'energia interna dipende solo dalla temperatura: scaldare significa proprio aumentare l'agitazione.",
-  27: "Quanto calore serve per scaldare un gas di un grado? Dipende da come lo scaldi: a volume bloccato tutto il calore va in agitazione molecolare; a pressione costante il gas si espande e parte del calore paga quel lavoro — per questo serve sempre un po' di più. Nei solidi, curiosamente, quasi tutti i materiali chiedono la stessa quantità per mole.",
-  28: "È la contabilità esatta dell'energia: quella interna di un sistema cambia solo per il calore che entra e il lavoro che esce. Niente si crea, niente si perde. L'energia interna è come il saldo del conto: non ricorda da quale sportello (calore o lavoro) i soldi sono passati.",
-  29: "L'energia si conserva sempre, ma ha una direzione preferita di degrado. Il lavoro si trasforma in calore facilmente e completamente (strofina le mani); il contrario mai del tutto: nessuna macchina può succhiare calore e restituirlo tutto come lavoro. E il calore, da solo, va sempre dal caldo al freddo, mai al contrario.",
-  30: "È la macchina termica 'perfetta' sulla carta: prende calore da una sorgente calda, ne trasforma in lavoro il massimo possibile e scarica il resto nella fredda, senza sprechi. Anche così, un po' di calore va SEMPRE buttato: il rendimento massimo dipende solo dalle due temperature, ed è sempre sotto il 100%.",
-  31: "Nessuna macchina, per quanto ingegnosa, può battere quella di Carnot: il rendimento massimo tra due temperature è un tetto fisico, non tecnologico. La prova è elegante: se esistesse una macchina migliore, accoppiandola a una Carnot al contrario otterresti calore che sale dal freddo al caldo gratis — e questo la natura non lo permette.",
-  32: "Il calore non vale sempre uguale: preso ad alta temperatura è 'pregiato', scaricato a bassa è 'degradato'. La disuguaglianza di Clausius pesa ogni scambio di calore per la temperatura a cui avviene e dice: in un giro completo, il bilancio non può mai essere in attivo. Solo i processi perfetti (reversibili) chiudono in pareggio.",
-  33: "L'entropia è il contachilometri del disordine: misura quanto un processo è irreversibile. Un bicchiere che si rompe, il caffè che si raffredda, un profumo che si spande: l'entropia dell'universo cresce sempre, perché gli stati disordinati sono infinitamente più probabili di quelli ordinati. È il motivo per cui il tempo ha una direzione."
-};
-
 // ============================================================
 // Costanti e stato
 // ============================================================
@@ -1617,7 +1658,7 @@ function costruiscePiano() {
 // ============================================================
 // Navigazione
 // ============================================================
-const VISTE = ["oggi", "argomenti", "simula", "formulario", "semplice"];
+const VISTE = ["oggi", "argomenti", "simula", "quiz", "formulario"];
 function mostraVista(nome) {
   chiudiScheda();
   VISTE.forEach(function (v) {
@@ -1629,8 +1670,8 @@ function mostraVista(nome) {
   if (nome === "oggi") renderOggi();
   if (nome === "argomenti") renderListaArgomenti();
   if (nome === "simula") renderSimulaIdle();
+  if (nome === "quiz") renderQuizIdle();
   if (nome === "formulario") renderFormulario();
-  if (nome === "semplice") renderSemplice();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll("#navbar button").forEach(function (b) {
@@ -1649,13 +1690,30 @@ function anelloSVG(perc, nome, colore) {
     '<circle class="traccia" cx="38" cy="38" r="' + r + '" stroke-width="7"></circle>' +
     '<circle class="valore" cx="38" cy="38" r="' + r + '" stroke-width="7" ' +
     'stroke="' + (colore || "var(--accent)") + '" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + c.toFixed(1) + '" data-off="' + off.toFixed(1) + '"></circle>' +
-    '</svg><div class="perc">' + perc + '%</div><div class="nome">' + nome + "</div></div>";
+    '</svg><div class="perc" data-target="' + perc + '">0%</div><div class="nome">' + nome + "</div></div>";
+}
+function contaSu(el, target, durata) {
+  const ridotto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (ridotto || target <= 0) { el.textContent = target + "%"; return; }
+  const t0 = performance.now();
+  (function tick(now) {
+    const p = Math.min(1, (now - t0) / durata);
+    const val = Math.round(target * (1 - Math.pow(1 - p, 3))); // ease-out cubica
+    el.textContent = val + "%";
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
 }
 function animaAnelli(contenitore) {
   requestAnimationFrame(function () {
     requestAnimationFrame(function () {
       contenitore.querySelectorAll(".anello .valore").forEach(function (c) {
         c.style.strokeDashoffset = c.dataset.off;
+      });
+      contenitore.querySelectorAll(".anello .perc").forEach(function (p) {
+        contaSu(p, parseInt(p.dataset.target, 10) || 0, 900);
+      });
+      contenitore.querySelectorAll(".barra-totale span[data-w]").forEach(function (s) {
+        s.style.width = s.dataset.w + "%";
       });
     });
   });
@@ -1674,6 +1732,12 @@ function renderOggi() {
   } else {
     html += '<div class="avviso">📅 Mancano <b>' + gg + " giorn" + (gg === 1 ? "o" : "i") + "</b> all'esame del 27 luglio.</div>";
   }
+
+  // Barra di preparazione complessiva
+  const puntiTot = CONTENUTI.reduce(function (s, a) { return s + recArg(a.id).stato; }, 0);
+  const percTot = Math.round(100 * puntiTot / (3 * CONTENUTI.length));
+  html += '<div class="card"><div class="quiz-meta" style="margin-bottom:2px"><span><b>Preparazione complessiva</b></span><span><b>' + percTot + '%</b></span></div>' +
+    '<div class="barra-totale"><span data-w="' + percTot + '"></span></div></div>';
 
   // Anelli di copertura per area
   html += '<div class="card"><h3 style="margin-top:0">Copertura per area</h3><div class="anelli">';
@@ -1756,7 +1820,7 @@ function renderListaArgomenti() {
   const el = document.getElementById("vista-argomenti");
   let html = "<h2>I 33 argomenti</h2>";
   Object.keys(AREE).forEach(function (area) {
-    html += "<h3>" + tagArea(area) + AREE[area] + '</h3><ul class="lista-argomenti">';
+    html += "<h3>" + tagArea(area) + AREE[area] + '</h3><ul class="lista-argomenti stagger">';
     CONTENUTI.filter(function (a) { return a.area === area; }).forEach(function (a) {
       html += '<li><button class="riga-argomento bordo-st-' + recArg(a.id).stato + '" onclick="apriScheda(' + a.id + ')">' +
         pallino(a.id) + '<span class="titolo-arg">' + a.id + ". " + a.titolo + '</span><span class="mini">' +
@@ -1799,14 +1863,13 @@ function apriScheda(id) {
     '<p class="mini">' + AREE[a.area] + " · Stato: <b>" + STATI[r.stato] + "</b>" +
     (r.prossimoRipasso ? " · prossimo ripasso: " + r.prossimoRipasso : "") + "</p>" +
     (prereq ? '<p class="mini">Prerequisiti: ' + prereq + "</p>" : "") +
+    '<div class="spiegazione-hero"><h4>💡 L\'idea in sintesi</h4><p>' + a.intuizioneFisica + "</p></div>" +
     sezione("📖 Definizioni", "<p>" + a.definizioni + "</p>", true) +
-    (SPIEGAZIONI_SEMPLICI[a.id] ? sezione("💡 In parole semplici", "<p>" + SPIEGAZIONI_SEMPLICI[a.id] + "</p>", false) : "") +
     sezione("🧮 Derivazione (nascosta: prova prima a voce!)", deriv, false) +
     (typeof SIMS !== "undefined" && SIMS[a.id] ? sezione("🎬 Vedi in azione", '<div class="sim-box" id="sim-box"></div>', false, 'id="sim-det"') : "") +
     sezione("📌 Ipotesi di validità", "<p>" + a.ipotesi + "</p>", false) +
     sezione("🔭 Casi limite", "<p>" + a.casiLimite + "</p>", false) +
     sezione("⚠️ Errori tipici", listaPunti(a.erroriTipici), false) +
-    sezione("💭 Intuizione fisica", "<p>" + a.intuizioneFisica + "</p>", false) +
     sezione("✅ Checklist per l'orale", listaPunti(a.checklistOrale), false) +
     sezione("❓ Domande di approfondimento", listaPunti(a.domandeApprofondimento), false) +
     sezione("∑ Formule chiave", a.formuleChiave.map(function (f) { return '<div class="formula-riga">' + f + "</div>"; }).join(""), false) +
@@ -1872,13 +1935,46 @@ function scegliArgomentoPesato() {
 
 function fermaTimer() { if (sim && sim.timerId) { clearInterval(sim.timerId); sim.timerId = null; } }
 
+function modalitaSim() {
+  if (stato.modalitaSim !== "facile" && stato.modalitaSim !== "difficile") stato.modalitaSim = "difficile";
+  return stato.modalitaSim;
+}
+function impostaModalitaSim(m) {
+  stato.modalitaSim = m; salvaStato();
+  if (sim && sim.inizio) {           // simulazione in corso: aggiorna al volo, timer intatto
+    sim.mode = m;
+    aggiornaSegmentatoSim();
+    renderChecklistSimBox();
+  } else {
+    renderSimulaIdle();
+  }
+}
+function aggiornaSegmentatoSim() {
+  const cont = document.getElementById("sim-modalita");
+  if (!cont) return;
+  const m = modalitaSim(), btns = cont.querySelectorAll("button");
+  btns[0].classList.toggle("sel", m === "facile");
+  btns[1].classList.toggle("sel", m === "difficile");
+}
+function segmentatoModalita(compatto) {
+  const m = modalitaSim();
+  return '<div class="segmentato pieno" id="sim-modalita">' +
+    '<button class="' + (m === "facile" ? "sel" : "") + '" onclick="impostaModalitaSim(\'facile\')">🟢 Facile' + (compatto ? "" : " · con checklist") + "</button>" +
+    '<button class="' + (m === "difficile" ? "sel" : "") + '" onclick="impostaModalitaSim(\'difficile\')">🔴 Difficile' + (compatto ? "" : " · a memoria") + "</button></div>";
+}
+
 function renderSimulaIdle() {
   fermaTimer();
   sim = null;
   const el = document.getElementById("vista-simula");
   const fatte = stato.simulazioni[dataISO(oggiData())] || 0;
+  const m = modalitaSim();
   el.innerHTML = "<h2>Simulazione orale</h2>" +
     '<div class="card"><p>Ti verrà estratto <b>un argomento a caso</b> (con probabilità maggiore per quelli deboli o in scadenza). Esponi <b>a voce alta</b>, come davanti al professore: definizioni → ipotesi → derivazione → casi limite.</p>' +
+    '<div class="etichetta-sez">Modalità del test</div>' + segmentatoModalita(false) +
+    '<p class="mini" style="margin-top:8px">' + (m === "facile"
+      ? "Mentre esponi vedrai la <b>checklist da seguire</b> e potrai spuntare i punti trattati: utile per imparare la scaletta."
+      : "Nessun aiuto a schermo, come all'esame vero. Se ti blocchi potrai comunque rivelare la checklist con un tocco.") + "</p>" +
     '<p class="mini">Simulazioni fatte oggi: ' + fatte + "</p>" +
     '<button class="btn-primario btn-largo" onclick="avviaSimulazione()">🎲 Estrai argomento e parti</button></div>';
 }
@@ -1886,14 +1982,17 @@ function renderSimulaIdle() {
 function avviaSimulazione() {
   mostraVista("simula");
   const a = scegliArgomentoPesato();
-  sim = { argomento: a, inizio: Date.now(), timerId: null, voti: {} };
+  sim = { argomento: a, inizio: Date.now(), timerId: null, voti: {}, mode: modalitaSim(), checklistFatti: {} };
   const el = document.getElementById("vista-simula");
   el.innerHTML = "<h2>Simulazione in corso</h2>" +
     '<div class="card"><p class="mini">Argomento estratto:</p><h3 style="margin-top:.2em">' + tagArea(a.area) + a.titolo + "</h3>" +
     '<div id="timer-display">00:00</div>' +
-    "<p>🎤 <b>Esponi a voce alta</b>, senza guardare la scheda: definizioni, ipotesi, derivazione completa, casi limite, errori da evitare.</p>" +
-    '<button class="btn-primario btn-largo" onclick="mostraChecklistSim()">Ho finito di esporre → checklist</button>' +
+    "<p>🎤 <b>Esponi a voce alta</b>: definizioni, ipotesi, derivazione completa, casi limite, errori da evitare.</p>" +
+    segmentatoModalita(true) +
+    '<div id="checklist-sim-box"></div>' +
+    '<button class="btn-primario btn-largo" onclick="mostraChecklistSim()" style="margin-top:12px">Ho finito di esporre → autovalutazione</button>' +
     '<button class="btn-largo btn-fantasma" onclick="renderSimulaIdle()">Annulla</button></div>';
+  renderChecklistSimBox();
   sim.timerId = setInterval(function () {
     const s = Math.floor((Date.now() - sim.inizio) / 1000);
     const disp = document.getElementById("timer-display");
@@ -1901,19 +2000,57 @@ function avviaSimulazione() {
   }, 250);
 }
 
+function renderChecklistSimBox() {
+  const box = document.getElementById("checklist-sim-box");
+  if (!box || !sim) return;
+  const a = sim.argomento;
+  if (sim.mode === "facile") {
+    let html = '<div class="etichetta-sez">Checklist da seguire — spunta man mano</div><ul class="checklist-sim">';
+    a.checklistOrale.forEach(function (punto, i) {
+      const fatto = sim.checklistFatti[i];
+      html += '<li class="' + (fatto ? "fatto" : "") + '" onclick="toggleChecklistPunto(' + i + ')">' +
+        '<span class="box">' + (fatto ? "✓" : "") + '</span><span class="testo">' + punto + "</span></li>";
+    });
+    html += "</ul>";
+    box.innerHTML = html;
+    typeset(box);
+  } else {
+    box.innerHTML = '<button class="btn-largo btn-fantasma" style="margin-top:6px" onclick="impostaModalitaSim(\'facile\')">👁 Sono bloccato: mostra la checklist</button>';
+  }
+}
+function toggleChecklistPunto(i) {
+  if (!sim) return;
+  sim.checklistFatti[i] = !sim.checklistFatti[i];
+  const box = document.getElementById("checklist-sim-box");
+  const li = box.querySelectorAll(".checklist-sim li")[i];
+  if (li) {
+    const on = !!sim.checklistFatti[i];
+    li.classList.toggle("fatto", on);
+    li.querySelector(".box").textContent = on ? "✓" : "";
+  }
+}
+
 function mostraChecklistSim() {
   fermaTimer();
   const a = sim.argomento;
   const durata = Math.floor((Date.now() - sim.inizio) / 1000);
   const el = document.getElementById("vista-simula");
+  // in modalità facile, i punti spuntati durante l'esposizione partono da "detto bene" (2)
+  a.checklistOrale.forEach(function (_, i) {
+    if (sim.checklistFatti && sim.checklistFatti[i] && sim.voti[i] === undefined) sim.voti[i] = 2;
+  });
+  const preFill = Object.keys(sim.voti).length > 0;
   let html = "<h2>Autovalutazione</h2>" +
     '<div class="card"><p class="mini">' + tagArea(a.area) + a.titolo + " · esposizione: " +
     Math.floor(durata / 60) + " min " + (durata % 60) + ' s</p>' +
-    "<p>Per ogni punto della checklist: <b>0</b> = non l'ho detto · <b>1</b> = accennato · <b>2</b> = detto bene · <b>3</b> = perfetto, con dettagli.</p></div><div class='card'>";
+    "<p>Per ogni punto della checklist: <b>0</b> = non l'ho detto · <b>1</b> = accennato · <b>2</b> = detto bene · <b>3</b> = perfetto, con dettagli.</p>" +
+    (preFill ? '<p class="mini">I punti che hai spuntato durante l\'esposizione sono già impostati a «detto bene»: correggi dove serve.</p>' : "") +
+    "</div><div class='card'>";
   a.checklistOrale.forEach(function (punto, i) {
+    const voto = sim.voti[i];
     html += '<div class="punto-checklist"><div>' + (i + 1) + ". " + punto + '</div><div class="voti-03" id="voto-' + i + '">' +
       [0, 1, 2, 3].map(function (v) {
-        return '<button onclick="votaPunto(' + i + "," + v + ')">' + v + "</button>";
+        return '<button class="' + (voto === v ? "sel" : "") + '" onclick="votaPunto(' + i + "," + v + ')">' + v + "</button>";
       }).join("") + "</div></div>";
   });
   html += '</div><button class="btn-primario btn-largo" onclick="chiudiChecklistSim()">Conferma e vedi le domande</button>';
@@ -1974,21 +2111,317 @@ function renderFormulario() {
 }
 
 // ============================================================
-// Vista SEMPLICE (tutti gli argomenti spiegati in parole povere)
+// Vista QUIZ (crea quiz per allenarti sugli argomenti)
 // ============================================================
-function renderSemplice() {
-  const el = document.getElementById("vista-semplice");
-  let html = "<h2>In parole semplici</h2>" +
-    '<p class="mini">Tutti i 33 argomenti spiegati senza formule, per capire l\'idea prima della matematica. Tocca un argomento per aprire la scheda completa.</p>';
-  Object.keys(AREE).forEach(function (area) {
-    html += "<h3>" + tagArea(area) + AREE[area] + "</h3>";
-    CONTENUTI.filter(function (a) { return a.area === area; }).forEach(function (a) {
-      html += '<div class="semplice-blocco bordo-st-' + recArg(a.id).stato + '"><h4>' + a.id + ". " + a.titolo +
-        '</h4><p>' + (SPIEGAZIONI_SEMPLICI[a.id] || "") + '</p>' +
-        '<button class="btn-fantasma" style="padding-left:0;min-height:36px" onclick="apriScheda(' + a.id + ')">Apri la scheda completa ›</button></div>';
+let quiz = null;
+const QUIZ_TIPI = {
+  formulaArg: "Formula → argomento",
+  argFormula: "Argomento → formula",
+  errore: "Riconosci l'errore",
+  flash: "Flashcard a voce"
+};
+
+function prefQuiz() {
+  if (!stato.quizPref) stato.quizPref = { aree: ["A", "B", "C", "D"], n: 10, tipi: ["formulaArg", "argFormula", "errore", "flash"] };
+  return stato.quizPref;
+}
+function mescola(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function pescaDistrattori(pool, escludi, n) {
+  const visti = new Set(escludi);
+  const out = [];
+  mescola(pool).forEach(function (x) {
+    if (out.length >= n || visti.has(x)) return;
+    visti.add(x); out.push(x);
+  });
+  return out;
+}
+
+// ---- Generatori di domande (dai dati dei 33 argomenti) ----
+function domFormulaArg(a, argomenti) {
+  if (!a.formuleChiave || !a.formuleChiave.length) return null;
+  const f = a.formuleChiave[Math.floor(Math.random() * a.formuleChiave.length)];
+  const altri = argomenti.filter(function (x) { return x.id !== a.id; });
+  const stessaArea = mescola(altri.filter(function (x) { return x.area === a.area; })).map(function (x) { return x.titolo; });
+  const altreAree = mescola(altri.filter(function (x) { return x.area !== a.area; })).map(function (x) { return x.titolo; });
+  const distr = pescaDistrattori(stessaArea.concat(altreAree), [a.titolo], 3);
+  if (distr.length < 2) return null;
+  const opz = mescola([{ html: a.titolo, giusta: true }].concat(distr.map(function (t) { return { html: t, giusta: false }; })));
+  return { tipo: "formulaArg", arg: a, testo: "A quale argomento appartiene questa formula chiave?", formula: f, opzioni: opz };
+}
+function domArgFormula(a, argomenti) {
+  if (!a.formuleChiave || !a.formuleChiave.length) return null;
+  const giusta = a.formuleChiave[Math.floor(Math.random() * a.formuleChiave.length)];
+  const mieSet = new Set(a.formuleChiave);
+  const poolStessa = [], poolAltre = [];
+  argomenti.forEach(function (x) {
+    if (x.id === a.id) return;
+    (x.formuleChiave || []).forEach(function (f) {
+      if (mieSet.has(f)) return;
+      (x.area === a.area ? poolStessa : poolAltre).push(f);
     });
   });
+  const distr = pescaDistrattori(mescola(poolStessa).concat(mescola(poolAltre)), mieSet, 3);
+  if (distr.length < 2) return null;
+  const opz = mescola([{ html: giusta, giusta: true }].concat(distr.map(function (f) { return { html: f, giusta: false }; })));
+  return { tipo: "argFormula", arg: a, testo: "Quale di queste è una formula chiave di «" + a.titolo + "»?", opzioni: opz };
+}
+function domErrore(a, argomenti) {
+  if (!a.erroriTipici || !a.erroriTipici.length) return null;
+  const giusta = a.erroriTipici[Math.floor(Math.random() * a.erroriTipici.length)];
+  const mieSet = new Set(a.erroriTipici);
+  const poolStessa = [], poolAltre = [];
+  argomenti.forEach(function (x) {
+    if (x.id === a.id) return;
+    (x.erroriTipici || []).forEach(function (e) {
+      if (mieSet.has(e)) return;
+      (x.area === a.area ? poolStessa : poolAltre).push(e);
+    });
+  });
+  const distr = pescaDistrattori(mescola(poolStessa).concat(mescola(poolAltre)), mieSet, 3);
+  if (distr.length < 2) return null;
+  const opz = mescola([{ html: giusta, giusta: true }].concat(distr.map(function (e) { return { html: e, giusta: false }; })));
+  return { tipo: "errore", arg: a, testo: "Quale di queste affermazioni è un errore tipico proprio di «" + a.titolo + "»?", opzioni: opz };
+}
+function domFlash(a) {
+  const dom = a.domandeApprofondimento || [];
+  if (!dom.length) return null;
+  const q = dom[Math.floor(Math.random() * dom.length)];
+  const m = q.match(/^(.*?)\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)\s*$/);
+  let domanda = q, risposta = null;
+  if (m && /[a-zA-Zàèéìòù]/.test(m[2]) && m[1].trim().length > 0) {
+    domanda = m[1].trim(); risposta = m[2].trim();
+  }
+  return { tipo: "flash", arg: a, testo: domanda, risposta: risposta };
+}
+
+// ---- Schermata di costruzione del quiz ----
+function renderQuizIdle() {
+  quiz = null;
+  const el = document.getElementById("vista-quiz");
+  const p = prefQuiz();
+  const st = stato.quizStat || { fatti: 0, migliore: 0 };
+  let html = "<h2>Quiz di allenamento</h2>" +
+    '<p class="mini">Crea un quiz su misura sugli argomenti: scelta multipla generata dalle formule e dagli errori tipici, più flashcard da esporre a voce.</p>';
+  html += '<div class="card"><h3 style="margin-top:0">1 · Su quali aree?</h3><div class="quiz-scelte" id="quiz-aree">';
+  Object.keys(AREE).forEach(function (area) {
+    const sel = p.aree.indexOf(area) >= 0;
+    html += '<button class="chip-scelta' + (sel ? " sel" : "") + '" data-area="' + area + '" onclick="toggleQuizArea(\'' + area + '\')">' + tagArea(area) + AREE[area] + "</button>";
+  });
+  html += "</div></div>";
+  html += '<div class="card"><h3 style="margin-top:0">2 · Tipo di domande</h3><div class="quiz-scelte" id="quiz-tipi">';
+  Object.keys(QUIZ_TIPI).forEach(function (t) {
+    const sel = p.tipi.indexOf(t) >= 0;
+    html += '<button class="chip-scelta' + (sel ? " sel" : "") + '" data-tipo="' + t + '" onclick="toggleQuizTipo(\'' + t + '\')">' + QUIZ_TIPI[t] + "</button>";
+  });
+  html += '</div><p class="mini" style="margin-top:8px">La <b>flashcard a voce</b> mostra una domanda da esporre e poi la risposta: la valuti tu, come all\'orale.</p></div>';
+  html += '<div class="card"><h3 style="margin-top:0">3 · Quante domande?</h3>' +
+    '<div class="sim-riga"><label>Numero</label><input type="range" id="quiz-n" min="5" max="25" step="1" value="' + p.n +
+    '" oninput="document.getElementById(\'quiz-n-out\').textContent=this.value"><output id="quiz-n-out">' + p.n + "</output></div></div>";
+  if (st.fatti > 0) html += '<p class="mini">Quiz completati: ' + st.fatti + " · miglior punteggio: " + st.migliore + "%</p>";
+  html += '<button class="btn-primario btn-largo" onclick="avviaQuiz()">🎯 Crea il quiz e parti</button>';
   el.innerHTML = html;
+  typeset(el);
+}
+function toggleQuizArea(area) {
+  const p = prefQuiz(), i = p.aree.indexOf(area);
+  if (i >= 0) { if (p.aree.length > 1) p.aree.splice(i, 1); } else p.aree.push(area);
+  salvaStato(); aggiornaChip("quiz-aree", "area", p.aree);
+}
+function toggleQuizTipo(t) {
+  const p = prefQuiz(), i = p.tipi.indexOf(t);
+  if (i >= 0) { if (p.tipi.length > 1) p.tipi.splice(i, 1); } else p.tipi.push(t);
+  salvaStato(); aggiornaChip("quiz-tipi", "tipo", p.tipi);
+}
+function aggiornaChip(contId, attr, sel) {
+  document.querySelectorAll("#" + contId + " .chip-scelta").forEach(function (b) {
+    b.classList.toggle("sel", sel.indexOf(b.dataset[attr]) >= 0);
+  });
+}
+
+// ---- Costruzione ed esecuzione del quiz ----
+function avviaQuiz() {
+  const p = prefQuiz();
+  const nEl = document.getElementById("quiz-n");
+  if (nEl) p.n = parseInt(nEl.value, 10) || 10;
+  salvaStato();
+  const argomenti = CONTENUTI.filter(function (a) { return p.aree.indexOf(a.area) >= 0; });
+  const generatori = { formulaArg: domFormulaArg, argFormula: domArgFormula, errore: domErrore, flash: domFlash };
+  const domande = [], chiaviViste = new Set();
+  let tentativi = 0;
+  while (domande.length < p.n && tentativi < p.n * 50) {
+    tentativi++;
+    const tipo = p.tipi[Math.floor(Math.random() * p.tipi.length)];
+    const a = argomenti[Math.floor(Math.random() * argomenti.length)];
+    const d = generatori[tipo](a, argomenti);
+    if (!d) continue;
+    const chiave = tipo + "|" + a.id + "|" + (d.formula || d.testo || "");
+    if (chiaviViste.has(chiave)) continue;
+    chiaviViste.add(chiave);
+    domande.push(d);
+  }
+  if (!domande.length) { renderQuizIdle(); return; }
+  quiz = { domande: domande, i: 0, giuste: 0, risposte: [] };
+  mostraDomandaQuiz();
+}
+function mostraDomandaQuiz() {
+  const el = document.getElementById("vista-quiz");
+  const q = quiz.domande[quiz.i], n = quiz.domande.length;
+  const perc = Math.round(100 * quiz.i / n);
+  // per "formula → argomento" l'area rivelerebbe la risposta: la nascondo
+  const tag = (q.tipo === "formulaArg") ? "" : tagArea(q.arg.area);
+  let html = '<div class="quiz-meta"><span>Domanda ' + (quiz.i + 1) + " / " + n + '</span><span>✅ ' + quiz.giuste + "</span></div>" +
+    '<div class="quiz-barra"><span style="width:' + perc + '%"></span></div>' +
+    '<div class="card"><div class="quiz-tipo-tag">' + tag + QUIZ_TIPI[q.tipo] + "</div>" +
+    '<div class="quiz-domanda">' + q.testo + "</div>";
+  if (q.formula) html += '<div class="p-formula" style="font-size:1.15rem;margin:6px 0">' + q.formula + "</div>";
+  if (q.tipo === "flash") {
+    html += '<div id="quiz-flash-area"><button class="btn-primario btn-largo" onclick="rivelaFlash()">👁 Mostra la risposta</button></div>';
+  } else {
+    html += '<div class="quiz-opzioni" id="quiz-opzioni">';
+    q.opzioni.forEach(function (o, idx) {
+      html += '<button class="quiz-opt" onclick="rispondiQuiz(' + idx + ')"><span class="lettera">' + "ABCD"[idx] + "</span><span>" + o.html + "</span></button>";
+    });
+    html += "</div>";
+  }
+  html += '</div><div id="quiz-azioni"></div>' +
+    '<button class="btn-largo btn-fantasma" onclick="renderQuizIdle()">Esci dal quiz</button>';
+  el.innerHTML = html;
+  window.scrollTo(0, 0);
+  typeset(el);
+}
+function rispondiQuiz(idx) {
+  const q = quiz.domande[quiz.i];
+  if (q.risolta) return;
+  q.risolta = true;
+  const corretta = q.opzioni[idx].giusta;
+  if (corretta) quiz.giuste++;
+  quiz.risposte.push({ arg: q.arg, corretta: corretta });
+  const cont = document.getElementById("quiz-opzioni");
+  Array.prototype.forEach.call(cont.children, function (b, j) {
+    b.disabled = true;
+    if (q.opzioni[j].giusta) b.classList.add("giusta");
+    else if (j === idx) b.classList.add("sbagliata");
+    else b.classList.add("attenua");
+  });
+  const az = document.getElementById("quiz-azioni");
+  az.innerHTML = '<div class="quiz-esito ' + (corretta ? "ok" : "no") + '">' +
+    (corretta ? "✅ Giusto!" : "❌ Non ci siamo: la risposta corretta è evidenziata in verde.") + "</div>";
+  aggiungiAvantiQuiz();
+}
+function rivelaFlash() {
+  const q = quiz.domande[quiz.i];
+  const area = document.getElementById("quiz-flash-area");
+  let html = q.risposta
+    ? '<div class="quiz-flash-risposta"><span class="mini">Risposta / traccia</span>' + q.risposta + "</div>"
+    : '<div class="quiz-flash-risposta"><span class="mini">Domanda aperta</span>Esponi la risposta a voce come faresti all\'orale, poi valuta come è andata.</div>';
+  html += '<p class="mini" style="margin-top:10px">Come è andata?</p><div class="segmentato pieno">' +
+    '<button onclick="valutaFlash(false)">❌ Non la sapevo</button>' +
+    '<button onclick="valutaFlash(true)">✅ La sapevo</button></div>';
+  area.innerHTML = html;
+  typeset(area);
+}
+function valutaFlash(ok) {
+  const q = quiz.domande[quiz.i];
+  if (q.risolta) return;
+  q.risolta = true;
+  if (ok) quiz.giuste++;
+  quiz.risposte.push({ arg: q.arg, corretta: ok });
+  const btns = document.querySelectorAll("#quiz-flash-area .segmentato button");
+  btns.forEach(function (b, j) { b.disabled = true; });
+  if (btns[ok ? 1 : 0]) btns[ok ? 1 : 0].classList.add("sel"); // 0 = "Non la sapevo", 1 = "La sapevo"
+  aggiungiAvantiQuiz();
+}
+function aggiungiAvantiQuiz() {
+  const az = document.getElementById("quiz-azioni");
+  const ultima = quiz.i >= quiz.domande.length - 1;
+  const btn = document.createElement("button");
+  btn.className = "btn-primario btn-largo";
+  btn.textContent = ultima ? "🏁 Vedi i risultati" : "Prossima domanda →";
+  btn.onclick = prossimaQuiz;
+  az.appendChild(btn);
+  btn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+function prossimaQuiz() {
+  if (quiz.i >= quiz.domande.length - 1) { risultatiQuiz(); return; }
+  quiz.i++;
+  mostraDomandaQuiz();
+}
+function risultatiQuiz() {
+  const n = quiz.domande.length;
+  const perc = Math.round(100 * quiz.giuste / n);
+  stato.quizStat = stato.quizStat || { fatti: 0, migliore: 0 };
+  stato.quizStat.fatti++;
+  const record = perc > stato.quizStat.migliore;
+  if (record) stato.quizStat.migliore = perc;
+  salvaStato();
+  const sbagliati = [], visti = {};
+  quiz.risposte.forEach(function (r) {
+    if (!r.corretta && !visti[r.arg.id]) { visti[r.arg.id] = true; sbagliati.push(r.arg); }
+  });
+  quiz.sbagliatiIds = sbagliati.map(function (a) { return a.id; });
+  const badge = perc >= 80 ? { t: "Ottimo! 🎉", c: "var(--st3-soft)", cc: "#8ef0bb" }
+    : perc >= 50 ? { t: "Ci sei quasi 💪", c: "var(--st2-soft)", cc: "#ffce7a" }
+      : { t: "Da ripassare 📚", c: "var(--st1-soft)", cc: "#ff9d9d" };
+  const el = document.getElementById("vista-quiz");
+  let html = "<h2>Risultato del quiz</h2>" +
+    '<div class="card" style="text-align:center">' +
+    '<div class="quiz-punteggio">' + quiz.giuste + " / " + n + "</div>" +
+    '<div class="quiz-badge" style="background:' + badge.c + ";color:" + badge.cc + '">' + perc + "% · " + badge.t + "</div>" +
+    (record && stato.quizStat.fatti > 1 ? '<p class="mini">🏅 Nuovo record personale!</p>' : "") + "</div>";
+
+  // dettaglio per area
+  const perArea = {};
+  quiz.risposte.forEach(function (r) {
+    const A = r.arg.area;
+    if (!perArea[A]) perArea[A] = { tot: 0, ok: 0 };
+    perArea[A].tot++; if (r.corretta) perArea[A].ok++;
+  });
+  const chiaviArea = Object.keys(perArea);
+  if (chiaviArea.length) {
+    html += '<div class="card"><h3 style="margin-top:0">Come sei andato per area</h3>';
+    chiaviArea.forEach(function (A) {
+      const d = perArea[A], pc = Math.round(100 * d.ok / d.tot);
+      html += '<div style="margin-bottom:10px"><div class="quiz-meta" style="margin-bottom:4px">' +
+        "<span>" + tagArea(A) + AREE[A] + "</span><span>" + d.ok + "/" + d.tot + "</span></div>" +
+        '<div class="quiz-barra"><span style="width:' + pc + '%"></span></div></div>';
+    });
+    html += "</div>";
+  }
+
+  // argomenti sbagliati
+  if (sbagliati.length) {
+    html += '<div class="card"><h3 style="margin-top:0">Da rivedere (' + sbagliati.length + ")</h3>";
+    sbagliati.forEach(function (a) {
+      html += '<button class="chip-arg bordo-st-' + recArg(a.id).stato + '" onclick="apriScheda(' + a.id + ')">' + pallino(a.id) + tagArea(a.area) + a.titolo + "</button>";
+    });
+    html += '<button class="btn-largo" style="margin-top:10px" onclick="marcaDaRipassare()">📌 Segna questi argomenti come «da ripassare»</button></div>';
+  } else {
+    html += '<div class="avviso">🌟 Nessun errore: hai risposto correttamente a tutto!</div>';
+  }
+
+  html += '<button class="btn-primario btn-largo" onclick="avviaQuiz()">🔁 Nuovo quiz (stesse impostazioni)</button>' +
+    '<button class="btn-largo btn-fantasma" onclick="renderQuizIdle()">⚙️ Cambia impostazioni</button>';
+  el.innerHTML = html;
+  window.scrollTo(0, 0);
+  typeset(el);
+}
+function marcaDaRipassare() {
+  if (!quiz || !quiz.sbagliatiIds) return;
+  quiz.sbagliatiIds.forEach(function (id) { registraRevisione(id, 1); });
+  const el = document.getElementById("vista-quiz");
+  const av = document.createElement("div");
+  av.className = "avviso";
+  av.innerHTML = "✅ " + quiz.sbagliatiIds.length + " argoment" + (quiz.sbagliatiIds.length === 1 ? "o segnato" : "i segnati") +
+    " come deboli: li ritroverai nel piano di oggi e con priorità nelle simulazioni.";
+  el.insertBefore(av, el.firstChild);
+  window.scrollTo(0, 0);
 }
 
 // ============================================================
