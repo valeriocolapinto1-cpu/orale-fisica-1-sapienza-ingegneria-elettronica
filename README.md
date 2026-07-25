@@ -16,7 +16,7 @@ Tutto in un unico `index.html`: nessun build, nessun backend, nessun account. Fu
 - **Ripasso spaziato (SM-2 semplificato)**: ogni argomento ha uno stato (mai visto → debole → consolidato → padroneggiato) e una data di prossimo ripasso; la dashboard mostra la preparazione complessiva e la copertura per area con anelli animati.
 - **Formulario stampabile** generato dalle formule chiave, raggruppato per area.
 
-Interfaccia in tema scuro, con micro-animazioni (comparse a cascata, anelli e barre che si riempiono), navigazione a tab in basso su mobile e sidebar su desktop, schede a schermo intero. Rispetta `prefers-reduced-motion`.
+Interfaccia in **tema scuro moderno**: superfici in vetro (glassmorphism) con bordi sottili, sfondo aurora animato, accenti a gradiente indigo-violetto e micro-animazioni ovunque (comparse a cascata, anelli e barre che si riempiono, transizioni fluide, feedback dei quiz). Navigazione a tab in basso su mobile e sidebar su desktop, schede a schermo intero. Rispetta `prefers-reduced-motion`.
 
 ## Uso
 
