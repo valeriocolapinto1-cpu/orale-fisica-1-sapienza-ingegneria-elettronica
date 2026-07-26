@@ -16,37 +16,60 @@ window.MathJax = {
 <style>
 :root{
   color-scheme: dark;
-  --bg:#07080e;
-  --bg-soft:#0b0d16;
-  --card:rgba(22,25,40,.60);
-  --card-2:rgba(30,34,52,.72);
-  --surface:rgba(255,255,255,.05);
+  --bg:#05060c;
+  --bg-soft:#080a12;
+  --card:rgba(18,21,36,.6);
+  --card-2:rgba(26,30,50,.74);
+  --surface:rgba(255,255,255,.045);
   --surface-2:rgba(255,255,255,.08);
   --surface-3:rgba(255,255,255,.13);
-  --border:rgba(255,255,255,.08);
-  --border-2:rgba(255,255,255,.16);
-  --fg:#eef1fa;
-  --fg2:#9aa4bd;
-  --fg3:#616b84;
+  --border:rgba(140,160,255,.12);
+  --border-2:rgba(140,170,255,.26);
+  --fg:#eaf0ff;
+  --fg2:#94a0c0;
+  --fg3:#5e688a;
   --accent:#8b93ff;
   --accent-chiaro:#b7bcff;
   --accent-2:#c483ff;
-  --accent-soft:rgba(139,147,255,.15);
-  --grad:linear-gradient(135deg,#6d7bff 0%,#a366ff 100%);
-  --grad-txt:linear-gradient(120deg,#b7bcff 0%,#d5a8ff 55%,#9fe9ff 100%);
-  --grad-soft:linear-gradient(135deg,rgba(109,123,255,.20),rgba(163,102,255,.14));
+  --cyan:#3ce6ff;
+  --magenta:#ff6bd6;
+  --accent-soft:rgba(139,147,255,.16);
+  --grad:linear-gradient(135deg,#6d7bff 0%,#a366ff 60%,#c86bff 100%);
+  --grad-neon:linear-gradient(135deg,#5cc8ff 0%,#8b7bff 45%,#c86bff 100%);
+  --grad-txt:linear-gradient(115deg,#9fe9ff 0%,#b7bcff 40%,#e0a8ff 100%);
+  --grad-soft:linear-gradient(135deg,rgba(109,123,255,.20),rgba(200,107,255,.13));
   --st0:#5a647a; --st1:#ff6b6b; --st2:#ffb454; --st3:#37e0a0;
   --st1-soft:rgba(255,107,107,.14); --st2-soft:rgba(255,180,84,.14); --st3-soft:rgba(55,224,160,.14);
-  --areaA:#8aa6ff; --areaB:#4fe3ac; --areaC:#ffc266; --areaD:#cf9bff;
-  --shadow:0 12px 40px -14px rgba(0,0,0,.62);
-  --shadow-lg:0 26px 70px -22px rgba(0,0,0,.72);
-  --glow:0 0 26px -6px rgba(124,131,255,.55);
+  --areaA:#7fb0ff; --areaB:#4fe3ac; --areaC:#ffc266; --areaD:#cf9bff;
+  --shadow:0 14px 44px -16px rgba(0,0,0,.7);
+  --shadow-lg:0 30px 80px -24px rgba(0,0,0,.78);
+  --glow:0 0 24px -4px rgba(124,131,255,.6);
+  --glow-cyan:0 0 24px -4px rgba(60,230,255,.55);
+  --hud:rgba(60,230,255,.55);
   --r:20px; --r-sm:14px; --r-xs:10px;
   --dur:.24s; --spring:cubic-bezier(.34,1.4,.5,1);
-  --nav-h:66px; --sidebar-w:246px;
+  --nav-h:66px; --sidebar-w:250px;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html{font-size:17px; background:var(--bg);}
+
+/* Griglia prospettica + scanline (livello sci-fi, dietro tutto) */
+html::before{
+  content:""; position:fixed; inset:-2px; z-index:-3; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(124,140,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,140,255,.055) 1px, transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask:radial-gradient(120% 90% at 50% 8%, #000 0%, transparent 72%);
+  mask:radial-gradient(120% 90% at 50% 8%, #000 0%, transparent 72%);
+  animation:gridDrift 34s linear infinite;
+}
+html::after{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.5;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px);
+}
+@keyframes gridDrift{from{background-position:0 0, 0 0;} to{background-position:0 460px, 460px 0;}}
+
 body{
   margin:0; background:transparent; color:var(--fg);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
@@ -55,20 +78,20 @@ body{
   padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
   overflow-x:hidden;
 }
-/* ---------- Sfondo aurora animato ---------- */
+/* Aurora animata */
 body::before{
   content:""; position:fixed; inset:-10vh -10vw; z-index:-2; pointer-events:none;
   background:
-    radial-gradient(38% 34% at 14% 12%, rgba(109,123,255,.26), transparent 60%),
-    radial-gradient(34% 32% at 88% 6%, rgba(180,102,255,.22), transparent 60%),
-    radial-gradient(42% 42% at 78% 88%, rgba(72,214,220,.12), transparent 62%),
-    radial-gradient(46% 44% at 22% 92%, rgba(163,102,255,.12), transparent 60%);
-  filter:saturate(1.1);
-  animation:aurora 28s ease-in-out infinite alternate;
+    radial-gradient(36% 32% at 12% 10%, rgba(109,123,255,.28), transparent 60%),
+    radial-gradient(32% 30% at 90% 4%, rgba(200,107,255,.22), transparent 60%),
+    radial-gradient(40% 40% at 82% 86%, rgba(60,230,255,.16), transparent 62%),
+    radial-gradient(44% 42% at 20% 94%, rgba(163,102,255,.13), transparent 60%);
+  filter:saturate(1.15);
+  animation:aurora 26s ease-in-out infinite alternate;
 }
 body::after{
   content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
-  background:radial-gradient(130% 120% at 50% -10%, transparent 52%, rgba(0,0,0,.55) 100%);
+  background:radial-gradient(130% 120% at 50% -10%, transparent 50%, rgba(0,0,0,.6) 100%);
 }
 @keyframes aurora{
   0%{transform:translate3d(0,0,0) scale(1);}
@@ -78,39 +101,37 @@ body::after{
 
 h1,h2,h3,h4{line-height:1.22; letter-spacing:-.02em;}
 h2{
-  font-size:1.85rem; font-weight:800; margin:.2em 0 .7em;
-  background:linear-gradient(180deg,#ffffff, #cfd4e8);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-size:1.9rem; font-weight:800; margin:.2em 0 .7em;
+  background:var(--grad-txt); -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 2px 18px rgba(124,131,255,.35));
 }
 h3{font-size:1.14rem; font-weight:700; margin:1em 0 .5em;}
 p{margin:.55em 0;}
-a{color:var(--accent-chiaro); text-underline-offset:3px;}
-::selection{background:rgba(139,147,255,.32); color:#fff;}
+a{color:var(--cyan); text-underline-offset:3px;}
+::selection{background:rgba(60,230,255,.3); color:#fff;}
 
 /* ---------- Header mobile ---------- */
 header.app-header{
   position:sticky; top:0; z-index:50;
-  background:linear-gradient(180deg,rgba(9,11,20,.9),rgba(9,11,20,.62));
+  background:linear-gradient(180deg,rgba(6,8,16,.92),rgba(6,8,16,.6));
   backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4);
   border-bottom:1px solid var(--border);
   padding:13px 18px; padding-top:calc(13px + env(safe-area-inset-top));
   display:flex; align-items:center; justify-content:space-between; gap:8px;
 }
-header.app-header h1{
-  font-size:1.06rem; margin:0; font-weight:800; display:flex; align-items:center; gap:8px;
-}
+header.app-header h1{font-size:1.06rem; margin:0; font-weight:800; display:flex; align-items:center; gap:8px;}
 #countdown{
-  font-size:.8rem; font-weight:800; white-space:nowrap;
-  padding:6px 12px; border-radius:999px; border:1px solid var(--border-2);
-  background:var(--accent-soft); color:var(--accent-chiaro);
+  font-size:.78rem; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums;
+  padding:6px 12px; border-radius:999px; border:1px solid rgba(60,230,255,.35);
+  background:rgba(60,230,255,.1); color:var(--cyan); box-shadow:var(--glow-cyan);
 }
 
-main{padding:20px 16px 40px; max-width:820px; margin:0 auto;}
+main{padding:20px 16px 44px; max-width:840px; margin:0 auto;}
 .vista{display:none;}
 .vista.attiva{display:block; animation:appare .5s var(--spring);}
 @keyframes appare{from{opacity:0; transform:translateY(14px) scale(.99);} to{opacity:1; transform:none;}}
 
-/* ---------- Superfici (glass) ---------- */
+/* ---------- Superfici (glass + HUD) ---------- */
 .card{
   position:relative; background:var(--card);
   backdrop-filter:blur(16px) saturate(1.25); -webkit-backdrop-filter:blur(16px) saturate(1.25);
@@ -118,16 +139,22 @@ main{padding:20px 16px 40px; max-width:820px; margin:0 auto;}
   padding:20px; margin-bottom:16px; box-shadow:var(--shadow);
   transition:transform var(--dur) var(--spring), border-color var(--dur), box-shadow var(--dur);
 }
-.card:hover{border-color:var(--border-2);}
+.card::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 40%);
+  -webkit-mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+  -webkit-mask-composite:xor; mask-composite:exclude; padding:1px; opacity:.6;
+}
+.card:hover{border-color:var(--border-2); box-shadow:var(--shadow), var(--glow);}
 .mini{color:var(--fg2); font-size:.86rem;}
 .avviso{
   position:relative; overflow:hidden;
-  background:var(--grad-soft); border:1px solid rgba(139,147,255,.28); border-radius:var(--r);
-  padding:15px 18px; margin-bottom:16px; font-size:.95rem; box-shadow:var(--shadow);
+  background:var(--grad-soft); border:1px solid rgba(139,147,255,.3); border-radius:var(--r);
+  padding:15px 18px; margin-bottom:16px; font-size:.95rem; box-shadow:var(--shadow), var(--glow);
 }
 .etichetta-sez{
-  font-size:.72rem; text-transform:uppercase; letter-spacing:.12em;
-  color:var(--fg3); font-weight:800; margin:18px 0 8px;
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.16em;
+  color:var(--cyan); font-weight:800; margin:18px 0 8px; opacity:.85;
 }
 .vuoto{color:var(--fg2); font-style:italic; padding:6px 0;}
 
@@ -143,14 +170,14 @@ button:active{transform:scale(.96);}
 .btn-primario{
   position:relative; overflow:hidden;
   background:var(--grad); color:#fff; border:none;
-  box-shadow:0 10px 26px -10px rgba(124,131,255,.8), inset 0 1px 0 rgba(255,255,255,.28);
+  box-shadow:0 10px 28px -10px rgba(124,131,255,.85), 0 0 22px -6px rgba(200,107,255,.6), inset 0 1px 0 rgba(255,255,255,.3);
 }
-.btn-primario:hover{transform:translateY(-2px); box-shadow:0 16px 34px -10px rgba(124,131,255,.9), inset 0 1px 0 rgba(255,255,255,.28);}
+.btn-primario:hover{transform:translateY(-2px); box-shadow:0 16px 38px -10px rgba(124,131,255,.95), 0 0 30px -6px rgba(60,230,255,.6), inset 0 1px 0 rgba(255,255,255,.3);}
 .btn-primario:active{transform:translateY(0) scale(.98);}
 .btn-primario::after{
   content:""; position:absolute; top:0; left:-120%; width:70%; height:100%;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
-  transform:skewX(-18deg); transition:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);
+  transform:skewX(-18deg);
 }
 .btn-primario:hover::after{animation:sheen .9s ease;}
 @keyframes sheen{to{left:130%;}}
@@ -162,16 +189,13 @@ button:active{transform:scale(.96);}
 .tag{
   display:inline-flex; align-items:center; font-size:.7rem; font-weight:800; padding:3px 11px; border-radius:999px;
   background:var(--surface-2); color:var(--fg2); margin-right:8px; vertical-align:middle;
-  border:1px solid var(--border); letter-spacing:.02em;
+  border:1px solid var(--border); letter-spacing:.03em;
 }
-.tag-A{color:var(--areaA); background:rgba(138,166,255,.14); border-color:rgba(138,166,255,.3);}
-.tag-B{color:var(--areaB); background:rgba(79,227,172,.13); border-color:rgba(79,227,172,.3);}
-.tag-C{color:var(--areaC); background:rgba(255,194,102,.13); border-color:rgba(255,194,102,.3);}
-.tag-D{color:var(--areaD); background:rgba(207,155,255,.14); border-color:rgba(207,155,255,.3);}
-.stato-pallino{
-  display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:10px; flex:none;
-  transition:background var(--dur), box-shadow var(--dur);
-}
+.tag-A{color:var(--areaA); background:rgba(127,176,255,.14); border-color:rgba(127,176,255,.34);}
+.tag-B{color:var(--areaB); background:rgba(79,227,172,.13); border-color:rgba(79,227,172,.34);}
+.tag-C{color:var(--areaC); background:rgba(255,194,102,.13); border-color:rgba(255,194,102,.34);}
+.tag-D{color:var(--areaD); background:rgba(207,155,255,.14); border-color:rgba(207,155,255,.34);}
+.stato-pallino{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:10px; flex:none; transition:background var(--dur), box-shadow var(--dur);}
 .st-0{background:var(--st0);}
 .st-1{background:var(--st1); box-shadow:0 0 10px -1px var(--st1);}
 .st-2{background:var(--st2); box-shadow:0 0 10px -1px var(--st2);}
@@ -185,12 +209,12 @@ button:active{transform:scale(.96);}
   display:flex; align-items:center; width:100%; text-align:left; gap:8px;
   background:var(--card); border:1px solid var(--border); border-radius:var(--r-sm);
   padding:15px 16px; margin-bottom:10px; min-height:56px; font-weight:550;
-  transition:transform var(--dur) var(--spring), border-color var(--dur), background var(--dur);
+  transition:transform var(--dur) var(--spring), border-color var(--dur), background var(--dur), box-shadow var(--dur);
 }
-.riga-argomento:hover{background:var(--card-2); border-color:var(--border-2); transform:translateX(4px);}
+.riga-argomento:hover{background:var(--card-2); border-color:var(--border-2); transform:translateX(4px); box-shadow:var(--glow);}
 .riga-argomento .titolo-arg{flex:1; font-size:.94rem;}
 .riga-argomento .freccia{color:var(--fg3); transition:transform var(--dur), color var(--dur);}
-.riga-argomento:hover .freccia{color:var(--accent-chiaro); transform:translateX(3px);}
+.riga-argomento:hover .freccia{color:var(--cyan); transform:translateX(3px);}
 .chip-arg{
   display:flex; align-items:center; width:100%; text-align:left;
   background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xs);
@@ -200,10 +224,7 @@ button:active{transform:scale(.96);}
 .chip-arg:hover{background:var(--surface-2); border-color:var(--border-2); transform:translateX(3px);}
 
 /* ---------- Sezioni collassabili ---------- */
-details.sezione{
-  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
-  margin-bottom:12px; overflow:hidden; transition:border-color var(--dur);
-}
+details.sezione{background:var(--card); border:1px solid var(--border); border-radius:var(--r); margin-bottom:12px; overflow:hidden; transition:border-color var(--dur);}
 details.sezione[open]{border-color:var(--border-2);}
 details.sezione>summary{
   cursor:pointer; list-style:none; padding:16px 18px; font-weight:750; font-size:1rem;
@@ -212,31 +233,26 @@ details.sezione>summary{
 }
 details.sezione>summary:hover{background:var(--surface);}
 details.sezione>summary::-webkit-details-marker{display:none;}
-details.sezione>summary::after{
-  content:"›"; color:var(--fg3); font-size:1.4rem; line-height:1; transition:transform var(--dur), color var(--dur);
-}
-details.sezione[open]>summary::after{transform:rotate(90deg); color:var(--accent-chiaro);}
+details.sezione>summary::after{content:"›"; color:var(--fg3); font-size:1.4rem; line-height:1; transition:transform var(--dur), color var(--dur);}
+details.sezione[open]>summary::after{transform:rotate(90deg); color:var(--cyan);}
 details.sezione[open]>summary{color:var(--accent-chiaro);}
 details.sezione .corpo{padding:2px 18px 18px; animation:corpoIn .32s ease;}
 @keyframes corpoIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;}}
-.passo-derivazione{
-  border-left:3px solid var(--accent);
-  padding:8px 0 8px 16px; margin:16px 0; background:linear-gradient(90deg,var(--surface),transparent); border-radius:2px;
-}
+.passo-derivazione{border-left:3px solid var(--accent); padding:8px 0 8px 16px; margin:16px 0; background:linear-gradient(90deg,var(--surface),transparent); border-radius:2px;}
 .passo-derivazione .p-passo{font-weight:750; font-size:.93rem;}
 .passo-derivazione .p-formula{margin:8px 0; overflow-x:auto; padding:4px 0;}
 .passo-derivazione .p-commento{color:var(--fg2); font-size:.88rem;}
 ul.puntata{margin:.3em 0; padding-left:1.25em;}
 ul.puntata li{margin-bottom:.5em;}
-ul.puntata li::marker{color:var(--accent);}
+ul.puntata li::marker{color:var(--cyan);}
 
 /* ---------- Anelli di progresso ---------- */
 .anelli{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px;}
 .anello{display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center;}
-.anello svg{transform:rotate(-90deg); filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));}
+.anello svg{transform:rotate(-90deg); filter:drop-shadow(0 0 8px rgba(124,131,255,.5));}
 .anello .traccia{stroke:var(--surface-2); fill:none;}
 .anello .valore{fill:none; stroke-linecap:round; transition:stroke-dashoffset 1s var(--spring);}
-.anello .perc{font-weight:800; font-size:1.05rem; margin-top:-46px; height:40px; display:flex; align-items:center;}
+.anello .perc{font-weight:800; font-size:1.05rem; margin-top:-46px; height:40px; display:flex; align-items:center; font-variant-numeric:tabular-nums;}
 .anello .nome{font-size:.72rem; color:var(--fg2); margin-top:8px; line-height:1.3; font-weight:600;}
 .legenda-stati{display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; font-size:.78rem; color:var(--fg2);}
 .legenda-stati span{display:flex; align-items:center;}
@@ -251,10 +267,10 @@ ul.puntata li::marker{color:var(--accent);}
 .voti-03 button{flex:1; min-height:48px; font-weight:800; border:1px solid var(--border);}
 .voti-03 button.sel{background:var(--grad); color:#fff; border-color:transparent; box-shadow:var(--glow);}
 #timer-display{
-  font-size:3.6rem; font-weight:800; text-align:center; font-variant-numeric:tabular-nums;
-  margin:16px 0; letter-spacing:.02em;
+  font-size:3.6rem; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; margin:16px 0; letter-spacing:.04em;
+  font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
   background:var(--grad-txt); -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 4px 20px rgba(124,131,255,.35));
+  filter:drop-shadow(0 0 22px rgba(60,230,255,.45));
 }
 
 /* ---------- Formulario ---------- */
@@ -266,7 +282,7 @@ ul.puntata li::marker{color:var(--accent);}
 nav#navbar{
   position:fixed; bottom:0; left:0; right:0; z-index:60;
   display:flex;
-  background:linear-gradient(180deg,rgba(10,12,22,.72),rgba(8,9,17,.92));
+  background:linear-gradient(180deg,rgba(8,10,20,.72),rgba(5,6,14,.94));
   backdrop-filter:blur(22px) saturate(1.5); -webkit-backdrop-filter:blur(22px) saturate(1.5);
   border-top:1px solid var(--border);
   padding-bottom:env(safe-area-inset-bottom);
@@ -275,22 +291,19 @@ nav#navbar{
 nav#navbar .brand{display:none;}
 nav#navbar button{
   flex:1; background:none; border:none; border-radius:0; color:var(--fg2);
-  font-size:.64rem; font-weight:700; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:4px; min-height:var(--nav-h); padding:6px 0;
+  font-size:.57rem; font-weight:750; letter-spacing:.01em; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px; min-height:var(--nav-h); padding:6px 2px;
   position:relative; transition:color var(--dur);
 }
-nav#navbar button .icona{
-  font-size:1.35rem; line-height:1;
-  transition:transform .3s var(--spring), filter var(--dur);
-}
-nav#navbar button.attivo{color:var(--accent-chiaro);}
-nav#navbar button.attivo .icona{transform:translateY(-2px) scale(1.14); filter:drop-shadow(0 4px 10px rgba(124,131,255,.7));}
+nav#navbar button .icona{font-size:1.28rem; line-height:1; transition:transform .3s var(--spring), filter var(--dur);}
+nav#navbar button.attivo{color:var(--cyan);}
+nav#navbar button.attivo .icona{transform:translateY(-2px) scale(1.16); filter:drop-shadow(0 4px 12px rgba(60,230,255,.8));}
 nav#navbar button.attivo::before{
   content:""; position:absolute; top:0; left:50%; transform:translateX(-50%);
-  width:34px; height:3px; border-radius:0 0 4px 4px; background:var(--grad);
-  box-shadow:0 0 12px rgba(124,131,255,.9); animation:navPop .3s var(--spring);
+  width:30px; height:3px; border-radius:0 0 4px 4px; background:var(--grad-neon);
+  box-shadow:0 0 14px rgba(60,230,255,.95); animation:navPop .3s var(--spring);
 }
-@keyframes navPop{from{width:0; opacity:0;} to{width:34px; opacity:1;}}
+@keyframes navPop{from{width:0; opacity:0;} to{width:30px; opacity:1;}}
 #countdown-nav{display:none;}
 
 /* ---------- Scheda a schermo intero ---------- */
@@ -301,46 +314,40 @@ nav#navbar button.attivo::before{
   transition:opacity .28s ease, transform .32s var(--spring);
 }
 #scheda-overlay.aperta{opacity:1; transform:none; pointer-events:auto;}
-#scheda-overlay .contenuto{max-width:820px; margin:0 auto; padding:14px 16px 90px;}
+#scheda-overlay .contenuto{max-width:840px; margin:0 auto; padding:14px 16px 90px;}
 #scheda-overlay .barra-scheda{
   position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:10px;
-  background:linear-gradient(180deg,rgba(11,13,22,.94),rgba(11,13,22,.6));
+  background:linear-gradient(180deg,rgba(8,10,18,.94),rgba(8,10,18,.55));
   backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
   border-bottom:1px solid var(--border);
   padding:12px 0; padding-top:calc(12px + env(safe-area-inset-top)); margin:0 -16px; padding-left:16px; padding-right:16px;
 }
 .titolo-scheda{
-  font-size:1.6rem; font-weight:800; margin:.55em 0 .35em; line-height:1.22;
-  background:linear-gradient(180deg,#fff,#c9cee6); -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-size:1.62rem; font-weight:800; margin:.55em 0 .35em; line-height:1.22;
+  background:var(--grad-txt); -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 2px 16px rgba(124,131,255,.3));
 }
 
 /* ---------- Simulazioni interattive ---------- */
-.sim-box canvas{
-  width:100%; display:block; border-radius:var(--r-sm);
-  background:rgba(16,18,30,.7); border:1px solid var(--border); margin-bottom:12px;
-}
+.sim-box canvas{width:100%; display:block; border-radius:var(--r-sm); background:rgba(12,15,26,.72); border:1px solid var(--border); margin-bottom:12px;}
 .sim-controlli{display:flex; flex-direction:column; gap:6px;}
 .sim-riga{display:flex; align-items:center; gap:12px; min-height:46px;}
 .sim-riga label{flex:0 0 34%; font-size:.85rem; color:var(--fg2); font-weight:650;}
 .sim-riga input[type=range]{flex:1; accent-color:var(--accent); min-height:44px; margin:0;}
-.sim-riga output{flex:0 0 78px; text-align:right; font-variant-numeric:tabular-nums; font-size:.88rem; font-weight:800; color:var(--accent-chiaro);}
+.sim-riga output{flex:0 0 78px; text-align:right; font-variant-numeric:tabular-nums; font-size:.88rem; font-weight:800; color:var(--cyan);}
 .sim-legenda{font-size:.84rem; color:var(--fg2); margin-top:8px;}
 
 /* ---------- Spiegazione in evidenza (intuizione) ---------- */
 .spiegazione-hero{
   position:relative; overflow:hidden;
-  background:var(--grad-soft);
-  border:1px solid rgba(139,147,255,.26); border-radius:var(--r);
-  padding:18px 20px; margin:14px 0; box-shadow:var(--shadow);
+  background:var(--grad-soft); border:1px solid rgba(139,147,255,.28); border-radius:var(--r);
+  padding:20px; margin:14px 0; box-shadow:var(--shadow), var(--glow);
 }
-.spiegazione-hero::before{
-  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background:radial-gradient(80% 120% at 0% 0%, rgba(139,147,255,.18), transparent 60%);
-}
-.spiegazione-hero h4{position:relative; margin:0 0 7px; font-size:.78rem; text-transform:uppercase; letter-spacing:.1em; color:var(--accent-chiaro); font-weight:800;}
+.spiegazione-hero::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(80% 130% at 0% 0%, rgba(60,230,255,.14), transparent 55%);}
+.spiegazione-hero h4{position:relative; margin:0 0 7px; font-size:.76rem; text-transform:uppercase; letter-spacing:.14em; color:var(--cyan); font-weight:800;}
 .spiegazione-hero p{position:relative; margin:0; font-size:1.02rem; line-height:1.62;}
 
-/* ---------- Controllo segmentato (facile/difficile ecc.) ---------- */
+/* ---------- Controllo segmentato ---------- */
 .segmentato{display:inline-flex; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); padding:5px; gap:5px; flex-wrap:wrap;}
 .segmentato button{background:none; min-height:40px; padding:9px 15px; border-radius:10px; font-size:.86rem; color:var(--fg2); font-weight:750; border:none;}
 .segmentato button:hover{background:var(--surface-2);}
@@ -362,39 +369,41 @@ nav#navbar button.attivo::before{
   transition:background var(--dur) var(--spring), border-color var(--dur), transform var(--dur) var(--spring); margin-top:1px;
 }
 .checklist-sim li.fatto{opacity:.6; border-color:rgba(55,224,160,.4);}
-.checklist-sim li.fatto .box{background:var(--st3); border-color:var(--st3); transform:scale(1.05);}
+.checklist-sim li.fatto .box{background:var(--st3); border-color:var(--st3); transform:scale(1.05); box-shadow:0 0 10px rgba(55,224,160,.7);}
 .checklist-sim li.fatto .testo{text-decoration:line-through; color:var(--fg2);}
 
-/* ---------- Vista QUIZ ---------- */
+/* ---------- Vista QUIZ / TEORIA ---------- */
 .quiz-scelte{display:flex; flex-wrap:wrap; gap:9px; margin:10px 0 4px;}
 .chip-scelta{
   background:var(--surface); color:var(--fg2); border:1px solid var(--border); border-radius:999px; padding:10px 16px;
-  font-size:.86rem; font-weight:750; min-height:44px; transition:background var(--dur), color var(--dur), border-color var(--dur), transform var(--dur) var(--spring);
+  font-size:.86rem; font-weight:750; min-height:44px; transition:background var(--dur), color var(--dur), border-color var(--dur), transform var(--dur) var(--spring), box-shadow var(--dur);
 }
 .chip-scelta:hover{transform:translateY(-2px); border-color:var(--border-2);}
 .chip-scelta.sel{background:var(--accent-soft); color:var(--accent-chiaro); border-color:transparent; box-shadow:inset 0 0 0 1.5px var(--accent), var(--glow);}
-.quiz-barra{height:9px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin:4px 0 2px;}
-.quiz-barra span{display:block; height:100%; background:var(--grad); width:0; border-radius:999px; transition:width .5s var(--spring); box-shadow:0 0 12px rgba(124,131,255,.6);}
-.quiz-meta{display:flex; justify-content:space-between; align-items:center; font-size:.82rem; color:var(--fg2); margin-bottom:12px;}
-.quiz-tipo-tag{font-size:.68rem; text-transform:uppercase; letter-spacing:.09em; color:var(--fg3); font-weight:800; margin-bottom:2px;}
+.quiz-barra{height:9px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin:4px 0 2px; border:1px solid var(--border);}
+.quiz-barra span{display:block; height:100%; background:var(--grad-neon); background-size:200% 100%; width:0; border-radius:999px; transition:width .5s var(--spring); box-shadow:0 0 14px rgba(60,230,255,.7); animation:scorri 3s linear infinite;}
+.quiz-meta{display:flex; justify-content:space-between; align-items:center; font-size:.82rem; color:var(--fg2); margin-bottom:12px; font-variant-numeric:tabular-nums;}
+.quiz-tipo-tag{font-size:.68rem; text-transform:uppercase; letter-spacing:.12em; color:var(--cyan); font-weight:800; margin-bottom:2px; opacity:.9;}
 .quiz-domanda{font-size:1.16rem; font-weight:750; line-height:1.45; margin:6px 0 4px;}
+.quiz-contesto{
+  position:relative; margin:12px 0 4px; padding:14px 16px; border-radius:var(--r-sm);
+  background:rgba(60,230,255,.06); border:1px solid rgba(60,230,255,.2); font-size:1.02rem; line-height:1.55; font-style:italic; color:#e6f6ff;
+}
+.quiz-contesto::before{content:"“"; position:absolute; top:-6px; left:8px; font-size:2rem; color:rgba(60,230,255,.4); font-style:normal;}
 .quiz-opzioni{display:flex; flex-direction:column; gap:11px; margin-top:16px;}
 .quiz-opt{
   text-align:left; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--r-sm);
   padding:15px 16px; font-weight:550; font-size:.95rem; min-height:54px; line-height:1.4;
   display:flex; align-items:center; gap:13px; transition:background var(--dur), border-color var(--dur), transform var(--dur) var(--spring), box-shadow var(--dur);
 }
-.quiz-opt .lettera{
-  flex:none; width:28px; height:28px; border-radius:9px; background:var(--surface-3); color:var(--fg2);
-  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.82rem; transition:background var(--dur), color var(--dur);
-}
-.quiz-opt:hover:not(:disabled){background:var(--surface-2); border-color:var(--border-2); transform:translateX(3px);}
+.quiz-opt .lettera{flex:none; width:28px; height:28px; border-radius:9px; background:var(--surface-3); color:var(--fg2); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.82rem; transition:background var(--dur), color var(--dur);}
+.quiz-opt:hover:not(:disabled){background:var(--surface-2); border-color:var(--border-2); transform:translateX(3px); box-shadow:var(--glow);}
 .quiz-opt:hover:not(:disabled) .lettera{background:var(--accent-soft); color:var(--accent-chiaro);}
-.quiz-opt.giusta{border-color:var(--st3); background:var(--st3-soft); box-shadow:0 0 22px -8px var(--st3);}
+.quiz-opt.giusta{border-color:var(--st3); background:var(--st3-soft); box-shadow:0 0 26px -6px var(--st3);}
 .quiz-opt.giusta .lettera{background:var(--st3); color:#08120d;}
 .quiz-opt.sbagliata{border-color:var(--st1); background:var(--st1-soft);}
 .quiz-opt.sbagliata .lettera{background:var(--st1); color:#1a0808;}
-.quiz-opt.attenua{opacity:.45;}
+.quiz-opt.attenua{opacity:.42;}
 .quiz-esito{margin-top:14px; padding:13px 16px; border-radius:var(--r-sm); font-size:.92rem; font-weight:700; animation:esitoIn .34s var(--spring);}
 @keyframes esitoIn{from{opacity:0; transform:translateY(8px) scale(.98);} to{opacity:1; transform:none;}}
 .quiz-esito.ok{background:var(--st3-soft); color:#9df3c8; border:1px solid rgba(55,224,160,.3);}
@@ -402,12 +411,42 @@ nav#navbar button.attivo::before{
 .quiz-flash-risposta{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-sm); padding:15px 16px; margin-top:12px; animation:esitoIn .3s var(--spring); line-height:1.55;}
 .quiz-flash-risposta .mini{display:block; margin-bottom:4px;}
 .quiz-punteggio{
-  font-size:3.4rem; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; margin:6px 0;
+  font-size:3.6rem; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; margin:6px 0;
+  font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
   background:var(--grad-txt); -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 4px 22px rgba(124,131,255,.4)); animation:punteggioPop .6s var(--spring);
+  filter:drop-shadow(0 0 24px rgba(60,230,255,.45)); animation:punteggioPop .6s var(--spring);
 }
 @keyframes punteggioPop{from{opacity:0; transform:scale(.6);} to{opacity:1; transform:none;}}
 .quiz-badge{display:inline-block; font-size:1rem; font-weight:800; padding:7px 18px; border-radius:999px; margin:2px 0 8px; border:1px solid var(--border);}
+
+/* ---------- Vista FLASHCARD (flip 3D + HUD) ---------- */
+.flash-scene{perspective:1600px; margin:10px 0 16px;}
+.flip-card{position:relative; width:100%; min-height:360px; cursor:pointer; transform-style:preserve-3d; transition:transform .62s var(--spring);}
+.flip-card.girata{transform:rotateY(180deg);}
+.flip-face{
+  position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  display:flex; flex-direction:column; border-radius:var(--r); border:1px solid var(--border-2);
+  padding:24px 22px; overflow:auto; box-shadow:var(--shadow);
+}
+.flip-face .fc-tag{font-size:.68rem; text-transform:uppercase; letter-spacing:.16em; font-weight:800; margin-bottom:12px;}
+.flip-face .fc-corpo{flex:1; display:flex; flex-direction:column; justify-content:center;}
+.flip-face .fc-hint{margin-top:14px; font-size:.76rem; color:var(--fg3); text-transform:uppercase; letter-spacing:.1em; font-weight:700;}
+.flip-front{background:var(--card-2); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);}
+.flip-front .fc-tag{color:var(--cyan);}
+.flip-front .fc-domanda{font-size:1.35rem; font-weight:800; line-height:1.35;}
+.flip-back{background:linear-gradient(160deg,rgba(30,26,54,.85),rgba(18,20,40,.9)); transform:rotateY(180deg);}
+.flip-back .fc-tag{color:var(--accent-2);}
+.flip-back .fc-risposta{font-size:1.02rem; line-height:1.6;}
+.flip-back .fc-risposta ul{margin:.3em 0; padding-left:1.2em;}
+.flip-back .fc-risposta li{margin-bottom:.4em;}
+.flip-back .fc-risposta li::marker{color:var(--accent-2);}
+/* angoli HUD */
+.flip-face::before, .flip-face::after{content:""; position:absolute; width:18px; height:18px; border:2px solid var(--hud); pointer-events:none; opacity:.8;}
+.flip-face::before{top:10px; left:10px; border-right:none; border-bottom:none; border-radius:4px 0 0 0;}
+.flip-face::after{bottom:10px; right:10px; border-left:none; border-top:none; border-radius:0 0 4px 0;}
+.flash-nav{display:flex; align-items:center; gap:10px; margin-top:4px;}
+.flash-nav .conta{flex:1; text-align:center; font-variant-numeric:tabular-nums; font-weight:800; color:var(--fg2); letter-spacing:.05em;}
+.flash-nav button{min-width:64px;}
 
 /* ---------- Micro-animazioni (comparse a cascata) ---------- */
 @keyframes entra{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
@@ -417,16 +456,14 @@ nav#navbar button.attivo::before{
 .stagger > *:nth-child(5){animation-delay:.19s;} .stagger > *:nth-child(6){animation-delay:.23s;}
 .stagger > *:nth-child(7){animation-delay:.27s;} .stagger > *:nth-child(8){animation-delay:.31s;}
 .stagger > *:nth-child(9){animation-delay:.35s;} .stagger > *:nth-child(n+10){animation-delay:.39s;}
-.barra-totale{height:13px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin-top:6px; position:relative;}
-.barra-totale span{display:block; height:100%; border-radius:999px; width:0;
-  background:linear-gradient(90deg,#6d7bff,#a366ff,#4fe3ac); background-size:200% 100%;
-  transition:width 1s var(--spring); animation:scorri 4s linear infinite; box-shadow:0 0 16px rgba(124,131,255,.5);}
+.barra-totale{height:13px; border-radius:999px; background:var(--surface-2); overflow:hidden; margin-top:6px; position:relative; border:1px solid var(--border);}
+.barra-totale span{display:block; height:100%; border-radius:999px; width:0; background:linear-gradient(90deg,#5cc8ff,#8b7bff,#c86bff,#37e0a0); background-size:200% 100%; transition:width 1s var(--spring); animation:scorri 4s linear infinite; box-shadow:0 0 18px rgba(60,230,255,.6);}
 @keyframes scorri{to{background-position:200% 0;}}
 
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:.001ms !important; animation-iteration-count:1 !important;}
   .stagger > *{opacity:1;}
-  body::before{animation:none;}
+  html::before, body::before{animation:none;}
   .vista.attiva{animation:none;}
 }
 
@@ -441,43 +478,38 @@ mjx-container[display="true"]{margin:.4em 0 !important;}
   nav#navbar{
     top:0; bottom:0; right:auto; width:var(--sidebar-w);
     flex-direction:column; justify-content:flex-start; align-items:stretch;
-    padding:26px 16px; gap:6px; height:auto;
-    background:linear-gradient(180deg,rgba(12,14,24,.66),rgba(9,11,20,.5));
+    padding:24px 14px; gap:5px; height:auto;
+    background:linear-gradient(180deg,rgba(10,12,24,.68),rgba(6,8,16,.5));
     border-top:none; border-right:1px solid var(--border);
   }
   nav#navbar .brand{
     display:flex; flex-direction:column; font-weight:800; font-size:1.2rem; line-height:1.3;
-    padding:0 12px 20px; gap:2px;
+    padding:0 12px 18px; gap:2px;
     background:var(--grad-txt); -webkit-background-clip:text; background-clip:text; color:transparent;
   }
   nav#navbar .brand span{font-size:.76rem; color:var(--fg2); font-weight:650; -webkit-text-fill-color:var(--fg2);}
   nav#navbar button{
     flex:0 0 auto; flex-direction:row; justify-content:flex-start; gap:13px;
-    font-size:.95rem; padding:13px 15px; border-radius:var(--r-sm); min-height:50px; width:100%;
+    font-size:.92rem; padding:12px 15px; border-radius:var(--r-sm); min-height:48px; width:100%;
   }
-  nav#navbar button .icona{font-size:1.2rem;}
+  nav#navbar button .icona{font-size:1.18rem;}
   nav#navbar button:hover{background:var(--surface);}
-  nav#navbar button.attivo{background:var(--grad-soft); box-shadow:inset 0 0 0 1px rgba(139,147,255,.3);}
-  nav#navbar button.attivo::before{
-    top:50%; left:0; transform:translateY(-50%);
-    width:3px; height:24px; border-radius:0 4px 4px 0; animation:none;
-  }
-  #countdown-nav{
-    display:block; margin-top:auto; padding:12px 15px; color:var(--accent-chiaro); font-weight:800; font-size:.9rem;
-    border-radius:var(--r-sm); background:var(--accent-soft); border:1px solid var(--border);
-  }
+  nav#navbar button.attivo{background:var(--grad-soft); box-shadow:inset 0 0 0 1px rgba(139,147,255,.32), var(--glow);}
+  nav#navbar button.attivo::before{top:50%; left:0; transform:translateY(-50%); width:3px; height:22px; border-radius:0 4px 4px 0; animation:none;}
+  #countdown-nav{display:block; margin-top:auto; padding:12px 15px; color:var(--cyan); font-weight:800; font-size:.9rem; font-variant-numeric:tabular-nums; border-radius:var(--r-sm); background:rgba(60,230,255,.09); border:1px solid rgba(60,230,255,.28);}
   #scheda-overlay .contenuto{padding-left:24px; padding-right:24px;}
 }
 
 /* ---------- Stampa: solo formulario ---------- */
 @media print{
   html,body{background:#fff; color:#000; padding:0;}
-  body::before, body::after{display:none !important;}
+  html::before, html::after, body::before, body::after{display:none !important;}
   header.app-header, nav#navbar, .no-print, #scheda-overlay{display:none !important;}
   .vista{display:none !important;}
   #vista-formulario{display:block !important;}
   .card{background:#fff; border:1px solid #bbb; break-inside:avoid; box-shadow:none;}
-  h2{color:#000; -webkit-text-fill-color:#000;}
+  .card::before{display:none;}
+  h2{color:#000; -webkit-text-fill-color:#000; filter:none;}
   .formula-riga + .formula-riga{border-color:#ddd;}
   .mini{color:#555;}
   .tag{color:#333; background:#eee; border-color:#ccc;}
@@ -1683,6 +1715,8 @@ const CONTENUTI = [
   <section id="vista-argomenti" class="vista"></section>
   <section id="vista-simula" class="vista"></section>
   <section id="vista-quiz" class="vista"></section>
+  <section id="vista-teoria" class="vista"></section>
+  <section id="vista-flashcard" class="vista"></section>
   <section id="vista-formulario" class="vista"></section>
 </main>
 
@@ -1692,7 +1726,9 @@ const CONTENUTI = [
   <button data-vista="argomenti"><span class="icona">📚</span>Argomenti</button>
   <button data-vista="simula"><span class="icona">🎤</span>Simula</button>
   <button data-vista="quiz"><span class="icona">📝</span>Quiz</button>
-  <button data-vista="formulario"><span class="icona">∑</span>Formulario</button>
+  <button data-vista="teoria"><span class="icona">🧠</span>Teoria</button>
+  <button data-vista="flashcard"><span class="icona">🃏</span>Flash</button>
+  <button data-vista="formulario"><span class="icona">∑</span>Formule</button>
   <div id="countdown-nav"></div>
 </nav>
 
@@ -1815,7 +1851,7 @@ function costruiscePiano() {
 // ============================================================
 // Navigazione
 // ============================================================
-const VISTE = ["oggi", "argomenti", "simula", "quiz", "formulario"];
+const VISTE = ["oggi", "argomenti", "simula", "quiz", "teoria", "flashcard", "formulario"];
 function mostraVista(nome) {
   chiudiScheda();
   VISTE.forEach(function (v) {
@@ -1828,6 +1864,8 @@ function mostraVista(nome) {
   if (nome === "argomenti") renderListaArgomenti();
   if (nome === "simula") renderSimulaIdle();
   if (nome === "quiz") renderQuizIdle();
+  if (nome === "teoria") renderTeoriaIdle();
+  if (nome === "flashcard") renderFlashcardIdle();
   if (nome === "formulario") renderFormulario();
   window.scrollTo(0, 0);
 }
@@ -2424,20 +2462,26 @@ function avviaQuiz() {
     domande.push(d);
   }
   if (!domande.length) { renderQuizIdle(); return; }
-  quiz = { domande: domande, i: 0, giuste: 0, risposte: [] };
+  quiz = { domande: domande, i: 0, giuste: 0, risposte: [], vista: "quiz", origine: "quiz" };
   mostraDomandaQuiz();
 }
+// il motore quiz è condiviso tra la vista "Quiz" e la vista "Teoria"
+function quizVistaEl() { return document.getElementById("vista-" + ((quiz && quiz.vista) || "quiz")); }
+function esciQuiz() { if (quiz && quiz.origine === "teoria") renderTeoriaIdle(); else renderQuizIdle(); }
+function rigeneraQuiz() { if (quiz && quiz.origine === "teoria") avviaTeoria(); else avviaQuiz(); }
 function mostraDomandaQuiz() {
-  const el = document.getElementById("vista-quiz");
+  const el = quizVistaEl();
   const q = quiz.domande[quiz.i], n = quiz.domande.length;
   const perc = Math.round(100 * quiz.i / n);
-  // per "formula → argomento" l'area rivelerebbe la risposta: la nascondo
-  const tag = (q.tipo === "formulaArg") ? "" : tagArea(q.arg.area);
+  // se la domanda rivela il tema con le opzioni, nascondo l'area (niente spoiler)
+  const tag = (q.tipo === "formulaArg" || q.nascondiArea) ? "" : tagArea(q.arg.area);
+  const etichetta = q.etichetta || QUIZ_TIPI[q.tipo] || "";
   let html = '<div class="quiz-meta"><span>Domanda ' + (quiz.i + 1) + " / " + n + '</span><span>✅ ' + quiz.giuste + "</span></div>" +
     '<div class="quiz-barra"><span style="width:' + perc + '%"></span></div>' +
-    '<div class="card"><div class="quiz-tipo-tag">' + tag + QUIZ_TIPI[q.tipo] + "</div>" +
+    '<div class="card"><div class="quiz-tipo-tag">' + tag + etichetta + "</div>" +
     '<div class="quiz-domanda">' + q.testo + "</div>";
   if (q.formula) html += '<div class="p-formula" style="font-size:1.15rem;margin:6px 0">' + q.formula + "</div>";
+  if (q.contesto) html += '<div class="quiz-contesto">' + q.contesto + "</div>";
   if (q.tipo === "flash") {
     html += '<div id="quiz-flash-area"><button class="btn-primario btn-largo" onclick="rivelaFlash()">👁 Mostra la risposta</button></div>';
   } else {
@@ -2448,7 +2492,7 @@ function mostraDomandaQuiz() {
     html += "</div>";
   }
   html += '</div><div id="quiz-azioni"></div>' +
-    '<button class="btn-largo btn-fantasma" onclick="renderQuizIdle()">Esci dal quiz</button>';
+    '<button class="btn-largo btn-fantasma" onclick="esciQuiz()">Esci</button>';
   el.innerHTML = html;
   window.scrollTo(0, 0);
   typeset(el);
@@ -2513,10 +2557,11 @@ function prossimaQuiz() {
 function risultatiQuiz() {
   const n = quiz.domande.length;
   const perc = Math.round(100 * quiz.giuste / n);
-  stato.quizStat = stato.quizStat || { fatti: 0, migliore: 0 };
-  stato.quizStat.fatti++;
-  const record = perc > stato.quizStat.migliore;
-  if (record) stato.quizStat.migliore = perc;
+  const statKey = (quiz.origine === "teoria") ? "teoriaStat" : "quizStat";
+  stato[statKey] = stato[statKey] || { fatti: 0, migliore: 0 };
+  stato[statKey].fatti++;
+  const record = perc > stato[statKey].migliore;
+  if (record) stato[statKey].migliore = perc;
   salvaStato();
   const sbagliati = [], visti = {};
   quiz.risposte.forEach(function (r) {
@@ -2526,12 +2571,12 @@ function risultatiQuiz() {
   const badge = perc >= 80 ? { t: "Ottimo! 🎉", c: "var(--st3-soft)", cc: "#8ef0bb" }
     : perc >= 50 ? { t: "Ci sei quasi 💪", c: "var(--st2-soft)", cc: "#ffce7a" }
       : { t: "Da ripassare 📚", c: "var(--st1-soft)", cc: "#ff9d9d" };
-  const el = document.getElementById("vista-quiz");
-  let html = "<h2>Risultato del quiz</h2>" +
+  const el = quizVistaEl();
+  let html = "<h2>" + (quiz.origine === "teoria" ? "Risultato — Teoria" : "Risultato del quiz") + "</h2>" +
     '<div class="card" style="text-align:center">' +
     '<div class="quiz-punteggio">' + quiz.giuste + " / " + n + "</div>" +
     '<div class="quiz-badge" style="background:' + badge.c + ";color:" + badge.cc + '">' + perc + "% · " + badge.t + "</div>" +
-    (record && stato.quizStat.fatti > 1 ? '<p class="mini">🏅 Nuovo record personale!</p>' : "") + "</div>";
+    (record && stato[statKey].fatti > 1 ? '<p class="mini">🏅 Nuovo record personale!</p>' : "") + "</div>";
 
   // dettaglio per area
   const perArea = {};
@@ -2563,8 +2608,8 @@ function risultatiQuiz() {
     html += '<div class="avviso">🌟 Nessun errore: hai risposto correttamente a tutto!</div>';
   }
 
-  html += '<button class="btn-primario btn-largo" onclick="avviaQuiz()">🔁 Nuovo quiz (stesse impostazioni)</button>' +
-    '<button class="btn-largo btn-fantasma" onclick="renderQuizIdle()">⚙️ Cambia impostazioni</button>';
+  html += '<button class="btn-primario btn-largo" onclick="rigeneraQuiz()">🔁 Nuova serie (stesse impostazioni)</button>' +
+    '<button class="btn-largo btn-fantasma" onclick="esciQuiz()">⚙️ Cambia impostazioni</button>';
   el.innerHTML = html;
   window.scrollTo(0, 0);
   typeset(el);
@@ -2572,13 +2617,227 @@ function risultatiQuiz() {
 function marcaDaRipassare() {
   if (!quiz || !quiz.sbagliatiIds) return;
   quiz.sbagliatiIds.forEach(function (id) { registraRevisione(id, 1); });
-  const el = document.getElementById("vista-quiz");
+  const el = quizVistaEl();
   const av = document.createElement("div");
   av.className = "avviso";
   av.innerHTML = "✅ " + quiz.sbagliatiIds.length + " argoment" + (quiz.sbagliatiIds.length === 1 ? "o segnato" : "i segnati") +
     " come deboli: li ritroverai nel piano di oggi e con priorità nelle simulazioni.";
   el.insertBefore(av, el.firstChild);
   window.scrollTo(0, 0);
+}
+
+// ============================================================
+// Vista TEORIA (quiz teorico a difficoltà variabile, generato al momento)
+// ============================================================
+const DIFF_ETICHETTA = { 1: "Facile", 2: "Medio", 3: "Difficile" };
+function prefTeoria() {
+  if (!stato.teoriaPref) stato.teoriaPref = { aree: ["A", "B", "C", "D"], n: 10, diff: 2 };
+  return stato.teoriaPref;
+}
+// distrattori (titoli) scelti in base alla difficoltà: facile = aree diverse, difficile = stessa area
+function distrattoriTitoli(a, argomenti, diff, n) {
+  const altri = argomenti.filter(function (x) { return x.id !== a.id; });
+  const same = mescola(altri.filter(function (x) { return x.area === a.area; })).map(function (x) { return x.titolo; });
+  const cross = mescola(altri.filter(function (x) { return x.area !== a.area; })).map(function (x) { return x.titolo; });
+  let pool;
+  if (diff >= 3) pool = same.concat(cross);
+  else if (diff === 2) pool = mescola(same.slice(0, 2).concat(cross));
+  else pool = cross.concat(same);
+  return pescaDistrattori(pool, [a.titolo], n);
+}
+function opzioniTitoli(a, distr) {
+  return mescola([{ html: a.titolo, giusta: true }].concat(distr.map(function (t) { return { html: t, giusta: false }; })));
+}
+function mascheraTitolo(testo, a) {
+  let out = testo;
+  const parole = a.titolo.toLowerCase().replace(/[^\wàèéìòù\s]/gi, " ").split(/\s+/).filter(function (w) { return w.length > 4; });
+  parole.forEach(function (w) {
+    try {
+      const re = new RegExp("\\b" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "[a-zà-ù]*", "gi");
+      out = out.replace(re, "…");
+    } catch (e) { }
+  });
+  return out;
+}
+function primaFrase(testo) {
+  const m = testo.match(/^[^.]*\.(?:\s|$)/);
+  return m ? m[0].trim() : testo;
+}
+function tDomIntuizione(a, argomenti, diff) {
+  if (!a.intuizioneFisica) return null;
+  const distr = distrattoriTitoli(a, argomenti, diff, diff >= 2 ? 3 : 2);
+  if (distr.length < 2) return null;
+  return { tipo: "teoria", arg: a, testo: "Quale argomento descrive questa idea?", contesto: a.intuizioneFisica, opzioni: opzioniTitoli(a, distr), nascondiArea: true, etichetta: "IDEA → ARGOMENTO · " + DIFF_ETICHETTA[diff] };
+}
+function tDomPunto(a, argomenti, diff) {
+  if (!a.checklistOrale || !a.checklistOrale.length) return null;
+  const punto = a.checklistOrale[Math.floor(Math.random() * a.checklistOrale.length)];
+  const distr = distrattoriTitoli(a, argomenti, diff, diff >= 2 ? 3 : 2);
+  if (distr.length < 2) return null;
+  return { tipo: "teoria", arg: a, testo: "In quale trattazione rientra questo passaggio?", contesto: punto, opzioni: opzioniTitoli(a, distr), nascondiArea: true, etichetta: "PASSAGGIO → ARGOMENTO · " + DIFF_ETICHETTA[diff] };
+}
+function tDomDefinizione(a, argomenti, diff) {
+  if (!a.definizioni) return null;
+  const distr = distrattoriTitoli(a, argomenti, diff, diff >= 2 ? 3 : 2);
+  if (distr.length < 2) return null;
+  return { tipo: "teoria", arg: a, testo: "Di quale argomento è questa definizione?", contesto: mascheraTitolo(primaFrase(a.definizioni), a), opzioni: opzioniTitoli(a, distr), nascondiArea: true, etichetta: "DEFINIZIONE → ARGOMENTO · " + DIFF_ETICHETTA[diff] };
+}
+function segmentatoDiff(diff) {
+  return '<div class="segmentato pieno" id="teoria-diff">' +
+    [1, 2, 3].map(function (d) {
+      return '<button class="' + (diff === d ? "sel" : "") + '" onclick="impostaTeoriaDiff(' + d + ')">' + ["🟢 Facile", "🟡 Medio", "🔴 Difficile"][d - 1] + "</button>";
+    }).join("") + "</div>";
+}
+function descrizioneDiff(diff) {
+  return diff === 1 ? "Distrattori da aree diverse e 3 opzioni: si riconosce bene il tema."
+    : diff === 2 ? "4 opzioni con distrattori misti: serve conoscere l'argomento."
+      : "4 opzioni con distrattori dalla <b>stessa area</b>: distinzioni sottili.";
+}
+function impostaTeoriaDiff(d) {
+  const p = prefTeoria(); p.diff = d; salvaStato();
+  const cont = document.getElementById("teoria-diff");
+  if (cont) cont.querySelectorAll("button").forEach(function (b, i) { b.classList.toggle("sel", i === d - 1); });
+  const desc = cont && cont.parentNode ? cont.parentNode.querySelector(".mini") : null;
+  if (desc) desc.innerHTML = descrizioneDiff(d);
+}
+function toggleTeoriaArea(area) {
+  const p = prefTeoria(), i = p.aree.indexOf(area);
+  if (i >= 0) { if (p.aree.length > 1) p.aree.splice(i, 1); } else p.aree.push(area);
+  salvaStato(); aggiornaChip("teoria-aree", "area", p.aree);
+}
+function renderTeoriaIdle() {
+  quiz = null;
+  const el = document.getElementById("vista-teoria");
+  const p = prefTeoria();
+  const st = stato.teoriaStat || { fatti: 0, migliore: 0 };
+  let html = "<h2>Quiz di teoria</h2>" +
+    '<p class="mini">Domande concettuali generate al momento dai contenuti dei 33 argomenti: riconosci l\'argomento dall\'idea, da un passaggio della trattazione o dalla definizione. Niente formule, solo teoria.</p>';
+  html += '<div class="card"><h3 style="margin-top:0">1 · Difficoltà</h3>' + segmentatoDiff(p.diff) +
+    '<p class="mini" style="margin-top:8px">' + descrizioneDiff(p.diff) + "</p></div>";
+  html += '<div class="card"><h3 style="margin-top:0">2 · Aree</h3><div class="quiz-scelte" id="teoria-aree">';
+  Object.keys(AREE).forEach(function (area) {
+    const sel = p.aree.indexOf(area) >= 0;
+    html += '<button class="chip-scelta' + (sel ? " sel" : "") + '" data-area="' + area + '" onclick="toggleTeoriaArea(\'' + area + '\')">' + tagArea(area) + AREE[area] + "</button>";
+  });
+  html += "</div></div>";
+  html += '<div class="card"><h3 style="margin-top:0">3 · Quante domande?</h3>' +
+    '<div class="sim-riga"><label>Numero</label><input type="range" id="teoria-n" min="5" max="25" step="1" value="' + p.n +
+    '" oninput="document.getElementById(\'teoria-n-out\').textContent=this.value"><output id="teoria-n-out">' + p.n + "</output></div></div>";
+  if (st.fatti > 0) html += '<p class="mini">Quiz di teoria completati: ' + st.fatti + " · miglior punteggio: " + st.migliore + "%</p>";
+  html += '<button class="btn-primario btn-largo" onclick="avviaTeoria()">🧠 Genera il quiz di teoria</button>';
+  el.innerHTML = html;
+  typeset(el);
+}
+function avviaTeoria() {
+  const p = prefTeoria();
+  const nEl = document.getElementById("teoria-n");
+  if (nEl) p.n = parseInt(nEl.value, 10) || 10;
+  salvaStato();
+  const argomenti = CONTENUTI.filter(function (a) { return p.aree.indexOf(a.area) >= 0; });
+  const gen = (p.diff === 1) ? [tDomIntuizione, tDomDefinizione]
+    : (p.diff === 2) ? [tDomIntuizione, tDomPunto, tDomDefinizione]
+      : [tDomPunto, tDomIntuizione, tDomDefinizione];
+  const domande = [], viste = new Set();
+  let tent = 0;
+  while (domande.length < p.n && tent < p.n * 60) {
+    tent++;
+    const g = gen[Math.floor(Math.random() * gen.length)];
+    const a = argomenti[Math.floor(Math.random() * argomenti.length)];
+    const d = g(a, argomenti, p.diff);
+    if (!d) continue;
+    const chiave = d.etichetta + "|" + a.id + "|" + (d.contesto || "").slice(0, 24);
+    if (viste.has(chiave)) continue;
+    viste.add(chiave);
+    domande.push(d);
+  }
+  if (!domande.length) { renderTeoriaIdle(); return; }
+  quiz = { domande: domande, i: 0, giuste: 0, risposte: [], vista: "teoria", origine: "teoria" };
+  mostraDomandaQuiz();
+}
+
+// ============================================================
+// Vista FLASHCARD (un mazzo per ogni argomento, flip 3D)
+// ============================================================
+let flash = null;
+function costruisciMazzo(a) {
+  const carte = [];
+  const lista = function (arr) { return "<ul>" + arr.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>"; };
+  if (a.intuizioneFisica) carte.push({ d: "L'idea in sintesi", r: a.intuizioneFisica, tag: "Intuizione" });
+  if (a.definizioni) carte.push({ d: "Definizione di « " + a.titolo + " »", r: a.definizioni, tag: "Definizione" });
+  if (a.formuleChiave && a.formuleChiave.length) carte.push({ d: "Le formule chiave", r: lista(a.formuleChiave), tag: "Formule" });
+  if (a.ipotesi) carte.push({ d: "Ipotesi di validità", r: a.ipotesi, tag: "Ipotesi" });
+  if (a.casiLimite) carte.push({ d: "Casi limite", r: a.casiLimite, tag: "Casi limite" });
+  (a.domandeApprofondimento || []).forEach(function (q) {
+    const m = q.match(/^(.*?)\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)\s*$/);
+    if (m && /[a-zA-Zàèéìòù]/.test(m[2]) && m[1].trim().length > 0) carte.push({ d: m[1].trim(), r: m[2].trim(), tag: "Approfondimento" });
+    else carte.push({ d: q, r: "Domanda aperta: prova a esporre la risposta a voce, come all'orale.", tag: "Approfondimento" });
+  });
+  if (a.erroriTipici && a.erroriTipici.length) carte.push({ d: "Errori da evitare", r: lista(a.erroriTipici), tag: "Errori tipici" });
+  if (a.checklistOrale && a.checklistOrale.length) carte.push({ d: "Cosa dire all'orale", r: lista(a.checklistOrale), tag: "Checklist" });
+  return carte;
+}
+function renderFlashcardIdle() {
+  flash = null;
+  const el = document.getElementById("vista-flashcard");
+  let html = "<h2>Flashcard</h2>" +
+    '<p class="mini">Un mazzo di flashcard per ogni argomento — idea, definizione, formule, ipotesi, casi limite, errori, domande e checklist. Tocca la carta per girarla.</p>' +
+    '<button class="btn-primario btn-largo" onclick="apriMazzoMescolato()" style="margin-bottom:8px">🎲 Mazzo misto (tutti gli argomenti)</button>';
+  Object.keys(AREE).forEach(function (area) {
+    html += "<h3>" + tagArea(area) + AREE[area] + '</h3><ul class="lista-argomenti stagger">';
+    CONTENUTI.filter(function (a) { return a.area === area; }).forEach(function (a) {
+      const nc = costruisciMazzo(a).length;
+      html += '<li><button class="riga-argomento bordo-st-' + recArg(a.id).stato + '" onclick="apriMazzo(' + a.id + ')">' +
+        pallino(a.id) + '<span class="titolo-arg">' + a.id + ". " + a.titolo + '</span><span class="mini">' + nc + ' carte</span><span class="freccia">›</span></button></li>';
+    });
+    html += "</ul>";
+  });
+  el.innerHTML = html;
+}
+function apriMazzo(id) {
+  const a = CONTENUTI.find(function (x) { return x.id === id; });
+  if (!a) return;
+  flash = { carte: costruisciMazzo(a), i: 0, girata: false, titolo: a.id + ". " + a.titolo, area: a.area };
+  mostraCarta();
+}
+function apriMazzoMescolato() {
+  let tutte = [];
+  CONTENUTI.forEach(function (a) {
+    costruisciMazzo(a).forEach(function (c) { tutte.push({ d: c.d, r: c.r, tag: c.tag, arg: a.titolo, area: a.area }); });
+  });
+  tutte = mescola(tutte).slice(0, 30);
+  flash = { carte: tutte, i: 0, girata: false, titolo: "Mazzo misto", area: null, misto: true };
+  mostraCarta();
+}
+function mostraCarta() {
+  const el = document.getElementById("vista-flashcard");
+  const c = flash.carte[flash.i], n = flash.carte.length;
+  const areaTag = flash.misto ? tagArea(c.area) : (flash.area ? tagArea(flash.area) : "");
+  let html = '<div class="quiz-meta"><span>' + flash.titolo + '</span><span>🃏 ' + (flash.i + 1) + " / " + n + "</span></div>" +
+    '<div class="flash-scene"><div class="flip-card' + (flash.girata ? " girata" : "") + '" id="flip-card" onclick="giraCarta()">' +
+    '<div class="flip-face flip-front"><div class="fc-tag">' + areaTag + (c.tag || "Domanda") + '</div>' +
+    '<div class="fc-corpo"><div class="fc-domanda">' + c.d + '</div></div><div class="fc-hint">Tocca per girare ↻</div></div>' +
+    '<div class="flip-face flip-back"><div class="fc-tag">' + (flash.misto ? c.arg : "Risposta") + '</div>' +
+    '<div class="fc-corpo"><div class="fc-risposta">' + c.r + '</div></div><div class="fc-hint">Tocca per tornare ↺</div></div>' +
+    "</div></div>";
+  html += '<div class="flash-nav"><button onclick="cartaPrec()" ' + (flash.i === 0 ? "disabled" : "") + ">‹ Prec</button>" +
+    '<span class="conta">' + (flash.i + 1) + " / " + n + "</span>" +
+    '<button onclick="cartaSucc()">' + (flash.i >= n - 1 ? "Fine ✓" : "Succ ›") + "</button></div>" +
+    '<button class="btn-largo btn-fantasma" onclick="renderFlashcardIdle()">Chiudi il mazzo</button>';
+  el.innerHTML = html;
+  window.scrollTo(0, 0);
+  typeset(el);
+}
+function giraCarta() {
+  flash.girata = !flash.girata;
+  const card = document.getElementById("flip-card");
+  if (card) card.classList.toggle("girata", flash.girata);
+}
+function cartaPrec() {
+  if (flash.i > 0) { flash.i--; flash.girata = false; mostraCarta(); }
+}
+function cartaSucc() {
+  if (flash.i >= flash.carte.length - 1) { renderFlashcardIdle(); return; }
+  flash.i++; flash.girata = false; mostraCarta();
 }
 
 // ============================================================
