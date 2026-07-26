@@ -290,12 +290,12 @@ nav#navbar{
 }
 nav#navbar .brand{display:none;}
 nav#navbar button{
-  flex:1; background:none; border:none; border-radius:0; color:var(--fg2);
-  font-size:.57rem; font-weight:750; letter-spacing:.01em; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:4px; min-height:var(--nav-h); padding:6px 2px;
+  flex:1; min-width:0; background:none; border:none; border-radius:0; color:var(--fg2);
+  font-size:.52rem; font-weight:750; letter-spacing:0; white-space:nowrap; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px; min-height:var(--nav-h); padding:6px 1px;
   position:relative; transition:color var(--dur);
 }
-nav#navbar button .icona{font-size:1.28rem; line-height:1; transition:transform .3s var(--spring), filter var(--dur);}
+nav#navbar button .icona{font-size:1.22rem; line-height:1; transition:transform .3s var(--spring), filter var(--dur);}
 nav#navbar button.attivo{color:var(--cyan);}
 nav#navbar button.attivo .icona{transform:translateY(-2px) scale(1.16); filter:drop-shadow(0 4px 12px rgba(60,230,255,.8));}
 nav#navbar button.attivo::before{
@@ -447,6 +447,19 @@ nav#navbar button.attivo::before{
 .flash-nav{display:flex; align-items:center; gap:10px; margin-top:4px;}
 .flash-nav .conta{flex:1; text-align:center; font-variant-numeric:tabular-nums; font-weight:800; color:var(--fg2); letter-spacing:.05em;}
 .flash-nav button{min-width:64px;}
+
+/* ---------- Vista DIMOSTRAZIONI (rivela passo-passo) ---------- */
+.dim-goal{position:relative; margin:12px 0 6px; padding:15px 16px; border-radius:var(--r-sm); background:var(--grad-soft); border:1px solid rgba(139,147,255,.3); box-shadow:var(--glow);}
+.dim-goal .cap{display:block; margin-bottom:8px; font-size:.7rem; text-transform:uppercase; letter-spacing:.14em; font-weight:800; color:var(--accent-chiaro);}
+.dim-goal .formula-riga{padding:6px 0; overflow-x:auto;}
+.dim-goal .formula-riga + .formula-riga{border-top:1px solid var(--border);}
+.passo-dim{animation:esitoIn .38s var(--spring);}
+.dim-prompt{color:var(--fg2); font-size:.9rem; margin:6px 0 2px;}
+.dim-restanti{text-align:center; color:var(--fg3); font-size:.82rem; font-weight:700; letter-spacing:.03em; margin-top:10px;}
+.dim-completa{text-align:center; padding:12px; border-radius:var(--r-sm); background:var(--st3-soft); border:1px solid rgba(55,224,160,.3); color:#9df3c8; font-weight:800; margin-top:6px;}
+.dim-nav{display:flex; align-items:center; gap:10px; margin-top:16px;}
+.dim-nav .conta{flex:1; text-align:center; font-variant-numeric:tabular-nums; font-weight:800; color:var(--fg2); letter-spacing:.04em;}
+.dim-nav button{min-width:96px;}
 
 /* ---------- Micro-animazioni (comparse a cascata) ---------- */
 @keyframes entra{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
@@ -1717,6 +1730,7 @@ const CONTENUTI = [
   <section id="vista-quiz" class="vista"></section>
   <section id="vista-teoria" class="vista"></section>
   <section id="vista-flashcard" class="vista"></section>
+  <section id="vista-dimostrazioni" class="vista"></section>
   <section id="vista-formulario" class="vista"></section>
 </main>
 
@@ -1728,6 +1742,7 @@ const CONTENUTI = [
   <button data-vista="quiz"><span class="icona">📝</span>Quiz</button>
   <button data-vista="teoria"><span class="icona">🧠</span>Teoria</button>
   <button data-vista="flashcard"><span class="icona">🃏</span>Flash</button>
+  <button data-vista="dimostrazioni"><span class="icona">📐</span>Dimostra</button>
   <button data-vista="formulario"><span class="icona">∑</span>Formule</button>
   <div id="countdown-nav"></div>
 </nav>
@@ -1851,7 +1866,7 @@ function costruiscePiano() {
 // ============================================================
 // Navigazione
 // ============================================================
-const VISTE = ["oggi", "argomenti", "simula", "quiz", "teoria", "flashcard", "formulario"];
+const VISTE = ["oggi", "argomenti", "simula", "quiz", "teoria", "flashcard", "dimostrazioni", "formulario"];
 function mostraVista(nome) {
   chiudiScheda();
   VISTE.forEach(function (v) {
@@ -1866,6 +1881,7 @@ function mostraVista(nome) {
   if (nome === "quiz") renderQuizIdle();
   if (nome === "teoria") renderTeoriaIdle();
   if (nome === "flashcard") renderFlashcardIdle();
+  if (nome === "dimostrazioni") renderDimostrazioniIdle();
   if (nome === "formulario") renderFormulario();
   window.scrollTo(0, 0);
 }
@@ -2839,6 +2855,93 @@ function cartaSucc() {
   if (flash.i >= flash.carte.length - 1) { renderFlashcardIdle(); return; }
   flash.i++; flash.girata = false; mostraCarta();
 }
+
+// ============================================================
+// Vista DIMOSTRAZIONI (tutte le derivazioni, rivelate passo-passo)
+// ============================================================
+let dimo = null;
+function argomentiConDerivazione() {
+  return CONTENUTI.filter(function (a) { return a.derivazione && a.derivazione.length; });
+}
+function renderDimostrazioniIdle() {
+  dimo = null;
+  const el = document.getElementById("vista-dimostrazioni");
+  const lista = argomentiConDerivazione();
+  const passiTot = lista.reduce(function (s, a) { return s + a.derivazione.length; }, 0);
+  let html = "<h2>Dimostrazioni</h2>" +
+    '<p class="mini">Tutte le ' + lista.length + " derivazioni delle formule (" + passiTot + " passaggi in totale), da ricavare <b>un passo alla volta</b>. Prova prima a mente, poi rivela e verifica.</p>" +
+    '<button class="btn-primario btn-largo" onclick="apriDimostrazione(' + lista[0].id + ')" style="margin-bottom:8px">▶️ Inizia dalla prima e scorrile tutte</button>';
+  Object.keys(AREE).forEach(function (area) {
+    const ag = lista.filter(function (a) { return a.area === area; });
+    if (!ag.length) return;
+    html += "<h3>" + tagArea(area) + AREE[area] + '</h3><ul class="lista-argomenti stagger">';
+    ag.forEach(function (a) {
+      html += '<li><button class="riga-argomento bordo-st-' + recArg(a.id).stato + '" onclick="apriDimostrazione(' + a.id + ')">' +
+        pallino(a.id) + '<span class="titolo-arg">' + a.id + ". " + a.titolo + '</span><span class="mini">' + a.derivazione.length + ' passi</span><span class="freccia">›</span></button></li>';
+    });
+    html += "</ul>";
+  });
+  el.innerHTML = html;
+}
+function apriDimostrazione(id) {
+  const lista = argomentiConDerivazione();
+  const pos = lista.findIndex(function (a) { return a.id === id; });
+  if (pos < 0) return;
+  dimo = { lista: lista, pos: pos, mostrati: 1 }; // il primo passo è già visibile
+  mostraDimostrazione(true);
+}
+function mostraDimostrazione(scrolla) {
+  const el = document.getElementById("vista-dimostrazioni");
+  const a = dimo.lista[dimo.pos], n = a.derivazione.length;
+  const perc = Math.round(100 * dimo.mostrati / n);
+  let html = '<div class="quiz-meta"><span>Dimostrazione ' + (dimo.pos + 1) + " / " + dimo.lista.length + '</span><span>📐 ' + dimo.mostrati + " / " + n + " passi</span></div>" +
+    '<div class="quiz-barra"><span style="width:' + perc + '%"></span></div>' +
+    '<div class="card"><div class="quiz-tipo-tag">' + tagArea(a.area) + "DERIVAZIONE</div>" +
+    '<div class="quiz-domanda">' + a.id + ". " + a.titolo + "</div>";
+  if (a.formuleChiave && a.formuleChiave.length) {
+    html += '<div class="dim-goal"><span class="cap">🎯 Obiettivo — ricavare</span>' +
+      a.formuleChiave.map(function (f) { return '<div class="formula-riga">' + f + "</div>"; }).join("") + "</div>";
+  }
+  html += '<p class="dim-prompt"><b>Ipotesi:</b> ' + a.ipotesi + "</p></div>";
+  // passi rivelati finora
+  for (let i = 0; i < dimo.mostrati && i < n; i++) {
+    const p = a.derivazione[i];
+    html += '<div class="passo-dim"><div class="passo-derivazione"><div class="p-passo">' + (i + 1) + ". " + p.passo +
+      '</div><div class="p-formula">' + p.formula + '</div><div class="p-commento">' + p.commento + "</div></div></div>";
+  }
+  // controlli di rivelazione
+  html += '<div id="dim-controlli">';
+  if (dimo.mostrati < n) {
+    html += '<button class="btn-primario btn-largo" onclick="rivelaPasso()">Mostra passo ' + (dimo.mostrati + 1) + " / " + n + " →</button>" +
+      '<button class="btn-largo" onclick="rivelaTuttiPassi()">Mostra tutti i passaggi</button>' +
+      '<div class="dim-restanti">ancora ' + (n - dimo.mostrati) + " passagg" + ((n - dimo.mostrati) === 1 ? "io" : "i") + " da rivelare</div>";
+  } else {
+    html += '<div class="dim-completa">✓ Dimostrazione completa</div>' +
+      '<button class="btn-largo" onclick="resetDimostrazione()">↺ Ricomincia da capo</button>';
+  }
+  html += "</div>";
+  // navigazione tra tutte le dimostrazioni
+  html += '<div class="dim-nav"><button onclick="dimoPrec()" ' + (dimo.pos === 0 ? "disabled" : "") + ">‹ Prec</button>" +
+    '<span class="conta">' + (dimo.pos + 1) + " / " + dimo.lista.length + "</span>" +
+    '<button onclick="dimoSucc()" ' + (dimo.pos >= dimo.lista.length - 1 ? "disabled" : "") + ">Succ ›</button></div>" +
+    '<button class="btn-largo btn-fantasma" onclick="apriScheda(' + a.id + ')">📖 Apri la scheda completa</button>' +
+    '<button class="btn-largo btn-fantasma" onclick="renderDimostrazioniIdle()">Torna all\'elenco</button>';
+  el.innerHTML = html;
+  typeset(el);
+  if (scrolla) window.scrollTo(0, 0);
+  else { const c = document.getElementById("dim-controlli"); if (c) c.scrollIntoView({ block: "center", behavior: "smooth" }); }
+}
+function rivelaPasso() {
+  const n = dimo.lista[dimo.pos].derivazione.length;
+  if (dimo.mostrati < n) { dimo.mostrati++; mostraDimostrazione(false); }
+}
+function rivelaTuttiPassi() {
+  dimo.mostrati = dimo.lista[dimo.pos].derivazione.length;
+  mostraDimostrazione(false);
+}
+function resetDimostrazione() { dimo.mostrati = 1; mostraDimostrazione(true); }
+function dimoPrec() { if (dimo.pos > 0) { dimo.pos--; dimo.mostrati = 1; mostraDimostrazione(true); } }
+function dimoSucc() { if (dimo.pos < dimo.lista.length - 1) { dimo.pos++; dimo.mostrati = 1; mostraDimostrazione(true); } }
 
 // ============================================================
 // Avvio
