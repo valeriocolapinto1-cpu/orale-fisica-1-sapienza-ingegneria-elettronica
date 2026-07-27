@@ -2463,27 +2463,125 @@ function domDefinizioneArg(a, argomenti) {
 }
 
 // ============================================================
-// MINI-QUIZ nella scheda argomento (verifica di comprensione)
+// MINI-QUIZ nella scheda argomento (verifica di COMPRENSIONE)
+// Domande concettuali, vero/falso con trabocchetti, distrattori insidiosi.
 // ============================================================
+
+// -- Helper: spezza una domanda di approfondimento in (domanda, risposta) se ha "(...)" finale --
+function scomponiApprofondimento(q) {
+  const s = String(q).trim();
+  const m = s.match(/^(.*?\?)\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)\s*$/);
+  if (!m) return null;
+  const risposta = m[2].trim();
+  if (risposta.length < 3 || !/[a-zA-Zàèéìòù]/.test(risposta)) return null;
+  return { domanda: m[1].trim(), risposta: risposta };
+}
+
+// -- 3. CONCETTUALE "perché/quando": domanda di approfondimento con risposta --
+// La risposta corretta è tra parentesi; i distrattori sono risposte di ALTRE domande della stessa area.
+function domConcettuale(a, argomenti) {
+  const mia = mescola((a.domandeApprofondimento || []).map(scomponiApprofondimento).filter(Boolean));
+  if (!mia.length) return null;
+  const scelta = mia[0];
+  // pool di risposte da altri argomenti: prima la STESSA area (distrattori a tema),
+  // le altre aree solo per completare, così le opzioni restano credibili.
+  const poolStessa = [], poolAltre = [];
+  argomenti.forEach(function (x) {
+    if (x.id === a.id) return;
+    (x.domandeApprofondimento || []).forEach(function (q) {
+      const s = scomponiApprofondimento(q);
+      if (s) (x.area === a.area ? poolStessa : poolAltre).push(s.risposta);
+    });
+  });
+  let distr = pescaDistrattori(mescola(poolStessa), [scelta.risposta], 3);
+  if (distr.length < 3) distr = distr.concat(pescaDistrattori(mescola(poolAltre), [scelta.risposta].concat(distr), 3 - distr.length));
+  if (distr.length < 3) return null; // esigo 4 opzioni piene: niente domande con 2-3 scelte
+  const opz = mescola([{ html: scelta.risposta, giusta: true }].concat(distr.map(function (t) { return { html: t, giusta: false }; })));
+  return { tipo: "concettuale", arg: a, testo: scelta.domanda, opzioni: opz };
+}
+
+// -- 4. CASO LIMITE: cosa succede quando...? --
+// Frammenta i casiLimite in "condizione → conseguenza" e chiede la conseguenza giusta.
+// Spezza casiLimite in coppie {condizione, conseguenza} separando SOLO sul primo ": "
+// (il "→" può comparire dentro la condizione, es. "k → ∞: T → 0", quindi non è un separatore).
+function coppieCasoLimite(a) {
+  return String(a.casiLimite || "").replace(/([.!])\s+/g, "$1\n").split("\n")
+    .map(function (s) { return s.trim(); })
+    .filter(function (s) { return s.length > 25; })
+    .map(function (s) {
+      const i = s.indexOf(": ");
+      if (i < 3) return null;
+      let cond = s.slice(0, i).trim();
+      let cons = s.slice(i + 2).trim().replace(/[.]$/, "");
+      // condizione leggibile solo se breve e senza LaTeX grezzo; conseguenza sensata
+      if (cond.length < 3 || cond.length > 60 || cons.length < 10) return null;
+      if (/\\\(|\\\[/.test(cond)) return null; // niente LaTeX nella condizione mostrata in grassetto
+      return { condizione: cond, conseguenza: cons };
+    })
+    .filter(Boolean);
+}
+function domCasoLimite(a, argomenti) {
+  const miei = coppieCasoLimite(a);
+  if (!miei.length) return null;
+  const scelto = mescola(miei)[0];
+  // distrattori = conseguenze di casi limite di ALTRI argomenti della stessa area
+  const pool = [];
+  argomenti.forEach(function (x) {
+    if (x.id === a.id || x.area !== a.area) return;
+    coppieCasoLimite(x).forEach(function (c) { pool.push(c.conseguenza); });
+  });
+  let distr = pescaDistrattori(mescola(pool), [scelto.conseguenza], 3);
+  if (distr.length < 3) {
+    // completo con conseguenze da altre aree se la stessa area non basta
+    const poolAltre = [];
+    argomenti.forEach(function (x) {
+      if (x.id === a.id || x.area === a.area) return;
+      coppieCasoLimite(x).forEach(function (c) { poolAltre.push(c.conseguenza); });
+    });
+    distr = distr.concat(pescaDistrattori(mescola(poolAltre), [scelto.conseguenza].concat(distr), 3 - distr.length));
+  }
+  if (distr.length < 3) return null;
+  const opz = mescola([{ html: scelto.conseguenza, giusta: true }].concat(distr.map(function (t) { return { html: t, giusta: false }; })));
+  return { tipo: "casoLimite", arg: a, testo: "In «" + a.titolo + "», cosa succede se <b>" + scelto.condizione + "</b>?", opzioni: opz };
+}
+
 let miniQuiz = null;
 function generaMiniQuiz(a, nMax) {
-  const generatori = [domDefinizioneArg, domArgFormula, domFormulaArg, domErrore];
+  // Primari: domande di comprensione con frasi COMPLETE e ben formate (leggono naturali).
+  // Riempitivi: opzioni auto-consistenti (definizioni intere, formule, errori tipici interi).
+  // I generatori "affermazione vero/falso" sono esclusi: il parsing degli erroriTipici produce
+  // frammenti tronchi che, isolati, si leggono male come opzioni.
+  const primari = [domConcettuale, domCasoLimite];
+  const riempitivi = [domErrore, domDefinizioneArg, domArgFormula, domFormulaArg];
   const domande = [];
   const viste = new Set();
-  // ripeto i generatori finché non raggiungo il numero desiderato o esaurisco le varianti
-  let tentativi = 0;
-  while (domande.length < nMax && tentativi < nMax * 6) {
-    tentativi++;
-    const gen = generatori[tentativi % generatori.length];
+  function prova(gen) {
     const d = gen(a, CONTENUTI);
-    if (!d) continue;
-    // evito domande-doppione (stesso tipo + stesso testo/formula)
-    const chiave = d.tipo + "|" + (d.formula || "") + "|" + d.testo + "|" + (d.opzioni ? d.opzioni.map(function (o) { return o.html; }).sort().join("~") : "");
-    if (viste.has(chiave)) continue;
-    viste.add(chiave);
+    if (!d || !d.opzioni || d.opzioni.length < 3) return false;
+    // dedup per TESTO della domanda (una domanda concettuale può ripresentarsi con opzioni diverse)
+    if (viste.has("Q|" + d.testo)) return false;
+    // dedup anche per identico insieme di opzioni (due domande troppo simili)
+    const chiaveOpz = d.opzioni.map(function (o) { return o.html; }).sort().join("~");
+    if (viste.has("OPZ|" + chiaveOpz)) return false;
+    viste.add("Q|" + d.testo); viste.add("OPZ|" + chiaveOpz);
     domande.push(d);
+    return true;
   }
-  return domande;
+  // 1) i primari a ripetizione (comprensione): pescano varianti diverse a ogni chiamata,
+  //    prendo tutte quelle disponibili fino a nMax.
+  let t = 0;
+  while (domande.length < nMax && t < nMax * 8) {
+    t++;
+    prova(primari[t % primari.length]);
+  }
+  // 2) completo con i riempitivi (in ordine di preferenza) fino a nMax, garantendo comunque
+  //    almeno 5 domande quando l'argomento le consente.
+  let r = 0;
+  while (domande.length < nMax && r < riempitivi.length * 8) {
+    prova(riempitivi[r % riempitivi.length]);
+    r++;
+  }
+  return mescola(domande);
 }
 function avviaMiniQuiz(id) {
   const a = CONTENUTI.find(function (x) { return x.id === id; });
