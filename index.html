@@ -1761,18 +1761,32 @@ const AREE = {
 };
 const STATI = ["Mai visto", "Debole", "Consolidato", "Padroneggiato"];
 const CHIAVE_LS = "fisica1-orale-v1";
+const AMBITO = "Fisica 1 — Ingegneria (programma tipico)";
 
 function dataISO(d) {
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 }
 function oggiData() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+// Data d'esame impostata dall'utente (ISO "YYYY-MM-DD") o null se non impostata
 function dataEsame() {
-  const oggi = oggiData();
-  const e = new Date(oggi.getFullYear(), 6, 27); // 27 luglio
-  if (e < oggi) e.setFullYear(e.getFullYear() + 1);
-  return e;
+  const iso = stato.dataEsame;
+  if (!iso) return null;
+  const p = iso.split("-");
+  const e = new Date(+p[0], +p[1] - 1, +p[2]); e.setHours(0, 0, 0, 0);
+  return isNaN(e) ? null : e;
 }
-function giorniAllEsame() { return Math.round((dataEsame() - oggiData()) / 86400000); }
+// Giorni all'esame: null se nessuna data impostata
+function giorniAllEsame() {
+  const e = dataEsame();
+  if (!e) return null;
+  return Math.round((e - oggiData()) / 86400000);
+}
+function impostaDataEsame(iso) {
+  stato.dataEsame = iso || null;
+  salvaStato();
+  aggiornaCountdown();
+  renderOggi();
+}
 function aggiungiGiorni(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
 function formattaData(d) { return d.toLocaleDateString("it-IT", { weekday: "short", day: "numeric", month: "long" }); }
 
@@ -1915,18 +1929,23 @@ function contaSu(el, target, durata) {
   })(t0);
 }
 function animaAnelli(contenitore) {
-  requestAnimationFrame(function () {
-    requestAnimationFrame(function () {
-      contenitore.querySelectorAll(".anello .valore").forEach(function (c) {
-        c.style.strokeDashoffset = c.dataset.off;
-      });
-      contenitore.querySelectorAll(".anello .perc").forEach(function (p) {
-        contaSu(p, parseInt(p.dataset.target, 10) || 0, 900);
-      });
-      contenitore.querySelectorAll(".barra-totale span[data-w]").forEach(function (s) {
-        s.style.width = s.dataset.w + "%";
-      });
+  // Applica i valori finali (usato sia come animazione sia come fallback)
+  function applica(anima) {
+    contenitore.querySelectorAll(".anello .valore").forEach(function (c) {
+      c.style.strokeDashoffset = c.dataset.off;
     });
+    contenitore.querySelectorAll(".anello .perc").forEach(function (p) {
+      const t = parseInt(p.dataset.target, 10) || 0;
+      if (anima) contaSu(p, t, 900); else p.textContent = t + "%";
+    });
+    contenitore.querySelectorAll(".barra-totale span[data-w]").forEach(function (s) {
+      s.style.width = s.dataset.w + "%";
+    });
+  }
+  // Se la tab è nascosta i requestAnimationFrame sono sospesi: imposta subito i valori finali.
+  if (document.hidden) { applica(false); return; }
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { applica(true); });
   });
 }
 
@@ -1937,11 +1956,18 @@ function renderOggi() {
   const el = document.getElementById("vista-oggi");
   const gg = giorniAllEsame();
   let html = "<h2>Oggi</h2>";
+  html += '<p class="mini" style="margin-top:-.4em">' + AMBITO + "</p>";
 
-  if (gg <= 0) {
-    html += '<div class="avviso">🎓 <b>Oggi è il giorno dell\'esame!</b> In bocca al lupo. Ripassa il formulario e stai tranquillo: il lavoro l\'hai fatto.</div>';
+  const oggiIso = dataISO(oggiData());
+  if (gg === null) {
+    html += '<div class="avviso">📅 <b>Nessuna data d\'esame impostata.</b> Impostala per attivare il piano di studio giornaliero e il countdown.' +
+      '<div style="margin-top:10px"><input type="date" id="input-data-esame" min="' + oggiIso + '" onchange="impostaDataEsame(this.value)" style="width:100%;background:var(--sup2,#1c212c);color:var(--fg,#e9edf4);border:none;border-radius:10px;padding:12px;font:inherit;min-height:46px"></div></div>';
+  } else if (gg <= 0) {
+    html += '<div class="avviso">🎓 <b>Oggi è il giorno dell\'esame!</b> In bocca al lupo. Ripassa il formulario e stai tranquillo: il lavoro l\'hai fatto. ' +
+      '<button class="btn-fantasma" style="min-height:34px;padding:0 6px" onclick="impostaDataEsame(null)">Rimuovi data</button></div>';
   } else {
-    html += '<div class="avviso">📅 Mancano <b>' + gg + " giorn" + (gg === 1 ? "o" : "i") + "</b> all'esame del 27 luglio.</div>";
+    html += '<div class="avviso">📅 Mancano <b>' + gg + " giorn" + (gg === 1 ? "o" : "i") + '</b> all\'esame (' + formattaData(dataEsame()) + '). ' +
+      '<button class="btn-fantasma" style="min-height:34px;padding:0 6px" onclick="impostaDataEsame(null)">Rimuovi</button></div>';
   }
 
   // Barra di preparazione complessiva
@@ -1970,7 +1996,9 @@ function renderOggi() {
   const oggiP = piano[0];
   html += '<div class="card"><h3 style="margin-top:0">Da fare oggi</h3>';
   if (!oggiP) {
-    html += '<p class="vuoto">Nessun piano: l\'esame è oggi o è passato.</p>';
+    html += '<p class="vuoto">' + (gg === null
+      ? "Studio libero: nessuna scadenza. Apri gli argomenti, allena l'esposizione dal tab Simula o fai un quiz."
+      : "Nessun piano: l'esame è oggi o è passato.") + "</p>";
   } else {
     if (oggiP.nuovi.length) {
       html += '<div class="etichetta-sez">Nuovi argomenti (' + oggiP.nuovi.length + ")</div>";
@@ -2105,20 +2133,27 @@ function apriScheda(id) {
   }
   typeset(el);
 }
+// Ridisegna la vista attualmente attiva (dopo che uno stato è cambiato)
+function rerenderVistaAttiva() {
+  const attiva = document.querySelector(".vista.attiva");
+  if (!attiva) return;
+  if (attiva.id === "vista-oggi") renderOggi();
+  else if (attiva.id === "vista-argomenti") renderListaArgomenti();
+  else if (attiva.id === "vista-formulario" && typeof renderFormulario === "function") renderFormulario();
+}
 function chiudiScheda() {
   if (simCleanup) { simCleanup(); simCleanup = null; }
   const overlay = document.getElementById("scheda-overlay");
   if (overlay.classList.contains("aperta")) {
     overlay.classList.remove("aperta");
     // aggiorna la vista sottostante (stati/pallini possono essere cambiati)
-    const attiva = document.querySelector(".vista.attiva");
-    if (attiva && attiva.id === "vista-oggi") renderOggi();
-    if (attiva && attiva.id === "vista-argomenti") renderListaArgomenti();
+    rerenderVistaAttiva();
   }
 }
 function autovaluta(id, q) {
   registraRevisione(id, q);
-  apriScheda(id);
+  apriScheda(id);        // riapre la scheda aggiornata (stato/prossimo ripasso)
+  rerenderVistaAttiva(); // e aggiorna la dashboard/lista sotto l'overlay
 }
 
 // ============================================================
@@ -2326,10 +2361,14 @@ function renderFormulario() {
 // ============================================================
 let quiz = null;
 const QUIZ_TIPI = {
-  formulaArg: "Formula → argomento",
-  argFormula: "Argomento → formula",
-  errore: "Riconosci l'errore",
-  flash: "Flashcard a voce"
+  formulaArg: "🧮 Formula → argomento",
+  argFormula: "🧮 Argomento → formula",
+  errore: "🧠 Riconosci l'errore",
+  flash: "🧠 Flashcard a voce"
+};
+// Ambito di ciascun tipo di quiz: "pratica" (formule) o "teoria" (concetti)
+const QUIZ_AMBITO = {
+  formulaArg: "pratica", argFormula: "pratica", errore: "teoria", flash: "teoria"
 };
 
 function prefQuiz() {
@@ -2419,6 +2458,7 @@ function renderQuizIdle() {
   const p = prefQuiz();
   const st = stato.quizStat || { fatti: 0, migliore: 0 };
   let html = "<h2>Quiz di allenamento</h2>" +
+    '<p class="mini" style="margin-top:-.4em">' + AMBITO + "</p>" +
     '<p class="mini">Crea un quiz su misura sugli argomenti: scelta multipla generata dalle formule e dagli errori tipici, più flashcard da esporre a voce.</p>';
   html += '<div class="card"><h3 style="margin-top:0">1 · Su quali aree?</h3><div class="quiz-scelte" id="quiz-aree">';
   Object.keys(AREE).forEach(function (area) {
@@ -2426,7 +2466,9 @@ function renderQuizIdle() {
     html += '<button class="chip-scelta' + (sel ? " sel" : "") + '" data-area="' + area + '" onclick="toggleQuizArea(\'' + area + '\')">' + tagArea(area) + AREE[area] + "</button>";
   });
   html += "</div></div>";
-  html += '<div class="card"><h3 style="margin-top:0">2 · Tipo di domande</h3><div class="quiz-scelte" id="quiz-tipi">';
+  html += '<div class="card"><h3 style="margin-top:0">2 · Tipo di domande</h3>' +
+    '<p class="mini" style="margin-top:-2px">🧮 <b>Pratica (formule)</b> · 🧠 <b>Teoria (concetti)</b></p>' +
+    '<div class="quiz-scelte" id="quiz-tipi">';
   Object.keys(QUIZ_TIPI).forEach(function (t) {
     const sel = p.tipi.indexOf(t) >= 0;
     html += '<button class="chip-scelta' + (sel ? " sel" : "") + '" data-tipo="' + t + '" onclick="toggleQuizTipo(\'' + t + '\')">' + QUIZ_TIPI[t] + "</button>";
@@ -2727,6 +2769,7 @@ function renderTeoriaIdle() {
   const p = prefTeoria();
   const st = stato.teoriaStat || { fatti: 0, migliore: 0 };
   let html = "<h2>Quiz di teoria</h2>" +
+    '<p class="mini" style="margin-top:-.4em">' + AMBITO + " · 🧠 Teoria (concetti, niente formule)</p>" +
     '<p class="mini">Domande concettuali generate al momento dai contenuti dei 33 argomenti: riconosci l\'argomento dall\'idea, da un passaggio della trattazione o dalla definizione. Niente formule, solo teoria.</p>';
   html += '<div class="card"><h3 style="margin-top:0">1 · Difficoltà</h3>' + segmentatoDiff(p.diff) +
     '<p class="mini" style="margin-top:8px">' + descrizioneDiff(p.diff) + "</p></div>";
