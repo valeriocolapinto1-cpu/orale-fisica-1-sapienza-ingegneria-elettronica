@@ -2112,13 +2112,10 @@ function apriScheda(id) {
     sezione("✅ Checklist per l'orale", listaPunti(a.checklistOrale), false) +
     sezione("❓ Domande di approfondimento", listaPunti(a.domandeApprofondimento), false) +
     sezione("∑ Formule chiave", a.formuleChiave.map(function (f) { return '<div class="formula-riga">' + f + "</div>"; }).join(""), false) +
-    '<div class="card no-print"><h3 style="margin-top:0">Autovalutazione rapida</h3><p class="mini">Dopo aver ripassato, come lo sapevi? Aggiorna lo stato e programma il ripasso.</p>' +
-    '<div class="griglia-stati">' +
-    [0, 1, 2, 3].map(function (q) {
-      return "<button onclick=\"autovaluta(" + id + "," + q + ')">' + ["😵 Zero", "😕 Poco", "🙂 Bene", "😎 Perfetto"][q] + "</button>";
-    }).join("") + "</div></div>";
+    '<div class="card no-print" id="mini-quiz"></div>';
 
   el.innerHTML = html;
+  renderPannelloVerifica(id);
   overlay.scrollTop = 0;
   overlay.classList.add("aperta");
   const det = document.getElementById("sim-det");
@@ -2449,6 +2446,132 @@ function domFlash(a) {
     domanda = m[1].trim(); risposta = m[2].trim();
   }
   return { tipo: "flash", arg: a, testo: domanda, risposta: risposta };
+}
+
+// ---- Domanda "riconosci la definizione corretta di questo argomento" ----
+function domDefinizioneArg(a, argomenti) {
+  if (!a.definizioni) return null;
+  const prima = function (t) { const s = String(t); const p = s.indexOf(". "); return (p > 0 ? s.slice(0, p + 1) : s).trim(); };
+  const mia = prima(a.definizioni);
+  const altri = argomenti.filter(function (x) { return x.id !== a.id && x.definizioni; });
+  const stessaArea = mescola(altri.filter(function (x) { return x.area === a.area; })).map(function (x) { return prima(x.definizioni); });
+  const altreAree = mescola(altri.filter(function (x) { return x.area !== a.area; })).map(function (x) { return prima(x.definizioni); });
+  const distr = pescaDistrattori(stessaArea.concat(altreAree), [mia], 3);
+  if (distr.length < 2) return null;
+  const opz = mescola([{ html: mia, giusta: true }].concat(distr.map(function (t) { return { html: t, giusta: false }; })));
+  return { tipo: "definizioneArg", arg: a, testo: "Quale definizione descrive «" + a.titolo + "»?", opzioni: opz };
+}
+
+// ============================================================
+// MINI-QUIZ nella scheda argomento (verifica di comprensione)
+// ============================================================
+let miniQuiz = null;
+function generaMiniQuiz(a, nMax) {
+  const generatori = [domDefinizioneArg, domArgFormula, domFormulaArg, domErrore];
+  const domande = [];
+  const viste = new Set();
+  // ripeto i generatori finché non raggiungo il numero desiderato o esaurisco le varianti
+  let tentativi = 0;
+  while (domande.length < nMax && tentativi < nMax * 6) {
+    tentativi++;
+    const gen = generatori[tentativi % generatori.length];
+    const d = gen(a, CONTENUTI);
+    if (!d) continue;
+    // evito domande-doppione (stesso tipo + stesso testo/formula)
+    const chiave = d.tipo + "|" + (d.formula || "") + "|" + d.testo + "|" + (d.opzioni ? d.opzioni.map(function (o) { return o.html; }).sort().join("~") : "");
+    if (viste.has(chiave)) continue;
+    viste.add(chiave);
+    domande.push(d);
+  }
+  return domande;
+}
+function avviaMiniQuiz(id) {
+  const a = CONTENUTI.find(function (x) { return x.id === id; });
+  if (!a) return;
+  // 8 domande se disponibili, minimo utile 5; se l'argomento ne genera meno, uso quelle che ci sono
+  const domande = generaMiniQuiz(a, 8);
+  miniQuiz = { arg: a, domande: domande, i: 0, giuste: 0 };
+  renderMiniQuiz();
+}
+function renderMiniQuiz() {
+  const box = document.getElementById("mini-quiz");
+  if (!box || !miniQuiz) return;
+  const q = miniQuiz.domande[miniQuiz.i];
+  if (!q) { chiudiMiniQuiz(false); return; }
+  let html = '<div class="quiz-progress-mini mini">Domanda ' + (miniQuiz.i + 1) + " di " + miniQuiz.domande.length +
+    " · punteggio " + miniQuiz.giuste + "/" + miniQuiz.i + "</div>" +
+    '<div class="quiz-domanda">' + q.testo + "</div>";
+  if (q.formula) html += '<div class="p-formula" style="font-size:1.15rem;margin:6px 0">' + q.formula + "</div>";
+  html += '<div class="quiz-opzioni" id="mini-opzioni">';
+  q.opzioni.forEach(function (o, idx) {
+    html += '<button class="quiz-opt" onclick="rispondiMini(' + idx + ')"><span class="lettera">' + "ABCD"[idx] + "</span><span>" + o.html + "</span></button>";
+  });
+  html += '</div><div id="mini-azioni"></div>';
+  box.innerHTML = html;
+  typeset(box);
+}
+function rispondiMini(idx) {
+  const q = miniQuiz.domande[miniQuiz.i];
+  if (q.risolta) return;
+  q.risolta = true;
+  const corretta = q.opzioni[idx].giusta;
+  if (corretta) miniQuiz.giuste++;
+  const cont = document.getElementById("mini-opzioni");
+  Array.prototype.forEach.call(cont.children, function (b, j) {
+    b.disabled = true;
+    if (q.opzioni[j].giusta) b.classList.add("giusta");
+    else if (j === idx) b.classList.add("sbagliata");
+    else b.classList.add("attenua");
+  });
+  const az = document.getElementById("mini-azioni");
+  const ultima = miniQuiz.i >= miniQuiz.domande.length - 1;
+  az.innerHTML = '<div class="quiz-esito ' + (corretta ? "ok" : "no") + '">' +
+    (corretta ? "✅ Giusto!" : "❌ La risposta corretta è evidenziata in verde.") + "</div>";
+  const btn = document.createElement("button");
+  btn.className = "btn-primario btn-largo";
+  btn.textContent = ultima ? "🏁 Vedi il risultato" : "Prossima domanda →";
+  btn.onclick = function () {
+    if (ultima) chiudiMiniQuiz(true);
+    else { miniQuiz.i++; renderMiniQuiz(); }
+  };
+  az.appendChild(btn);
+}
+function chiudiMiniQuiz(completato) {
+  const box = document.getElementById("mini-quiz");
+  const a = miniQuiz.arg;
+  const n = miniQuiz.domande.length;
+  if (!completato || n === 0) { miniQuiz = null; if (box) renderPannelloVerifica(a.id); return; }
+  const frazione = miniQuiz.giuste / n;
+  // mappo la frazione di risposte esatte su qualità 0-3 dell'SM-2
+  const q = frazione >= 0.9 ? 3 : frazione >= 0.65 ? 2 : frazione >= 0.4 ? 1 : 0;
+  registraRevisione(a.id, q);
+  rerenderVistaAttiva(); // aggiorna dashboard/lista sotto l'overlay
+  // aggiorno anche l'intestazione della scheda (stato/pallino/prossimo ripasso)
+  const r = recArg(a.id);
+  const commento = frazione >= 0.9 ? "Padroneggiato: hai le idee chiarissime. 🎯"
+    : frazione >= 0.65 ? "Ci siamo: buona comprensione, rivedi i punti sbagliati."
+      : frazione >= 0.4 ? "Comprensione parziale: ripassa la scheda e riprova."
+        : "Da riprendere: rileggi definizioni e derivazione, poi rifai il quiz.";
+  if (box) {
+    box.innerHTML = '<div class="quiz-esito ' + (frazione >= 0.65 ? "ok" : "no") + '" style="font-size:1.1rem">' +
+      "Hai risposto correttamente a <b>" + miniQuiz.giuste + " su " + n + "</b> (" + Math.round(frazione * 100) + "%)</div>" +
+      '<p style="margin:10px 0">' + commento + "</p>" +
+      '<p class="mini">Nuovo stato: <b>' + STATI[r.stato] + "</b>" + (r.prossimoRipasso ? " · prossimo ripasso: " + r.prossimoRipasso : "") + "</p>" +
+      '<button class="btn-primario btn-largo" onclick="avviaMiniQuiz(' + a.id + ')">🔁 Rifai il quiz</button>' +
+      '<button class="btn-largo btn-fantasma" onclick="chiudiScheda()">✓ Chiudi la scheda</button>';
+  }
+  miniQuiz = null;
+}
+// Pannello iniziale di verifica (sostituisce l'autovalutazione a bottoni)
+function renderPannelloVerifica(id) {
+  const box = document.getElementById("mini-quiz");
+  if (!box) return;
+  const a = CONTENUTI.find(function (x) { return x.id === id; });
+  // stimo quante domande potrà generare per avvisare l'utente
+  const nDom = generaMiniQuiz(a, 8).length;
+  box.innerHTML = '<h3 style="margin-top:0">🧪 Hai capito l\'argomento?</h3>' +
+    '<p class="mini">Mettiti alla prova con un mini-quiz di ' + nDom + ' domande a risposta multipla, generate dai contenuti di questa scheda. Il risultato aggiorna automaticamente il tuo stato e programma il ripasso.</p>' +
+    '<button class="btn-primario btn-largo" onclick="avviaMiniQuiz(' + id + ')">▶️ Inizia il mini-quiz</button>';
 }
 
 // ---- Schermata di costruzione del quiz ----
